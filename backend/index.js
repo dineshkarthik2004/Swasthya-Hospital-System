@@ -52,7 +52,7 @@ const prepareOrigins = () => {
 const allowedOrigins = prepareOrigins();
 console.log(`[CORS] Allowed Origins:`, allowedOrigins);
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     // 1. Allow server-to-server / non-browser requests
     if (!origin) return callback(null, true);
@@ -74,7 +74,11 @@ app.use(cors({
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
-}));
+};
+
+// Handle OPTIONS preflight requests BEFORE any other middleware
+app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -139,6 +143,10 @@ app.get("/", (req, res) => {
 
 // ─── Global error handler ─────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
+  // Handle CORS errors explicitly — do NOT send a 500 as it strips CORS headers
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({ error: "CORS: Origin not allowed" });
+  }
   console.error("Unhandled error:", err.message);
   res.status(500).json({ error: "Internal server error", details: err.message });
 });
