@@ -28,27 +28,32 @@ import aiRouter from "./routes/ai.js";
 import voiceRouter from "./routes/voice.js"; // just in case we need it too
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(morgan("tiny"));
 
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   process.env.FRONTEND_URL,
-].filter(Boolean);
+].filter(Boolean).map(o => o.endsWith('/') ? o.slice(0, -1) : o);
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes("*")) {
+    // Allow if no origin (server-to-server) or if it's in the allowed list
+    if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
       callback(null, true);
     } else {
+      console.warn(`[CORS REJECTION] Origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
+
 app.use(express.json());
 
 // ─── Global Request Logger (Legacy fallback) ──────────────────────────────────
