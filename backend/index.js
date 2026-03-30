@@ -1,6 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
 
 // Legacy AI Extractors (now updated to use Prisma)
 import patientRouter from "./routes/patient.js";
@@ -26,6 +28,9 @@ import aiRouter from "./routes/ai.js";
 import voiceRouter from "./routes/voice.js"; // just in case we need it too
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
+app.use(helmet());
+app.use(morgan("tiny"));
+
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
@@ -46,11 +51,10 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// ─── Global Request Logger ────────────────────────────────────────────────────
+// ─── Global Request Logger (Legacy fallback) ──────────────────────────────────
 app.use((req, res, next) => {
-  console.log(`[ROUTER LOG] ${new Date().toISOString()} | ${req.method} ${req.url}`);
-  if (req.body && typeof req.body === "object" && Object.keys(req.body).length) {
-    console.log(`  -> Body params keys:`, Object.keys(req.body));
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[ROUTER LOG] ${new Date().toISOString()} | ${req.method} ${req.url}`);
   }
   next();
 });
