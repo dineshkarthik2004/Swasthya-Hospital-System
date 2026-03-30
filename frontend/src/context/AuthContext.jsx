@@ -30,12 +30,16 @@ export function AuthProvider({ children }) {
       localStorage.setItem("token", newToken);
       
       return { success: true, role: userData.role, rawPayload: response.data };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.error || "Login failed" 
-      };
-    }
+      } catch (error) {
+        // Defensive: handle both string and object error responses
+        const errorData = error.response?.data?.error || error.response?.data?.message || error.message || "Login failed";
+        const normalizedError = typeof errorData === "object" ? (errorData.message || JSON.stringify(errorData)) : errorData;
+        
+        return { 
+          success: false, 
+          error: normalizedError
+        };
+      }
   };
 
   const logout = () => {
