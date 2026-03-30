@@ -1,0 +1,7 @@
+USER: molleti@gmail.com | ROLE: [PATIENT]
+USER: anirudh@gmail.com | ROLE: [PATIENT]
+USER: test@medvoice.com | ROLE: [DOCTOR]
+USER: karthik@gmail.com | ROLE: [RECEPTIONIST]
+USER: sai@gmail.com | ROLE: [PATIENT]
+USER: patient@test.com | ROLE: [PATIENT]
+USER: molletidinesh@gmail.com | ROLE: [DOCTOR]
