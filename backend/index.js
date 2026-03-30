@@ -33,21 +33,43 @@ app.use(helmet({
 }));
 app.use(morgan("tiny"));
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-  process.env.FRONTEND_URL,
-].filter(Boolean).map(o => o.endsWith('/') ? o.slice(0, -1) : o);
+// Robust CORS origin detector
+const prepareOrigins = () => {
+  const defaults = ["http://localhost:5173", "http://localhost:3000"];
+  let envOrigin = process.env.FRONTEND_URL;
+  
+  if (envOrigin) {
+    envOrigin = envOrigin.trim();
+    if (envOrigin.endsWith("/")) envOrigin = envOrigin.slice(0, -1);
+    if (!envOrigin.startsWith("http") && envOrigin.includes(".")) {
+      envOrigin = `https://${envOrigin}`;
+    }
+    defaults.push(envOrigin);
+  }
+  return [...new Set(defaults)].filter(Boolean);
+};
+
+const allowedOrigins = prepareOrigins();
+console.log(`[CORS] Allowed Origins:`, allowedOrigins);
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow if no origin (server-to-server) or if it's in the allowed list
-    if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
-      callback(null, true);
-    } else {
-      console.warn(`[CORS REJECTION] Origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
+    // 1. Allow server-to-server / non-browser requests
+    if (!origin) return callback(null, true);
+    
+    // 2. Exact match check
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+      return callback(null, true);
     }
+    
+    // 3. Normalized check (in case of subtle mismatch)
+    const normalized = origin.endsWith("/") ? origin.slice(0, -1) : origin;
+    if (allowedOrigins.includes(normalized)) {
+      return callback(null, true);
+    }
+
+    console.warn(`[CORS REJECTION] Origin: ${origin} (Not in: ${allowedOrigins.join(', ')})`);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
