@@ -1,8 +1,20 @@
 import axios from "axios";
 
-// Create Axios Instance
+// Build Base URL with defensive checks
+let baseURL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+// Standardize URL: Remove trailing slash if present
+if (baseURL.endsWith("/")) {
+  baseURL = baseURL.slice(0, -1);
+}
+
+// Add protocol if missing for remote URLs
+if (baseURL && !baseURL.startsWith("http") && baseURL.includes(".")) {
+  baseURL = `https://${baseURL}`;
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+  baseURL,
   headers: {
     "Content-Type": "application/json",
   },
