@@ -44,6 +44,13 @@ const prepareOrigins = () => {
     if (!envOrigin.startsWith("http") && envOrigin.includes(".")) {
       envOrigin = `https://${envOrigin}`;
     }
+    // Strip any path (e.g. /login) — CORS only cares about the origin
+    try {
+      const parsed = new URL(envOrigin);
+      envOrigin = parsed.origin; // e.g. "https://example.vercel.app"
+    } catch (e) {
+      // If URL parsing fails, use as-is
+    }
     defaults.push(envOrigin);
   }
   return [...new Set(defaults)].filter(Boolean);
@@ -76,8 +83,7 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 };
 
-// Handle OPTIONS preflight requests BEFORE any other middleware
-app.options("*", cors(corsOptions));
+// Enable CORS for all routes (handles OPTIONS preflight automatically)
 app.use(cors(corsOptions));
 
 app.use(express.json());
