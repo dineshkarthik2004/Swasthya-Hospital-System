@@ -23,34 +23,32 @@ pool.query("SELECT NOW()", (err, res) => {
   }
 });
 
-// ─── Prisma Client ─────────────────────────────────────────────────────────
-const dbUrl = process.env.DATABASE_URL;
-const separator = dbUrl.includes("?") ? "&" : "?";
-const fullUrl = `${dbUrl}${separator}connect_timeout=30&pool_timeout=30&connection_limit=5`;
+// singleton prisma
+const globalForPrisma = global;
 
-export const prisma = new PrismaClient({
-  log: ["error", "warn"],
-  datasources: {
-    db: {
-      url: fullUrl
-    }
-  }
-});
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    log: ["error", "warn"],
+  });
 
-// Keep Prisma connection alive with periodic pings
-setInterval(async () => {
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
+
+// ─── Retry-on-demand Helper ──────────────────────────────────────────────────
+// This handles Neon cold starts (P1001 errors) gracefully by retrying once.
+export async function safeQuery(fn) {
   try {
-    await prisma.$queryRaw`SELECT 1`;
-  } catch (e) {
-    console.warn("[DB] Prisma keepalive ping failed, reconnecting...", e.message);
-    try {
-      await prisma.$disconnect();
-      await prisma.$connect();
-      console.log("[DB] Prisma reconnected successfully");
-    } catch (reconnectErr) {
-      console.error("[DB] Prisma reconnect failed:", reconnectErr.message);
+    return await fn();
+  } catch (err) {
+    if (err.code === "P1001" || err.message?.includes("Can't reach database server")) {
+      console.log("[DB] Neon waking up, retrying query in 2s...");
+      await new Promise(res => setTimeout(res, 2000));
+      return await fn(); 
     }
+    throw err;
   }
-}, 30000); // every 30 seconds
+}
 
 export default pool;

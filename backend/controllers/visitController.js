@@ -1,4 +1,4 @@
-import { prisma } from "../config/db.js";
+import { prisma, safeQuery } from "../config/db.js";
 
 // POST /api/visits
 export async function createVisit(req, res) {
@@ -112,7 +112,7 @@ export async function createVisit(req, res) {
     }
 
     // Create the Visit
-    const visit = await prisma.visit.create({
+    const visit = await safeQuery(() => prisma.visit.create({
       data: {
         patientId: targetPatientId,
         bookedById: userRole === "PATIENT" ? req.user.userId : null,
@@ -127,15 +127,15 @@ export async function createVisit(req, res) {
       include: {
         patient: true
       }
-    });
+    }));
 
     if (height) {
-      await prisma.vitals.create({
+      await safeQuery(() => prisma.vitals.create({
         data: {
           visitId: visit.id,
           height: height.toString()
         }
-      });
+      }));
     }
 
     return res.status(201).json(visit);
@@ -173,7 +173,7 @@ export async function listVisits(req, res) {
        ];
     }
 
-    const visits = await prisma.visit.findMany({
+    const visits = await safeQuery(() => prisma.visit.findMany({
       where,
       orderBy: { createdAt: "desc" },
       include: {
@@ -187,7 +187,7 @@ export async function listVisits(req, res) {
           }
         }
       }
-    });
+    }));
 
     return res.status(200).json(visits);
   } catch (error) {
@@ -218,15 +218,7 @@ export async function getVisitDetails(req, res) {
   });
 
   try {
-    let visit;
-    try {
-      visit = await fetchVisit();
-    } catch (firstErr) {
-      console.warn("[VisitController] First attempt failed, reconnecting...", firstErr.message);
-      await prisma.$disconnect();
-      await prisma.$connect();
-      visit = await fetchVisit();
-    }
+    const visit = await safeQuery(() => fetchVisit());
 
     if (!visit) return res.status(404).json({ error: "Visit not found" });
     return res.status(200).json(visit);
@@ -384,7 +376,7 @@ export async function receptionCreateVisit(req, res) {
     }
 
     // 2. Create Visit
-    const visit = await prisma.visit.create({
+    const visit = await safeQuery(() => prisma.visit.create({
       data: {
         patientId: patient.id,
         doctorId: doctorId || null,
@@ -395,11 +387,11 @@ export async function receptionCreateVisit(req, res) {
         feeType: "Receptionist Booking",
         appointmentTime: parsedAppointmentTime
       }
-    });
+    }));
 
     // 3. Create Vitals if provided
     if (vitals && Object.values(vitals).some(v => v)) {
-      await prisma.vitals.create({
+      await safeQuery(() => prisma.vitals.create({
         data: {
           visitId: visit.id,
           bloodPressure: vitals.bloodPressure || vitals.bp,
@@ -408,17 +400,17 @@ export async function receptionCreateVisit(req, res) {
           weight: vitals.weight,
           height: vitals.height ? String(vitals.height) : null
         }
-      });
+      }));
     }
 
-    const fullVisit = await prisma.visit.findUnique({
+    const fullVisit = await safeQuery(() => prisma.visit.findUnique({
       where: { id: visit.id },
       include: {
         patient: true,
         doctor: { select: { name: true, specialization: true } },
         vitals: true
       }
-    });
+    }));
 
     return res.status(201).json(fullVisit);
   } catch (error) {

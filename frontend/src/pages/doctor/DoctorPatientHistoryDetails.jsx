@@ -38,7 +38,7 @@ export default function DoctorPatientHistoryDetails() {
   }, [visitId]);
 
   const handlePrint = () => {
-    window.print();
+    navigate(`/print/${visitId}`);
   };
 
   if (loading) {
@@ -153,7 +153,8 @@ export default function DoctorPatientHistoryDetails() {
                 <TableHeader className="bg-gray-50/50 h-12 border-b border-gray-100">
                   <TableRow className="border-none hover:bg-transparent">
                     <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-6 w-[60px]">S.No</TableHead>
-                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Medicine Name</TableHead>
+                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-[20%]">Medicine Name</TableHead>
+                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-[20%]">Generic Name</TableHead>
                     <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Dosage</TableHead>
                     <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">M-A-N</TableHead>
                     <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Duration</TableHead>
@@ -165,10 +166,10 @@ export default function DoctorPatientHistoryDetails() {
                     <TableRow key={idx} className="hover:bg-gray-50/30 border-b border-gray-50 h-16 transition-colors">
                       <TableCell className="pl-6 text-xs font-bold text-gray-400">{idx + 1}</TableCell>
                       <TableCell className="py-4">
-                        <div className="flex flex-col">
-                          <span className="font-bold text-gray-900 text-sm">{med.medicineName}</span>
-                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight italic">{med.genericName || ""}</span>
-                        </div>
+                        <span className="font-bold text-gray-900 text-sm uppercase">{med.medicineName}</span>
+                      </TableCell>
+                      <TableCell className="py-4">
+                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-tight italic">{med.genericName || "-"}</span>
                       </TableCell>
                       <TableCell className="font-bold text-gray-700 text-sm">{med.dosage || "-"}</TableCell>
                       <TableCell className="text-center font-black text-blue-600 text-xs tracking-[0.3em]">{med.dosageMorning}-{med.dosageAfternoon}-{med.dosageNight}</TableCell>
@@ -210,30 +211,7 @@ export default function DoctorPatientHistoryDetails() {
         </div>
       </div>
 
-      {/* Legacy Print Logic (Not changed per user request to only touch PrintPrescription.jsx) */}
-      <style>{`
-        @media print {
-          @page { size: a4; margin: 0; }
-          body * { visibility: hidden; }
-          #print-area, #print-area * { visibility: visible; }
-          #print-area { 
-            position: absolute !important; 
-            left: 0 !important; 
-            top: 0 !important; 
-            width: 100% !important; 
-            padding: 30px 45px !important;
-            background: white !important;
-            font-size: 13px !important;
-          }
-          .no-print { display: none !important; }
-        }
-        .serif-font { font-family: "Times New Roman", Times, serif; }
-      `}</style>
-
-      <div id="print-area" className="hidden print:block bg-white text-black p-0 serif-font max-w-[850px] mx-auto absolute z-[-9999] opacity-0 print:z-auto print:opacity-100 print:relative">
-         {/* Outdated print area remains here as per specific 'dont change other pages' constraint */}
-         <p className="p-10 text-center">Redirecting to new print engine...</p>
-      </div>
+      {/* Legacy Print Area Removed - Using Standalone Print Engine */}
     </div>
   );
 }

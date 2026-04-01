@@ -13,8 +13,8 @@ export default function PrintPrescription() {
   useEffect(() => {
     async function loadData() {
       try {
-        const res = await api.get(`/api/visits`)
-        const found = res.data.find(v => v.id === visitId)
+        const res = await api.get(`/api/visits/${visitId}`)
+        const found = res.data?.data || res.data
         if (found) {
            setVisit(found)
         }
@@ -167,6 +167,7 @@ export default function PrintPrescription() {
                          <tr className="bg-slate-50/50 border-y border-slate-200">
                             <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 w-10">#</th>
                             <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400">Medicine Name</th>
+                            <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400">Generic Name</th>
                             <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 w-24">Dosage</th>
                             <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 text-center w-28">Frequency</th>
                             <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 w-28">Timing</th>
@@ -178,10 +179,10 @@ export default function PrintPrescription() {
                             <tr key={i} className="border-b border-slate-50 group hover:bg-slate-50/20 transition-colors">
                                <td className={cn("px-2 font-medium text-slate-300", rowPadding, tableFontSize)}>{i + 1}</td>
                                <td className={cn("px-2", rowPadding)}>
-                                  <div className="flex flex-col">
-                                     <span className={cn("font-bold text-slate-900 uppercase tracking-tight", tableFontSize)}>{m.medicineName}</span>
-                                     {m.genericName && <span className="text-[9px] text-slate-400 italic font-serif leading-none mt-0.5">{m.genericName}</span>}
-                                  </div>
+                                  <span className={cn("font-bold text-slate-900 uppercase tracking-tight", tableFontSize)}>{m.medicineName}</span>
+                               </td>
+                               <td className={cn("px-2", rowPadding)}>
+                                  <span className={cn("text-slate-500 italic font-serif leading-none", tableFontSize)}>{m.genericName || "-"}</span>
                                </td>
                                <td className={cn("px-2 font-bold text-slate-700", rowPadding, tableFontSize)}>{m.dosage || "-"}</td>
                                <td className={cn("px-2 font-black text-blue-600 text-center tracking-widest", rowPadding, tableFontSize)}>{m.dosageMorning}-{m.dosageAfternoon}-{m.dosageNight}</td>
