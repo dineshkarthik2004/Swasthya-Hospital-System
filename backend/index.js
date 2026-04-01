@@ -36,9 +36,9 @@ app.use(morgan("tiny"));
 
 // Robust CORS origin detector
 const prepareOrigins = () => {
-  const defaults = ["http://localhost:5173", "http://localhost:3000"];
+  const defaults = ["http://localhost:5173", "http://localhost:3000", "https://swasthya-hospital-system.vercel.app"];
   let envOrigin = process.env.FRONTEND_URL;
-  
+
   if (envOrigin) {
     envOrigin = envOrigin.trim();
     if (envOrigin.endsWith("/")) envOrigin = envOrigin.slice(0, -1);
@@ -64,12 +64,12 @@ const corsOptions = {
   origin: function (origin, callback) {
     // 1. Allow server-to-server / non-browser requests
     if (!origin) return callback(null, true);
-    
+
     // 2. Exact match check
     if (allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
       return callback(null, true);
     }
-    
+
     // 3. Normalized check (in case of subtle mismatch)
     const normalized = origin.endsWith("/") ? origin.slice(0, -1) : origin;
     if (allowedOrigins.includes(normalized)) {
