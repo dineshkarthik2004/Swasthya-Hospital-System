@@ -1,7 +1,7 @@
 import { Outlet, Navigate, useLocation, Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 import { Users, ClipboardList, Activity, ArrowLeftToLine, ArrowRightToLine, LogOut, FileText, UserSquare, LayoutDashboard, History, ShieldCheck, HeartPulse, Menu, Bell, ChevronDown, Loader2 } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
@@ -10,6 +10,12 @@ export default function AppLayout({ allowedRoles }) {
   const location = useLocation()
   const navigate = useNavigate()
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [location.pathname])
   
   // Failsafe: if state is null but localStorage has user, we might be in middle of state update
   const effectiveUser = user || (() => {
@@ -85,8 +91,12 @@ export default function AppLayout({ allowedRoles }) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F8F9FA] font-sans">
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 bg-black/30 z-30 md:hidden" onClick={() => setMobileOpen(false)} />
+      )}
       <aside 
-        className={`${collapsed ? 'w-[80px]' : 'w-72'} transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) border-r bg-white flex flex-col z-20 shadow-[4px_0_24px_-10px_rgba(0,0,0,0.02)]`}
+        className={`${collapsed ? 'md:w-[80px]' : 'md:w-72'} w-72 transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) border-r bg-white flex flex-col z-40 shadow-[4px_0_24px_-10px_rgba(0,0,0,0.02)] fixed md:relative h-full ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
         <div className="h-24 flex flex-col justify-center px-8 shrink-0 bg-white">
           {!collapsed && (
@@ -106,7 +116,7 @@ export default function AppLayout({ allowedRoles }) {
         </div>
         
         <div className="px-8 pt-8 pb-4">
-           {!collapsed && <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] pl-1">Platform</span>}
+           {!collapsed && <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] pl-1">Platform</span>}
         </div>
 
         <nav className="flex-1 overflow-y-auto px-4 space-y-1.5 scrollbar-hide">
@@ -128,35 +138,12 @@ export default function AppLayout({ allowedRoles }) {
             </Link>
           ))}
         </nav>
-
-        <div className="p-6 pb-8 shrink-0 bg-white border-t border-gray-50">
-           <div 
-             className={`flex items-center ${collapsed ? 'justify-center' : 'gap-4'} p-3 rounded-[1.5rem] bg-gray-50/50 border border-transparent hover:border-gray-100 transition-all group cursor-pointer`}
-             onClick={() => !collapsed && setCollapsed(true)}
-           >
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-black text-xs shadow-lg group-hover:scale-110 transition-transform">
-                 {(user?.name || 'User').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}
-              </div>
-              {!collapsed && (
-                <div className="flex flex-col truncate flex-1 leading-tight">
-                  <span className="font-black text-gray-900 text-[13px] truncate">{user?.name || "Patient"}</span>
-                  <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-0.5 opacity-60">Session {user?.role || "USER"}</span>
-                </div>
-              )}
-              {!collapsed && (
-                 <div className="flex flex-col gap-0.5 opacity-20 hover:opacity-100 transition-opacity ml-auto">
-                    <div className="w-1 h-1 bg-gray-900 rounded-full"></div>
-                    <div className="w-1.5 h-1.5 bg-gray-900 rounded-full"></div>
-                 </div>
-              )}
-           </div>
-        </div>
       </aside>
 
       <main className="flex-1 flex flex-col h-full overflow-hidden">
         <header className="h-20 bg-white/80 backdrop-blur-3xl border-b border-gray-100/50 flex items-center px-10 shrink-0 justify-between z-10">
             <div className="flex items-center gap-6">
-               <div className="p-2.5 hover:bg-gray-50 rounded-2xl cursor-pointer text-gray-300 transition-colors border border-transparent hover:border-gray-100" onClick={() => setCollapsed(!collapsed)}>
+               <div className="p-2.5 hover:bg-gray-50 rounded-2xl cursor-pointer text-gray-400 transition-colors border border-transparent hover:border-gray-100" onClick={() => { if (window.innerWidth < 768) { setMobileOpen(!mobileOpen); } else { setCollapsed(!collapsed); } }}>
                   <Menu className="w-5 h-5" />
                </div>
                <div className="flex flex-col leading-none">

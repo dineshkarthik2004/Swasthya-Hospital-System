@@ -18,6 +18,7 @@ import visitsCrudRouter from "./routes/visits.js";
 import consultationsRouter from "./routes/consultations.js";
 import staffRouter from "./routes/staff.js";
 import symptomsRouter from "./routes/symptoms.js";
+import medicineRouter from "./routes/medicineRoutes.js";
 
 import { authenticateToken } from "./middleware/auth.js";
 
@@ -116,6 +117,7 @@ app.use("/api/staff", staffRouter);
 app.use("/api/symptoms", symptomsRouter); // Added for symptom extraction
 app.use("/api/ai", aiRouter);
 app.use("/api/voice", voiceRouter);
+app.use("/api/medicines", medicineRouter);
 // Direct aliases requested by user workflow
 import { assignDoctor } from "./controllers/visitController.js";
 import { saveVitalsManual } from "./controllers/vitalsController.js";

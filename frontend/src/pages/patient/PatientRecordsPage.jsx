@@ -44,20 +44,20 @@ export default function PatientRecordsPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto mt-4 px-6 pb-20">
       {/* HEADER SECTION */}
-      <div className="flex justify-between items-center bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100/50">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100/50 gap-6">
         <div className="flex items-center gap-5">
-           <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center shadow-inner">
+           <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center shadow-inner shrink-0">
               <Activity className="text-blue-600 w-8 h-8"/>
            </div>
            <div>
-              <h2 className="text-3xl font-black tracking-tighter text-gray-900 leading-none">My Visit Records</h2>
-              <p className="text-gray-400 text-xs font-black uppercase tracking-widest mt-2 ml-1 opacity-70">Medical Consultation Dashboard</p>
+              <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-gray-900 leading-none">My Visit Records</h2>
+              <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest mt-2 ml-1 opacity-80">Medical Consultation Dashboard</p>
            </div>
         </div>
-        <div className="flex items-center gap-5">
-           <div className="flex flex-col items-end mr-2">
-              <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-1">Session Data</span>
-              <div className="bg-gray-50 text-gray-900 text-xs font-black uppercase tracking-widest px-5 py-2 rounded-full border border-gray-100 shadow-inner">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-5 w-full lg:w-auto">
+           <div className="flex flex-col items-start lg:items-end mr-2">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 ml-1 lg:ml-0">Session Data</span>
+              <div className="bg-gray-50 text-gray-900 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-full border border-gray-100 shadow-inner w-full sm:w-auto text-center">
                  {visits.length} Total Visits
               </div>
            </div>
@@ -68,7 +68,7 @@ export default function PatientRecordsPage() {
                  console.log("[PatientRecordsPage] Navigating to /patient/create-visit");
                  navigate("/patient/create-visit");
               }}
-              className="bg-blue-600 hover:bg-blue-700 h-14 px-10 rounded-[1.5rem] font-black uppercase tracking-widest text-[11px] flex items-center gap-3 shadow-xl shadow-blue-100 transition-all hover:scale-105"
+              className="bg-blue-600 hover:bg-blue-700 h-14 px-10 rounded-[1.5rem] font-black uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 shadow-xl shadow-blue-100 transition-all hover:scale-105 w-full sm:w-auto"
             >
                <Plus className="w-5 h-5" /> Book New Visit
             </Button>
@@ -90,15 +90,16 @@ export default function PatientRecordsPage() {
                </div>
 
             </div>
-            <Table>
-               <TableHeader className="bg-gray-50/20">
-                 <TableRow className="hover:bg-transparent border-gray-50 h-14">
-                   <TableHead className="w-[140px] text-[10px] font-black text-gray-400 uppercase tracking-widest pl-10">DATE</TableHead>
-                   <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest">DIAGNOSIS / REASON</TableHead>
-                   <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest">MEDICINES</TableHead>
-                   <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-right pr-10">STATUS</TableHead>
-                 </TableRow>
-               </TableHeader>
+             <div className="overflow-x-auto">
+                <Table className="min-w-[800px] md:min-w-0">
+                   <TableHeader className="bg-gray-50/20">
+                     <TableRow className="hover:bg-transparent border-gray-50 h-14">
+                       <TableHead className="w-[140px] text-[10px] font-black text-gray-500 uppercase tracking-widest pl-10">DATE</TableHead>
+                       <TableHead className="text-[10px] font-black text-gray-500 uppercase tracking-widest">DIAGNOSIS / REASON</TableHead>
+                       <TableHead className="text-[10px] font-black text-gray-500 uppercase tracking-widest">MEDICINES</TableHead>
+                       <TableHead className="text-[10px] font-black text-gray-500 uppercase tracking-widest text-right pr-10">STATUS</TableHead>
+                     </TableRow>
+                   </TableHeader>
                <TableBody>
                  {(filteredVisits || []).map(v => (
                    <TableRow 
@@ -153,8 +154,9 @@ export default function PatientRecordsPage() {
                  )}
                </TableBody>
             </Table>
-         </CardContent>
-      </Card>
+         </div>
+      </CardContent>
+    </Card>
 
       {/* Side Panel for Visit Details */}
       <Sheet open={!!selectedVisit} onOpenChange={(open) => !open && setSelectedVisit(null)}>

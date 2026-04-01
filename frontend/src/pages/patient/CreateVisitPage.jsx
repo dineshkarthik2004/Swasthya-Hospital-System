@@ -180,13 +180,13 @@ export default function CreateVisitPage() {
         <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
           <Plus className="w-8 h-8 text-blue-600" />
         </div>
-        <h1 className="text-3xl font-black tracking-tight text-gray-900">Book New Visit</h1>
-        <p className="text-gray-400 text-sm font-medium">Fill in your details and describe your symptoms to schedule an appointment.</p>
+        <h1 className="text-2xl md:text-3xl font-black tracking-tight text-gray-900">Book New Visit</h1>
+        <p className="text-gray-500 text-[10px] md:text-sm font-medium">Fill in your details and describe your symptoms to schedule an appointment.</p>
       </div>
 
       {/* Form Card */}
       <Card className="rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden bg-white">
-        <form onSubmit={handleSubmit} className="p-10 space-y-8">
+        <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-8">
 
           {/* Patient Info Section */}
           <div className="space-y-2 mb-2">
@@ -195,7 +195,7 @@ export default function CreateVisitPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-               <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Relation / Booking For</Label>
+               <Label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">Relation / Booking For</Label>
                <Select value={form.relation} onValueChange={v => handleChange("relation", v)}>
                  <SelectTrigger className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 shadow-none">
                    <SelectValue placeholder="Booking for..." />
@@ -216,7 +216,7 @@ export default function CreateVisitPage() {
             </div>
             
             <div className="space-y-2 relative z-50">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Full Name</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">Full Name</Label>
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 z-10" />
                 <Input
@@ -254,7 +254,7 @@ export default function CreateVisitPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Age</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">Age</Label>
               <Input
                 className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm"
                 value={form.age}

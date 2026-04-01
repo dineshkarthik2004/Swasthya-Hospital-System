@@ -10,9 +10,11 @@ export const extractAiData = async (req, res) => {
 
     let prompt = "";
 
+    const englishConstraint = " IMPORTANT: All extracted text values (medicine names, symptoms, notes, etc.) MUST be returned in English ONLY. If the input is in another language, translate it to English before returning.";
+
     if (type === "symptoms") {
       prompt = `Extract only medical symptoms from this text and return JSON:
-{ "symptoms": [] }`;
+{ "symptoms": [] }` + englishConstraint;
     } else if (type === "vitals") {
       prompt = `Extract vitals like bp, pulse, temperature, weight, and height from text. Return JSON ONLY exactly like:
 { "bp": "", "pulse": "", "temperature": "", "weight": "", "height": "" }`;
@@ -44,16 +46,16 @@ Return JSON ONLY exactly like this format:
 "n": 0.5,
 "timing": "After Food",
 "duration": "3"
-}`;
+}` + englishConstraint;
     } else if (type === "diagnosis") {
       prompt = `Extract only the clinical diagnosis from this text. Return JSON exactly like:
-{ "diagnosis": "Hypertension" }`;
+{ "diagnosis": "Hypertension" }` + englishConstraint;
     } else if (type === "notes") {
       prompt = `Extract the clinical notes, remarks, or initial observation from this text. Return JSON exactly like:
-{ "notes": "Patient complains of headache for 3 days." }`;
+{ "notes": "" }` + englishConstraint;
     } else if (type === "diseases_only") {
       prompt = `Extract ONLY the medical diseases/symptoms from this text. Capitalize the first letter of each disease. Return them as a comma-separated string. Return JSON exactly like:
-{ "diseases": "Fever, Cold, Headache" }`;
+{ "diseases": "Fever, Cold, Headache" }` + englishConstraint;
     } else {
       return res.status(400).json({ error: "Invalid type" });
     }

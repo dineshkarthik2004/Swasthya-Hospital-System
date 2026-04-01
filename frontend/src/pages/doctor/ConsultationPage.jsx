@@ -31,6 +31,8 @@ export default function ConsultationPage() {
    const [feeType, setFeeType] = useState("Type A")
 
    const [medicines, setMedicines] = useState([]);
+   const [medicineSuggestions, setMedicineSuggestions] = useState([]);
+   const [activeSearchIndex, setActiveSearchIndex] = useState(null);
 
    // Edit Vitals state
    const [editingVitals, setEditingVitals] = useState(false)
@@ -97,6 +99,35 @@ export default function ConsultationPage() {
       setMedicines(newMeds)
    }
 
+   const fetchMedicineSuggestions = async (index, query) => {
+      if (query.length < 2) {
+         setMedicineSuggestions([]);
+         setActiveSearchIndex(null);
+         return;
+      }
+      try {
+         const res = await api.get(`/api/medicines/search?q=${query}`);
+         setMedicineSuggestions(res.data || []);
+         setActiveSearchIndex(index);
+      } catch (err) {
+         console.error("Search error:", err);
+      }
+   };
+
+   const handleSelectMedicine = (index, suggestion) => {
+      const newMeds = [...medicines];
+      newMeds[index] = {
+         ...newMeds[index],
+         name: suggestion.name,
+         generic: suggestion.generic,
+         dosage: suggestion.dosage || newMeds[index].dosage,
+         type: suggestion.type || newMeds[index].type
+      };
+      setMedicines(newMeds);
+      setMedicineSuggestions([]);
+      setActiveSearchIndex(null);
+   };
+
    // Finalize
    const applyExtractedData = (data, type) => {
       if (type === "prescription") {
@@ -162,7 +193,9 @@ export default function ConsultationPage() {
             days: Number(m.duration) || 0,
             instructions: m.timing + (m.instruction ? " | " + m.instruction : "")
          }))
-         const combinedNotes = clinicalNotes + (remarks ? "\nRemarks: " + remarks : "")
+         const validClinicalNotes = (!clinicalNotes || clinicalNotes.toLowerCase() === 'none') ? "" : clinicalNotes.trim()
+         const validRemarks = (!remarks || remarks.toLowerCase() === 'none') ? "" : remarks.trim()
+         const combinedNotes = validClinicalNotes + (validRemarks ? "\nRemarks: " + validRemarks : "")
 
          await api.post(`/api/consultations/finalize`, {
             visitId: id,
@@ -215,10 +248,10 @@ export default function ConsultationPage() {
    if (!visit || !visit.id) return <div className="p-10 flex flex-col items-center justify-center gap-4 text-gray-500 font-bold">Failed to load consultation</div>
 
    return (
-      <div className="w-full pt-6 px-4 md:px-6 lg:px-10 space-y-6 flex gap-8 pb-32">
+      <div className="w-full pt-6 px-4 md:px-6 lg:px-10 space-y-6 flex flex-col xl:flex-row gap-8 pb-32">
 
          {/* LEFT PANEL */}
-         <div className="w-[340px] flex-shrink-0 space-y-6">
+         <div className="w-full xl:w-[340px] flex-shrink-0 space-y-6">
             {/* Patient Info */}
             <Card className="rounded-3xl border border-gray-100 shadow-sm bg-blue-50/30 overflow-hidden p-6 flex flex-col h-[180px] justify-center items-center text-center">
                <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-2xl uppercase mb-3 text-center">
@@ -233,7 +266,7 @@ export default function ConsultationPage() {
             {/* Vitals Signs Box */}
             <div>
                <div className="flex justify-between items-center mb-4 px-2 tracking-tight">
-                  <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Vitals Signs</h3>
+                  <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Vitals Signs</h3>
                   {editingVitals ? (
                      <Button type="button" onClick={handleSaveVitals} className="h-6 text-[10px] font-bold px-3">Save</Button>
                   ) : (
@@ -246,35 +279,35 @@ export default function ConsultationPage() {
                   <div className="flex flex-col p-4 rounded-3xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center">
                      <div className="flex items-center gap-2 text-red-500">
                         <span className="font-bold text-lg leading-none"></span>
-                        <span className="text-[10px] uppercase font-bold text-gray-400">BP</span>
+                        <span className="text-[10px] uppercase font-bold text-gray-500">BP</span>
                      </div>
                      <Input value={vitalsTemp.bp} onChange={(e) => setVitalsTemp({ ...vitalsTemp, bp: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full" placeholder="--" />
                   </div>
                   <div className="flex flex-col p-4 rounded-3xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center">
                      <div className="flex items-center gap-2 text-pink-500">
                         <span className="font-bold text-lg leading-none"></span>
-                        <span className="text-[10px] uppercase font-bold text-gray-400">Heart Rate</span>
+                        <span className="text-[10px] uppercase font-bold text-gray-500">Heart Rate</span>
                      </div>
                      <Input value={vitalsTemp.pulse} onChange={(e) => setVitalsTemp({ ...vitalsTemp, pulse: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full" placeholder="--" />
                   </div>
                   <div className="flex flex-col p-4 rounded-3xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center">
                      <div className="flex items-center gap-2 text-orange-500">
                         <span className="font-bold text-lg leading-none"></span>
-                        <span className="text-[10px] uppercase font-bold text-gray-400">Temperature</span>
+                        <span className="text-[10px] uppercase font-bold text-gray-500">Temperature</span>
                      </div>
                      <Input value={vitalsTemp.temp} onChange={(e) => setVitalsTemp({ ...vitalsTemp, temp: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full" placeholder="--" />
                   </div>
                   <div className="flex flex-col p-4 rounded-3xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center">
                      <div className="flex items-center gap-2 text-blue-500">
                         <span className="font-bold text-lg leading-none"></span>
-                        <span className="text-[10px] uppercase font-bold text-gray-400">Weight</span>
+                        <span className="text-[10px] uppercase font-bold text-gray-500">Weight</span>
                      </div>
                      <Input value={vitalsTemp.weight} onChange={(e) => setVitalsTemp({ ...vitalsTemp, weight: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full" placeholder="--" />
                   </div>
                   <div className="flex flex-col p-4 rounded-3xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center col-span-2">
                      <div className="flex items-center gap-2 text-green-500">
                         <span className="font-bold text-lg leading-none"></span>
-                        <span className="text-[10px] uppercase font-bold text-gray-400">Height (cm)</span>
+                        <span className="text-[10px] uppercase font-bold text-gray-500">Height (cm)</span>
                      </div>
                      <Input value={vitalsTemp.height} onChange={(e) => setVitalsTemp({ ...vitalsTemp, height: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full" placeholder="--" />
                   </div>
@@ -283,7 +316,7 @@ export default function ConsultationPage() {
 
             {/* Patient Complaints */}
             <div className="pt-2">
-               <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest px-2 mb-3">Patient Complaints</h3>
+               <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-2 mb-3">Patient Complaints</h3>
                <Card className="rounded-3xl border border-gray-100 shadow-sm bg-gray-50/50 p-5 min-h-[100px]">
                   <p className="text-sm font-bold text-gray-800 leading-relaxed shadow-none bg-transparent">
                      {visit.notes || "No initial observation provided."}
@@ -296,7 +329,7 @@ export default function ConsultationPage() {
          <div className="flex-1 space-y-6 max-w-full">
 
             {/* Prescription Card */}
-            <Card className="rounded-3xl border border-gray-100 shadow-sm bg-white overflow-hidden pb-4">
+            <Card className="rounded-3xl border border-gray-100 shadow-sm bg-white pb-4">
                <div className="px-6 py-5 border-b border-gray-50 flex items-center justify-between bg-white">
                   <h2 className="text-base font-bold text-gray-900 tracking-tight">Prescription</h2>
                   <div className="flex gap-2">
@@ -307,27 +340,27 @@ export default function ConsultationPage() {
                   </div>
                </div>
 
-               <Table>
+               <Table className="overflow-visible">
                   <TableHeader className="bg-transparent h-12">
                      <TableRow className="border-b border-gray-100 hover:bg-transparent">
-                        <TableHead className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-6 w-[80px]">Type</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-400 uppercase tracking-widest w-[25%]">Medicine Name</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-400 uppercase tracking-widest w-[20%]">Generic Name</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-400 uppercase tracking-widest w-[100px]">Dosage</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center w-[120px]">Frequency</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-400 uppercase tracking-widest w-[140px]">Timing</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-400 uppercase tracking-widest w-[80px]">Duration</TableHead>
+                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-6 w-[80px]">Type</TableHead>
+                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[25%]">Medicine Name</TableHead>
+                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[20%]">Generic Name</TableHead>
+                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[100px]">Dosage</TableHead>
+                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center w-[120px]">Frequency</TableHead>
+                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[140px]">Timing</TableHead>
+                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[80px]">Duration</TableHead>
                         <TableHead className="w-[40px] pr-4"></TableHead>
                      </TableRow>
                   </TableHeader>
                   <TableBody>
                      {(medicines || []).map((med, index) => (
                         <React.Fragment key={index}>
-                        <TableRow className="hover:bg-transparent transition-all border-b border-gray-50 h-16">
-                           <TableCell className="p-2 pl-6">
+                        <TableRow className="hover:bg-transparent transition-all border-b border-gray-50 h-16 relative z-[50]">
+                           <TableCell className="p-2 pl-6 relative z-[200]">
                               <Select value={med.type} onValueChange={(v) => updateMedicine(index, 'type', v)}>
                                  <SelectTrigger className="h-9 text-xs font-bold border-none bg-transparent hover:bg-gray-50 px-2 rounded-lg shadow-none focus:ring-0 w-full"><SelectValue /></SelectTrigger>
-                                 <SelectContent className="rounded-xl border-gray-100 shadow-lg relative z-[99999]" position="popper">
+                                 <SelectContent className="rounded-xl border border-gray-100 shadow-2xl z-[99999] bg-white" position="popper" sideOffset={5}>
                                     <SelectItem value="Tab">Tab</SelectItem>
                                     <SelectItem value="Syp">Syp</SelectItem>
                                     <SelectItem value="Cap">Cap</SelectItem>
@@ -337,14 +370,53 @@ export default function ConsultationPage() {
                                  </SelectContent>
                               </Select>
                            </TableCell>
-                           <TableCell className="p-2">
-                              <Input placeholder="Search or type medicine..." value={med.name} onChange={(e) => {
-                                 const val = e.target.value;
-                                 if (isEnglishOnly(val)) {
-                                    updateMedicine(index, 'name', val);
-                                 }
-                              }} className="h-9 text-sm font-medium border-none bg-gray-50 rounded-full px-4 shadow-none focus-visible:ring-1 transition-colors w-full" />
-                           </TableCell>
+                            <TableCell className="p-2 relative z-[100]">
+                               <div className="relative">
+                                  <Input 
+                                     placeholder="Search or type medicine..." 
+                                     value={med.name} 
+                                     onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (isEnglishOnly(val)) {
+                                           updateMedicine(index, 'name', val);
+                                           fetchMedicineSuggestions(index, val);
+                                        }
+                                     }} 
+                                     onFocus={() => {
+                                        if (med.name.length >= 2) fetchMedicineSuggestions(index, med.name);
+                                     }}
+                                     onBlur={() => {
+                                        setTimeout(() => {
+                                           if (activeSearchIndex === index) {
+                                              setActiveSearchIndex(null);
+                                              setMedicineSuggestions([]);
+                                           }
+                                        }, 200);
+                                     }}
+                                     className="h-9 text-sm font-medium border-none bg-gray-50 rounded-full px-4 shadow-none focus-visible:ring-1 transition-colors w-full" 
+                                  />
+                                  
+                                  {activeSearchIndex === index && medicineSuggestions.length > 0 && (
+                                     <div className="absolute top-full left-0 mt-1.5 bg-white border border-gray-200 shadow-2xl rounded-xl overflow-hidden z-[501] max-h-80 overflow-y-auto py-1 animate-in fade-in zoom-in-95 duration-100 min-w-[500px]">
+                                        {medicineSuggestions.map((s, i) => (
+                                           <div 
+                                              key={i} 
+                                              onMouseDown={(e) => {
+                                                 e.preventDefault();
+                                                 handleSelectMedicine(index, s);
+                                              }}
+                                              className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer group transition-colors border-b border-gray-50/50 last:border-none"
+                                           >
+                                              <div className="text-[13px] font-semibold text-gray-800 group-hover:text-blue-600">{s.name}</div>
+                                              <div className="text-[11px] text-gray-400 mt-0.5 truncate font-medium">
+                                                 {s.type} • {s.dosage || 'NA'} • {s.generic}
+                                              </div>
+                                           </div>
+                                        ))}
+                                     </div>
+                                  )}
+                               </div>
+                            </TableCell>
                            <TableCell className="p-2">
                               <Input placeholder="Paracetamol" value={med.generic} onChange={(e) => updateMedicine(index, 'generic', e.target.value)} className="h-9 text-sm font-medium border-none bg-gray-50/50 rounded-full px-4 shadow-none text-gray-400 focus-visible:ring-1 w-full" />
                            </TableCell>
@@ -370,7 +442,7 @@ export default function ConsultationPage() {
                            <TableCell className="p-2">
                               <Select value={med.timing || ""} onValueChange={(v) => updateMedicine(index, 'timing', v)}>
                                  <SelectTrigger className="h-9 text-xs font-medium border-none bg-gray-50 rounded-full shadow-none px-4 w-full text-center focus:ring-0"><SelectValue placeholder="Select..." /></SelectTrigger>
-                                 <SelectContent className="rounded-xl border-gray-100 shadow-lg z-[99999]" position="popper">
+                                 <SelectContent className="rounded-xl border border-gray-100 shadow-2xl z-[99999] bg-white" position="popper" sideOffset={5}>
                                     <SelectItem value="After Food">After Food</SelectItem>
                                     <SelectItem value="Before Food">Before Food</SelectItem>
                                     <SelectItem value="Bedtime">Bedtime</SelectItem>
@@ -389,10 +461,10 @@ export default function ConsultationPage() {
                            </TableCell>
                         </TableRow>
                         {/* Per-medicine instruction row */}
-                        <TableRow key={`instruction-${index}`} className="hover:bg-transparent border-b border-gray-100 h-10">
-                           <TableCell colSpan={8} className="p-0 px-6 pb-2">
-                              <div className="w-full bg-gray-50/50 rounded-full p-2.5 px-6 shadow-inner flex items-center gap-2">
-                                 <span className="text-yellow-500 not-italic text-[11px]">💡</span>
+                         <TableRow key={`instruction-${index}`} className="hover:bg-transparent border-b border-gray-100 relative z-[40]">
+                            <TableCell colSpan={8} className="py-2 px-6">
+                               <div className="w-full bg-gray-50/80 rounded-2xl p-3 px-6 shadow-sm flex items-center gap-2 border border-gray-100">
+                                  <span className="text-yellow-500 not-italic text-[11px] shrink-0">💡</span>
                                  <Input 
                                     placeholder="Instruction: e.g. Take this medicine 30 min after Dolo" 
                                     value={med.instruction || ""} 
@@ -493,16 +565,13 @@ export default function ConsultationPage() {
                   />
                </Card>
             </div>
-
-         </div>
-
-         <div className="fixed bottom-0 right-0 left-0 bg-white border-t border-gray-100 p-5 px-10 flex justify-end items-center shadow-[0_-20px_50px_-15px_rgba(0,0,0,0.08)] z-[15]">
+         <div className="bg-white border border-gray-100 p-8 px-10 rounded-[2.5rem] flex flex-col md:flex-row justify-between items-center gap-6 mt-6 shadow-sm mb-12">
             <div className="flex items-center gap-6">
                <div className="flex items-center gap-3">
                   <span className="text-sm font-bold text-gray-500 flex items-center gap-2"><div className="w-4 h-4 rounded-full border border-green-500 flex items-center justify-center text-green-500 text-[8px]">✓</div> Select Fee Type</span>
                   <Select value={feeType} onValueChange={setFeeType}>
                      <SelectTrigger className="w-[160px] rounded-full border border-gray-200 bg-white shadow-sm font-medium text-gray-900 h-10 px-5 text-sm"><SelectValue /></SelectTrigger>
-                     <SelectContent position="popper" className="rounded-2xl border-gray-100 shadow-2xl z-[99999]">
+                      <SelectContent position="popper" sideOffset={5} className="rounded-2xl border border-gray-100 shadow-2xl z-[99999] bg-white p-2">
                         <SelectItem value="Type A" className="font-medium">Type A</SelectItem>
                         <SelectItem value="Type B" className="font-medium">Type B</SelectItem>
                         <SelectItem value="Free" className="font-medium text-red-500">Free</SelectItem>
@@ -517,9 +586,9 @@ export default function ConsultationPage() {
                >
                   {submitting ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : "Finalize Prescription"}
                </Button>
-            </div>
-         </div>
-
-      </div>
-   )
+             </div>
+          </div>
+       </div>
+    </div>
+ )
 }
