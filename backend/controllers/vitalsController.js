@@ -15,7 +15,8 @@ Rules:
   "bp": "120/80",
   "pulse": "72",
   "temperature": "98.2",
-  "weight": "70"
+  "weight": "70",
+  "height": "175"
 }`;
 
 export async function extractVitals(req, res) {
@@ -42,14 +43,16 @@ export async function extractVitals(req, res) {
           bloodPressure: result.bp || null,
           pulse: result.pulse || null,
           temperature: result.temperature || null,
-          weight: result.weight || null
+          weight: result.weight || null,
+          height: result.height || null
         },
         create: {
           visitId,
           bloodPressure: result.bp || null,
           pulse: result.pulse || null,
           temperature: result.temperature || null,
-          weight: result.weight || null
+          weight: result.weight || null,
+          height: result.height || null
         }
       });
       
@@ -71,7 +74,7 @@ export async function saveVitalsManual(req, res) {
   try {
     const data = req.body;
     if (!data || typeof data !== "object") return res.status(400).json({ error: "Invalid input" });
-    let { visitId, bloodPressure, pulse, temperature, weight, sugar } = data;
+    let { visitId, bloodPressure, pulse, temperature, weight, sugar, height } = data;
     
     // Also accept it from URL parameters if provided in the path mapping
     visitId = visitId || req.params.visitId || req.params.id;
@@ -95,7 +98,8 @@ export async function saveVitalsManual(req, res) {
           bloodPressure: bloodPressure ? String(bloodPressure) : null,
           pulse: pulse ? String(pulse) : null,
           temperature: temperature ? String(temperature) : null,
-          weight: weight ? String(weight) : null
+          weight: weight ? String(weight) : null,
+          height: height ? String(height) : null
         }
       });
     } else {
@@ -105,7 +109,8 @@ export async function saveVitalsManual(req, res) {
           bloodPressure: bloodPressure ? String(bloodPressure) : null,
           pulse: pulse ? String(pulse) : null,
           temperature: temperature ? String(temperature) : null,
-          weight: weight ? String(weight) : null
+          weight: weight ? String(weight) : null,
+          height: height ? String(height) : null
         }
       });
     }

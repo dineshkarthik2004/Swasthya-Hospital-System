@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
@@ -12,6 +13,7 @@ export default function VisitHistoryPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [dateRange, setDateRange] = useState({ start: "", end: "" })
+  const navigate = useNavigate()
   const { toast } = useToast()
 
   const loadData = async () => {
@@ -109,7 +111,15 @@ export default function VisitHistoryPage() {
             </TableHeader>
             <TableBody>
                {(filteredVisits || []).map(v => (
-                 <TableRow key={v.id} className="hover:bg-gray-50/50 transition-colors border-gray-50 h-14">
+                 <TableRow 
+                    key={v.id} 
+                    className={`transition-colors border-gray-50 h-14 ${['COMPLETED', 'PRESCRIPTION_COMPLETED', 'CONSULTED'].includes(v.status) ? 'cursor-pointer hover:bg-blue-50/50' : 'hover:bg-gray-50/50'}`}
+                    onClick={() => {
+                       if (['COMPLETED', 'PRESCRIPTION_COMPLETED', 'CONSULTED'].includes(v.status)) {
+                          navigate(`/print/${v.id}`)
+                       }
+                    }}
+                 >
                    <TableCell className="font-bold text-gray-400 text-[10px] pl-8">#{v.id?.slice(-8)}</TableCell>
                    <TableCell className="font-bold text-gray-900 text-sm">{v.patient?.name}</TableCell>
                    <TableCell className="font-bold text-gray-500 text-sm">{v.patient?.phone || "--"}</TableCell>

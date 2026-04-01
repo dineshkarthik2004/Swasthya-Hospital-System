@@ -68,7 +68,10 @@ export async function getPatient(req, res) {
       include: {
         visits: {
           orderBy: { createdAt: "desc" },
-          include: { doctor: { select: { name: true } } }
+          include: { 
+             doctor: { select: { name: true } },
+             vitals: true
+          }
         }
       }
     });

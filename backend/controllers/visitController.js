@@ -15,7 +15,11 @@ export async function createVisit(req, res) {
       age,
       gender,
       notes,
-      feeType 
+      feeType,
+      bloodGroup,
+      appointmentDate,
+      appointmentTime,
+      height
     } = data;
 
     const userRole = (req.user.role || "").toUpperCase();
@@ -36,7 +40,8 @@ export async function createVisit(req, res) {
                    email: req.user.email || null,
                    userId: req.user.userId,
                    gender: gender ? gender.toUpperCase() : "MALE",
-                   dateOfBirth: age ? new Date(new Date().getFullYear() - parseInt(age), 0, 1) : null
+                   dateOfBirth: age ? new Date(new Date().getFullYear() - parseInt(age), 0, 1) : null,
+                   bloodGroup: bloodGroup || null
                 }
              });
           } else {
@@ -48,6 +53,7 @@ export async function createVisit(req, res) {
                 dob.setFullYear(dob.getFullYear() - parseInt(age, 10));
                 updateData.dateOfBirth = dob;
              }
+             if (bloodGroup) updateData.bloodGroup = bloodGroup;
              if (Object.keys(updateData).length > 0) {
                 profile = await prisma.patient.update({ where: { id: profile.id }, data: updateData });
              }
@@ -74,7 +80,8 @@ export async function createVisit(req, res) {
                 data: {
                    gender: gender ? gender.toUpperCase() : familyMember.gender,
                    dateOfBirth: dob || familyMember.dateOfBirth,
-                   phone: phone || familyMember.phone || ""
+                   phone: phone || familyMember.phone || "",
+                   bloodGroup: bloodGroup || familyMember.bloodGroup
                 }
              });
           } else {
@@ -85,7 +92,8 @@ export async function createVisit(req, res) {
                    phone: phone || `FAM-${req.user.userId.slice(-6)}-${Date.now().toString().slice(-4)}`,
                    gender: gender ? gender.toUpperCase() : "MALE",
                    dateOfBirth: dob,
-                   registeredById: req.user.userId
+                   registeredById: req.user.userId,
+                   bloodGroup: bloodGroup || null
                 }
              });
           }
@@ -98,6 +106,11 @@ export async function createVisit(req, res) {
        targetPatientId = patientId;
     }
 
+    let parsedAppointmentTime = null;
+    if (appointmentDate && appointmentTime) {
+       parsedAppointmentTime = new Date(`${appointmentDate}T${appointmentTime}:00`);
+    }
+
     // Create the Visit
     const visit = await prisma.visit.create({
       data: {
@@ -108,12 +121,22 @@ export async function createVisit(req, res) {
         feeType: feeType || (userRole === "PATIENT" ? "Online Booking" : "General Consultation"),
         notes,
         status: "WAITING",
-        paymentStatus: "UNPAID"
+        paymentStatus: "UNPAID",
+        appointmentTime: parsedAppointmentTime
       },
       include: {
         patient: true
       }
     });
+
+    if (height) {
+      await prisma.vitals.create({
+        data: {
+          visitId: visit.id,
+          height: height.toString()
+        }
+      });
+    }
 
     return res.status(201).json(visit);
   } catch (error) {
@@ -307,7 +330,10 @@ export async function receptionCreateVisit(req, res) {
       name, phone, age, gender, email, 
       complaint, 
       vitals, 
-      doctorId 
+      doctorId,
+      bloodGroup,
+      appointmentDate,
+      appointmentTime
     } = req.body;
 
     if (!name || !phone || !age || !gender) {
@@ -331,6 +357,7 @@ export async function receptionCreateVisit(req, res) {
       if (email) updateData.email = email;
       if (gender) updateData.gender = gender.toUpperCase();
       if (dob) updateData.dateOfBirth = dob;
+      if (bloodGroup) updateData.bloodGroup = bloodGroup;
 
       patient = await prisma.patient.update({
         where: { id: patient.id },
@@ -345,9 +372,15 @@ export async function receptionCreateVisit(req, res) {
           email,
           gender: gender ? gender.toUpperCase() : "MALE",
           dateOfBirth: dob,
-          registeredById: req.user.userId
+          registeredById: req.user.userId,
+          bloodGroup: bloodGroup || null
         }
       });
+    }
+
+    let parsedAppointmentTime = null;
+    if (appointmentDate && appointmentTime) {
+       parsedAppointmentTime = new Date(`${appointmentDate}T${appointmentTime}:00`);
     }
 
     // 2. Create Visit
@@ -359,7 +392,8 @@ export async function receptionCreateVisit(req, res) {
         notes: complaint,
         status: doctorId ? "ASSIGNED_TO_DOCTOR" : "WAITING",
         paymentStatus: "UNPAID",
-        feeType: "Receptionist Booking"
+        feeType: "Receptionist Booking",
+        appointmentTime: parsedAppointmentTime
       }
     });
 
@@ -371,7 +405,8 @@ export async function receptionCreateVisit(req, res) {
           bloodPressure: vitals.bloodPressure || vitals.bp,
           pulse: vitals.pulse,
           temperature: vitals.temperature,
-          weight: vitals.weight
+          weight: vitals.weight,
+          height: vitals.height ? String(vitals.height) : null
         }
       });
     }

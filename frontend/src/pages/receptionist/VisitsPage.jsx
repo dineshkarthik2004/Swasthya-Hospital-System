@@ -25,7 +25,7 @@ export default function DailyVisitsPage() {
    // Vitals State
    const [isVitalsOpen, setIsVitalsOpen] = useState(false)
    const [activeVisit, setActiveVisit] = useState(null)
-   const [manualVitals, setManualVitals] = useState({ bp: "", pulse: "", temp: "", weight: "" })
+   const [manualVitals, setManualVitals] = useState({ bp: "", pulse: "", temp: "", weight: "", height: "" })
 
    // Doctor Assign State
    const [isAssignOpen, setIsAssignOpen] = useState(false)
@@ -63,14 +63,14 @@ export default function DailyVisitsPage() {
       e.preventDefault();
       try {
          if (!selectedVisit?.id) return;
-         await api.post(`/api/vitals/${selectedVisit.id}`, {
+         await api.put(`/api/vitals/${selectedVisit.id}`, {
             bloodPressure: manualVitals.bp,
             pulse: manualVitals.pulse,
             temperature: manualVitals.temp,
-            weight: manualVitals.weight
+            weight: manualVitals.weight,
+            height: manualVitals.height
          });
          toast({ title: "Vitals Updated", description: "Successfully updated vitals." });
-         setSelectedVisit(null);
          loadData();
       } catch (err) {
          toast({ title: "Error", variant: "destructive", description: "Failed to update vitals" });
@@ -82,7 +82,7 @@ export default function DailyVisitsPage() {
       if (!selectedDoctor) return toast({ title: "Select Doctor", variant: "destructive" });
       if (!selectedVisit?.id) return;
       try {
-         await api.post(`/api/assign-doctor/${selectedVisit.id}`, { doctorId: selectedDoctor });
+         await api.patch(`/api/visits/${selectedVisit.id}/assign`, { doctorId: selectedDoctor });
          toast({ title: "Doctor Assigned", description: "Successfully allocated doctor." });
          setSelectedVisit(null);
          loadData();
@@ -114,13 +114,14 @@ export default function DailyVisitsPage() {
    }
 
    const applyExtractedData = (data, type) => {
-      if (type === "vitals") {
+      if (type.startsWith("vital")) {
          setManualVitals(prev => ({
             ...prev,
             bp: data.bp || prev.bp,
             pulse: data.pulse || prev.pulse,
             temp: data.temperature || prev.temp,
-            weight: data.weight || prev.weight
+            weight: data.weight || prev.weight,
+            height: data.height || prev.height
          }));
       }
    };
@@ -150,7 +151,8 @@ export default function DailyVisitsPage() {
             bloodPressure: manualVitals.bp,
             pulse: manualVitals.pulse,
             temperature: manualVitals.temp,
-            weight: manualVitals.weight
+            weight: manualVitals.weight,
+            height: manualVitals.height
          })
          toast({ title: "Vitals Updated", description: "Patient data has been saved." })
          setIsVitalsOpen(false)
@@ -291,7 +293,8 @@ export default function DailyVisitsPage() {
                                     bp: fullVisit.vitals?.bloodPressure || "",
                                     pulse: fullVisit.vitals?.pulse || "",
                                     temp: fullVisit.vitals?.temperature || "",
-                                    weight: fullVisit.vitals?.weight || ""
+                                    weight: fullVisit.vitals?.weight || "",
+                                    height: fullVisit.vitals?.height || ""
                                  });
                                  setSelectedDoctor(fullVisit.doctorId || "");
                               } catch (err) {
@@ -345,7 +348,7 @@ export default function DailyVisitsPage() {
                                        onSelect={(e) => {
                                           e.preventDefault();
                                           setActiveVisit(v);
-                                          setManualVitals({ bp: v.vitals?.bloodPressure || "", pulse: v.vitals?.pulse || "", temp: v.vitals?.temperature || "", weight: v.vitals?.weight || "" });
+                                          setManualVitals({ bp: v.vitals?.bloodPressure || "", pulse: v.vitals?.pulse || "", temp: v.vitals?.temperature || "", weight: v.vitals?.weight || "", height: v.vitals?.height || "" });
                                           setTimeout(() => setIsVitalsOpen(true), 0);
                                        }}
                                     >
@@ -410,7 +413,7 @@ export default function DailyVisitsPage() {
                         <VoiceMicButton
                            visitId={activeVisit?.id}
                            endpoint="/vitals"
-                           onExtractionSuccess={(v) => { setManualVitals({ bp: v.bp, pulse: v.pulse, temp: v.temperature, weight: v.weight }); }}
+                           onExtractionSuccess={(v) => { setManualVitals({ bp: v.bp, pulse: v.pulse, temp: v.temperature, weight: v.weight, height: v.height }); }}
                         />
                         <p className="text-[11px] text-gray-400 font-bold italic text-center px-4 leading-relaxed">"BP 120 over 80, pulse 75, temperature 98.6"</p>
                      </div>
@@ -498,7 +501,15 @@ export default function DailyVisitsPage() {
                <div className="bg-gray-50 p-5 rounded-xl mb-6 shadow-none border border-gray-100">
                   <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest mb-3">Patient Info</h3>
                   <p className="font-black text-gray-900 text-sm">{selectedVisit?.patient?.name || "Patient"}</p>
-                  <p className="text-xs font-bold text-gray-500 mt-1">Age: {new Date().getFullYear() - (new Date(selectedVisit?.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} | Gender: {(selectedVisit?.patient?.gender || "MALE").toLowerCase()}</p>
+                  <p className="text-xs font-bold text-gray-500 mt-1">
+                     Age: {new Date().getFullYear() - (new Date(selectedVisit?.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} | Gender: {(selectedVisit?.patient?.gender || "MALE").toLowerCase()}
+                     {selectedVisit?.patient?.bloodGroup && ` | Blood: ${selectedVisit.patient.bloodGroup}`}
+                  </p>
+                  <p className="text-xs font-bold text-gray-500 mt-1">
+                     {selectedVisit?.vitals?.height && `Height: ${selectedVisit.vitals.height} cm`}
+                     {selectedVisit?.vitals?.height && selectedVisit?.appointmentTime && ' | '}
+                     {selectedVisit?.appointmentTime && `Slot: ${new Date(selectedVisit.appointmentTime).toLocaleString()}`}
+                  </p>
 
                   <div className="mt-4 pt-4 border-t border-gray-100">
                      <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest mb-2">Symptoms</h3>
@@ -513,28 +524,35 @@ export default function DailyVisitsPage() {
                         <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Blood Pressure</Label>
                         <div className="flex gap-2">
                            <Input placeholder="120/80" value={manualVitals.bp} onChange={(e) => setManualVitals({ ...manualVitals, bp: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
-                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vitals")} />
+                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_bp")} />
                         </div>
                      </div>
                      <div className="space-y-1">
                         <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Pulse</Label>
                         <div className="flex gap-2">
                            <Input placeholder="72" value={manualVitals.pulse} onChange={(e) => setManualVitals({ ...manualVitals, pulse: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
-                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vitals")} />
+                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_pulse")} />
                         </div>
                      </div>
                      <div className="space-y-1">
                         <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Temperature</Label>
                         <div className="flex gap-2">
                            <Input placeholder="98.6" value={manualVitals.temp} onChange={(e) => setManualVitals({ ...manualVitals, temp: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
-                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vitals")} />
+                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_temperature")} />
                         </div>
                      </div>
                      <div className="space-y-1">
                         <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Weight</Label>
                         <div className="flex gap-2">
                            <Input placeholder="70" value={manualVitals.weight} onChange={(e) => setManualVitals({ ...manualVitals, weight: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
-                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vitals")} />
+                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_weight")} />
+                        </div>
+                     </div>
+                     <div className="space-y-1">
+                        <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Height (cm)</Label>
+                        <div className="flex gap-2">
+                           <Input placeholder="175" value={manualVitals.height} onChange={(e) => setManualVitals({ ...manualVitals, height: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
+                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_height")} />
                         </div>
                      </div>
                   </div>

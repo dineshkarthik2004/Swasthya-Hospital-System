@@ -10,13 +10,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft, Loader2, Mic, Plus, User } from "lucide-react"
 import api from "@/services/api"
-import { VoiceMicButton } from "@/components/VoiceMicButton"
 
 export default function CreateVisitPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const [pastPatients, setPastPatients] = useState([])
+  const [showAutoFill, setShowAutoFill] = useState(false)
 
   const [form, setForm] = useState({
     relation: "SELF",
@@ -24,18 +25,25 @@ export default function CreateVisitPage() {
     age: "",
     gender: "MALE",
     mobile: "",
-    notes: ""
+    notes: "",
+    bloodGroup: "",
+    slotDate: "",
+    slotTime: "",
+    height: ""
   })
 
   useEffect(() => {
     if (user && form.relation === "SELF") {
       console.log("[CreateVisitPage] Auto-filling for SELF booking")
+      const selfPatient = pastPatients.find(p => p.name?.toLowerCase() === (user.name||"").toLowerCase())
       setForm(prev => ({
         ...prev,
         patientName: user.name || "",
-        age: user.age || "",
-        gender: (user.gender || "MALE").toUpperCase(),
-        mobile: user.phone || ""
+        age: selfPatient?.age || user.age || "",
+        gender: (selfPatient?.gender || user.gender || "MALE").toUpperCase(),
+        mobile: selfPatient?.phone || user.phone || "",
+        bloodGroup: selfPatient?.bloodGroup || "",
+        height: selfPatient?.height || ""
       }))
     } else {
        // Clear form for family members so user can enter fresh details
@@ -45,34 +53,74 @@ export default function CreateVisitPage() {
           patientName: "",
           age: "",
           gender: "MALE",
-          mobile: ""
+          mobile: "",
+          bloodGroup: "",
+          height: ""
        }))
     }
-  }, [user, form.relation])
+  }, [user, form.relation, pastPatients])
+
+  useEffect(() => {
+    async function fetchPastPatients() {
+      try {
+        const res = await api.get("/api/visits")
+        const visits = Array.isArray(res.data) ? res.data : []
+        const uniquePatients = []
+        visits.forEach(v => {
+           if (v.patient && !uniquePatients.find(p => p.name?.toLowerCase() === v.patient.name?.toLowerCase())) {
+              uniquePatients.push({
+                 name: v.patient.name,
+                 phone: v.patient.phone,
+                 gender: v.patient.gender,
+                 bloodGroup: v.patient.bloodGroup,
+                 age: v.patient.dateOfBirth ? new Date().getFullYear() - new Date(v.patient.dateOfBirth).getFullYear() : "",
+                 height: v.vitals?.height || ""
+              })
+           }
+        })
+        setPastPatients(uniquePatients)
+      } catch (err) {
+        console.error("Failed to load past patients", err)
+      }
+    }
+    fetchPastPatients()
+  }, [])
+
+  const handleNameChange = (val) => {
+     setForm(prev => ({ ...prev, patientName: val }))
+     setShowAutoFill(true)
+     
+     // Auto-fill if exact match
+     const matched = pastPatients.find(p => p.name?.toLowerCase() === val.toLowerCase())
+     if (matched) {
+        setForm(prev => ({
+           ...prev,
+           age: matched.age?.toString() || prev.age,
+           gender: matched.gender || prev.gender,
+           mobile: matched.phone || prev.mobile,
+           bloodGroup: matched.bloodGroup || prev.bloodGroup,
+           height: matched.height || prev.height
+        }))
+        setShowAutoFill(false)
+     }
+  }
+
+  const selectAutoFill = (matched) => {
+      setForm(prev => ({
+         ...prev,
+         patientName: matched.name,
+         age: matched.age?.toString() || prev.age,
+         gender: matched.gender || prev.gender,
+         mobile: matched.phone || prev.mobile,
+         bloodGroup: matched.bloodGroup || prev.bloodGroup,
+         height: matched.height || prev.height
+      }))
+      setShowAutoFill(false)
+  }
 
   const handleChange = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }))
   }
-
-  const applyExtractedData = (data, type) => {
-    if (type === "symptoms") {
-      setForm(prev => ({
-        ...prev,
-        notes: data.symptoms?.join(", ") || prev.notes
-      }));
-    }
-  };
-
-  const handleVoiceResult = async (text, type) => {
-    try {
-      const res = await api.post("/api/ai/extract", { text, type });
-      const data = res.data?.data || res.data;
-      console.log("AI RESPONSE:", data);
-      applyExtractedData(data, type);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -91,7 +139,11 @@ export default function CreateVisitPage() {
         age: form.age,
         phone: form.mobile,
         gender: form.gender,
-        notes: form.notes
+        notes: form.notes,
+        bloodGroup: form.bloodGroup,
+        appointmentDate: form.slotDate,
+        appointmentTime: form.slotTime,
+        height: form.height
       })
       console.log("[CreateVisitPage] Visit created successfully:", res.data?.id)
       toast({ title: "Visit Booked!", description: "Your appointment is now in the queue. Status: WAITING" })
@@ -163,17 +215,39 @@ export default function CreateVisitPage() {
                </Select>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-2 relative z-50">
               <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Full Name</Label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 z-10" />
                 <Input
-                  className="pl-12 rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm"
+                  className="pl-12 rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm relative z-0"
                   value={form.patientName}
-                  onChange={e => handleChange("patientName", e.target.value)}
+                  onChange={e => handleNameChange(e.target.value)}
+                  onFocus={() => setShowAutoFill(true)}
+                  onBlur={() => setTimeout(() => setShowAutoFill(false), 200)}
                   placeholder="E.g., Dr. John Doe"
                   required
                 />
+                {showAutoFill && form.patientName && form.relation !== "SELF" && (
+                   <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-gray-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-2xl max-h-48 overflow-y-auto z-[600] py-2">
+                      {pastPatients.filter(p => p.name.toLowerCase().includes(form.patientName.toLowerCase())).map((p, idx) => (
+                         <div 
+                            key={idx} 
+                            className="px-4 py-3 hover:bg-blue-50/50 cursor-pointer border-b border-gray-50/50 flex items-center gap-3 transition-colors last:border-none"
+                            onClick={() => selectAutoFill(p)}
+                          >
+                            <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs shrink-0">{p.name.charAt(0).toUpperCase()}</div>
+                            <div className="flex flex-col min-w-0">
+                               <p className="text-sm font-bold text-gray-800 truncate">{p.name}</p>
+                               <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest truncate">{p.phone}</p>
+                            </div>
+                         </div>
+                      ))}
+                      {pastPatients.filter(p => p.name.toLowerCase().includes(form.patientName.toLowerCase())).length === 0 && (
+                         <div className="px-4 py-3 text-xs font-bold text-gray-400 text-center">New Family Member</div>
+                      )}
+                   </div>
+                )}
               </div>
             </div>
           </div>
@@ -218,6 +292,56 @@ export default function CreateVisitPage() {
                  </SelectContent>
               </Select>
             </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Blood Group</Label>
+              <Select value={form.bloodGroup} onValueChange={v => handleChange("bloodGroup", v)}>
+                 <SelectTrigger className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 shadow-none">
+                    <SelectValue placeholder="Select (Optional)" />
+                 </SelectTrigger>
+                 <SelectContent className="rounded-2xl border-gray-100 bg-white z-[500] shadow-2xl p-2">
+                    {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(bg => (
+                      <SelectItem key={bg} value={bg}>{bg}</SelectItem>
+                    ))}
+                 </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Height (cm)</Label>
+              <Input
+                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm"
+                value={form.height}
+                onChange={e => handleChange("height", e.target.value)}
+                placeholder="E.g., 175"
+                type="number"
+                min="0"
+                max="300"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Slot Date</Label>
+              <Input
+                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm"
+                value={form.slotDate}
+                onChange={e => handleChange("slotDate", e.target.value)}
+                type="date"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Slot Time</Label>
+              <Input
+                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm"
+                value={form.slotTime}
+                onChange={e => handleChange("slotTime", e.target.value)}
+                type="time"
+                required
+              />
+            </div>
           </div>
 
           {/* Symptoms Section */}
@@ -228,14 +352,6 @@ export default function CreateVisitPage() {
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Describe your problem</Label>
-              <div className="bg-blue-50 px-4 py-1.5 rounded-full flex items-center gap-2">
-                <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">Voice Input</span>
-                <VoiceMicButton
-                  onExtractionSuccess={(text) => handleVoiceResult(text, "symptoms")}
-                  endpoint="/api/voice/extract"
-                  buttonText="Speak"
-                />
-              </div>
             </div>
             <div className="relative">
               <Textarea

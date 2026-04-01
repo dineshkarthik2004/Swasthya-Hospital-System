@@ -9,7 +9,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { useToast } from "@/hooks/use-toast"
 import { Search, Plus, Activity, Printer, HeartPulse, CalendarDays } from "lucide-react"
 import api from "@/services/api"
-import { VoiceMicButton } from "@/components/VoiceMicButton"
 import { Badge } from "@/components/ui/badge"
 
 export default function PatientRecordsPage() {
@@ -89,15 +88,7 @@ export default function PatientRecordsPage() {
                      onChange={(e) => setSearchQuery(e.target.value)}
                   />
                </div>
-               <div className="flex items-center gap-4">
-                  <div className="bg-gray-100 p-1 rounded-2xl flex border border-gray-50">
-                     <VoiceMicButton 
-                        endpoint="/api/voice/extract" 
-                        onExtractionSuccess={(d) => setSearchQuery(d.text || d.notes || d.diagnosis || d.problem || "")} 
-                        buttonText="DictateSearch"
-                     />
-                  </div>
-               </div>
+
             </div>
             <Table>
                <TableHeader className="bg-gray-50/20">
@@ -175,7 +166,7 @@ export default function PatientRecordsPage() {
                         <SheetTitle className="text-2xl font-black tracking-tight">Clinical History</SheetTitle>
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mt-2">Appointment Identity: #{selectedVisit.id?.slice(-8).toUpperCase()}</p>
                      </div>
-                     <Button type="button" variant="outline" className="gap-3 rounded-2xl h-12 font-black px-8 border-gray-100 shadow-sm text-[10px] uppercase tracking-widest hover:bg-gray-50" onClick={()=>window.print()}>
+                     <Button type="button" variant="outline" className="gap-3 rounded-2xl h-12 font-black px-8 border-gray-100 shadow-sm text-[10px] uppercase tracking-widest hover:bg-gray-50" onClick={()=>navigate('/print/' + selectedVisit.id)}>
                         <Printer className="w-4 h-4" /> Print Record
                      </Button>
                   </div>

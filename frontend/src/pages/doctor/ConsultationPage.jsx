@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -34,7 +34,7 @@ export default function ConsultationPage() {
 
    // Edit Vitals state
    const [editingVitals, setEditingVitals] = useState(false)
-   const [vitalsTemp, setVitalsTemp] = useState({ bp: "", pulse: "", temp: "", weight: "", sugar: "" })
+   const [vitalsTemp, setVitalsTemp] = useState({ bp: "", pulse: "", temp: "", weight: "", sugar: "", height: "" })
 
    useEffect(() => {
       if (!id) return;
@@ -49,7 +49,8 @@ export default function ConsultationPage() {
                pulse: found.vitals?.pulse || "",
                temp: found.vitals?.temperature || "",
                weight: found.vitals?.weight || "",
-               sugar: found.vitals?.bloodSugar || ""
+               sugar: found.vitals?.bloodSugar || "",
+               height: found.vitals?.height || ""
             })
             if (found.consultation) {
                setDiagnosis(found.consultation.diagnosis || "")
@@ -79,8 +80,11 @@ export default function ConsultationPage() {
    }, [id])
 
    const handleAddMedicine = () => {
-      setMedicines([...medicines, { type: "Tab", name: "", generic: "", dosage: "", m: 0, a: 0, n: 0, timing: "After Food", duration: 3 }])
+      setMedicines([...medicines, { type: "Tab", name: "", generic: "", dosage: "", m: 0, a: 0, n: 0, timing: "", duration: "", instruction: "" }])
    }
+
+   // Validate English-only for medicine names
+   const isEnglishOnly = (text) => /^[a-zA-Z0-9\s\-\/\.\,\(\)\+\%]*$/.test(text)
 
    const updateMedicine = (index, field, value) => {
       const newMeds = [...medicines]
@@ -103,14 +107,15 @@ export default function ConsultationPage() {
                name: data.medicine || "",
                generic: data.genericName || "",
                dosage: data.dosage || "",
-               m: data.m || 1, a: data.a || 0, n: data.n || 0,
-               timing: data.timing || "After Food",
-               duration: data.duration?.toString().replace(/\D/g, '') || 3
+               m: data.m || 0, a: data.a || 0, n: data.n || 0,
+               timing: "",
+               duration: "",
+               instruction: ""
             }
          ]);
       }
-      if (type === "diagnosis") {
-         setDiagnosis(data.diagnosis || "");
+      if (type === "diagnosis" || type === "diseases_only") {
+         setDiagnosis(data.diseases || data.diagnosis || "");
       }
       if (type === "notes") {
          setClinicalNotes(data.notes || "");
@@ -131,11 +136,14 @@ export default function ConsultationPage() {
          return;
       }
 
+      // For diagnosis, use diseases_only extraction type
+      const extractType = type === "diagnosis" ? "diseases_only" : type;
+
       try {
-         const res = await api.post("/api/ai/extract", { text, type });
+         const res = await api.post("/api/ai/extract", { text, type: extractType });
          const data = res.data?.data || res.data;
          console.log("AI RESPONSE:", data);
-         applyExtractedData(data, type);
+         applyExtractedData(data, extractType);
       } catch (err) {
          console.error(err);
       }
@@ -151,8 +159,8 @@ export default function ConsultationPage() {
             dosageMorning: Number(m.m) || 0,
             dosageAfternoon: Number(m.a) || 0,
             dosageNight: Number(m.n) || 0,
-            days: Number(m.duration) || 1,
-            instructions: m.timing
+            days: Number(m.duration) || 0,
+            instructions: m.timing + (m.instruction ? " | " + m.instruction : "")
          }))
          const combinedNotes = clinicalNotes + (remarks ? "\nRemarks: " + remarks : "")
 
@@ -188,7 +196,8 @@ export default function ConsultationPage() {
             bloodPressure: vitalsTemp.bp || "",
             pulse: vitalsTemp.pulse || "",
             temperature: vitalsTemp.temp || "",
-            weight: vitalsTemp.weight || ""
+            weight: vitalsTemp.weight || "",
+            height: vitalsTemp.height || ""
          })
 
          toast({ title: "Success", description: "Vitals updated" })
@@ -218,6 +227,7 @@ export default function ConsultationPage() {
                <h2 className="text-xl font-bold text-gray-900 leading-none mb-2">{visit.patient?.name || "Patient"}</h2>
                <p className="text-xs font-medium text-gray-500 mb-1">{visit.patient?.gender || "MALE"}, {new Date().getFullYear() - (new Date(visit.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} Years</p>
                <p className="text-xs font-bold text-gray-600">ID: p-{(visit.patient?.id || "").slice(-8).toUpperCase()}</p>
+               {visit.patient?.bloodGroup && <p className="text-xs font-bold text-red-500 mt-1">Blood: {visit.patient.bloodGroup}</p>}
             </Card>
 
             {/* Vitals Signs Box */}
@@ -260,6 +270,13 @@ export default function ConsultationPage() {
                         <span className="text-[10px] uppercase font-bold text-gray-400">Weight</span>
                      </div>
                      <Input value={vitalsTemp.weight} onChange={(e) => setVitalsTemp({ ...vitalsTemp, weight: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full" placeholder="--" />
+                  </div>
+                  <div className="flex flex-col p-4 rounded-3xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center col-span-2">
+                     <div className="flex items-center gap-2 text-green-500">
+                        <span className="font-bold text-lg leading-none"></span>
+                        <span className="text-[10px] uppercase font-bold text-gray-400">Height (cm)</span>
+                     </div>
+                     <Input value={vitalsTemp.height} onChange={(e) => setVitalsTemp({ ...vitalsTemp, height: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full" placeholder="--" />
                   </div>
                </div>
             </div>
@@ -305,7 +322,8 @@ export default function ConsultationPage() {
                   </TableHeader>
                   <TableBody>
                      {(medicines || []).map((med, index) => (
-                        <TableRow key={index} className="hover:bg-transparent transition-all border-b border-gray-50 h-16">
+                        <React.Fragment key={index}>
+                        <TableRow className="hover:bg-transparent transition-all border-b border-gray-50 h-16">
                            <TableCell className="p-2 pl-6">
                               <Select value={med.type} onValueChange={(v) => updateMedicine(index, 'type', v)}>
                                  <SelectTrigger className="h-9 text-xs font-bold border-none bg-transparent hover:bg-gray-50 px-2 rounded-lg shadow-none focus:ring-0 w-full"><SelectValue /></SelectTrigger>
@@ -315,11 +333,17 @@ export default function ConsultationPage() {
                                     <SelectItem value="Cap">Cap</SelectItem>
                                     <SelectItem value="Inj">Inj</SelectItem>
                                     <SelectItem value="Oint">Oint</SelectItem>
+                                    <SelectItem value="Other">Other</SelectItem>
                                  </SelectContent>
                               </Select>
                            </TableCell>
                            <TableCell className="p-2">
-                              <Input placeholder="Search or type medicine..." value={med.name} onChange={(e) => updateMedicine(index, 'name', e.target.value)} className="h-9 text-sm font-medium border-none bg-gray-50 rounded-full px-4 shadow-none focus-visible:ring-1 transition-colors w-full" />
+                              <Input placeholder="Search or type medicine..." value={med.name} onChange={(e) => {
+                                 const val = e.target.value;
+                                 if (isEnglishOnly(val)) {
+                                    updateMedicine(index, 'name', val);
+                                 }
+                              }} className="h-9 text-sm font-medium border-none bg-gray-50 rounded-full px-4 shadow-none focus-visible:ring-1 transition-colors w-full" />
                            </TableCell>
                            <TableCell className="p-2">
                               <Input placeholder="Paracetamol" value={med.generic} onChange={(e) => updateMedicine(index, 'generic', e.target.value)} className="h-9 text-sm font-medium border-none bg-gray-50/50 rounded-full px-4 shadow-none text-gray-400 focus-visible:ring-1 w-full" />
@@ -344,10 +368,19 @@ export default function ConsultationPage() {
                               </div>
                            </TableCell>
                            <TableCell className="p-2">
-                              <Input placeholder="After Food" value={med.timing} onChange={(e) => updateMedicine(index, 'timing', e.target.value)} className="h-9 text-xs font-medium border-none bg-gray-50 rounded-full shadow-none px-4 w-full text-center focus-visible:ring-1" />
+                              <Select value={med.timing || ""} onValueChange={(v) => updateMedicine(index, 'timing', v)}>
+                                 <SelectTrigger className="h-9 text-xs font-medium border-none bg-gray-50 rounded-full shadow-none px-4 w-full text-center focus:ring-0"><SelectValue placeholder="Select..." /></SelectTrigger>
+                                 <SelectContent className="rounded-xl border-gray-100 shadow-lg z-[99999]" position="popper">
+                                    <SelectItem value="After Food">After Food</SelectItem>
+                                    <SelectItem value="Before Food">Before Food</SelectItem>
+                                    <SelectItem value="Bedtime">Bedtime</SelectItem>
+                                    <SelectItem value="Empty Stomach">Empty Stomach</SelectItem>
+                                    <SelectItem value="SOS">SOS</SelectItem>
+                                 </SelectContent>
+                              </Select>
                            </TableCell>
                            <TableCell className="p-2 text-center">
-                              <Input type="number" value={med.duration} onChange={(e) => updateMedicine(index, 'duration', e.target.value)} className="h-9 text-sm font-medium border-none bg-gray-50 rounded-full text-center shadow-none w-[60px]" />
+                              <Input type="number" min="0" value={med.duration} onChange={(e) => updateMedicine(index, 'duration', e.target.value)} placeholder="0" className="h-9 text-sm font-medium border-none bg-gray-50 rounded-full text-center shadow-none w-[60px]" />
                            </TableCell>
                            <TableCell className="p-2 pr-4 text-right">
                               <Button type="button" variant="ghost" size="icon" onClick={() => removeMedicine(index)} className="h-8 w-8 rounded-full text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all shadow-none border-none">
@@ -355,14 +388,25 @@ export default function ConsultationPage() {
                               </Button>
                            </TableCell>
                         </TableRow>
+                        {/* Per-medicine instruction row */}
+                        <TableRow key={`instruction-${index}`} className="hover:bg-transparent border-b border-gray-100 h-10">
+                           <TableCell colSpan={8} className="p-0 px-6 pb-2">
+                              <div className="w-full bg-gray-50/50 rounded-full p-2.5 px-6 shadow-inner flex items-center gap-2">
+                                 <span className="text-yellow-500 not-italic text-[11px]">💡</span>
+                                 <Input 
+                                    placeholder="Instruction: e.g. Take this medicine 30 min after Dolo" 
+                                    value={med.instruction || ""} 
+                                    onChange={(e) => updateMedicine(index, 'instruction', e.target.value)} 
+                                    className="border-none bg-transparent h-6 text-[11px] font-medium italic text-gray-500 shadow-none focus-visible:ring-0 px-0 placeholder:text-gray-400" 
+                                 />
+                              </div>
+                           </TableCell>
+                        </TableRow>
+                        </React.Fragment>
                      ))}
                   </TableBody>
                </Table>
-               <div className="px-6 mt-3">
-                  <div className="w-full bg-gray-50/50 rounded-full p-2.5 px-6 shadow-inner text-[11px] font-medium italic text-gray-400 flex items-center gap-2">
-                     <span className="text-yellow-500 not-italic"></span> Instruction: e.g. Take this medicine 30 min after Dolo
-                  </div>
-               </div>
+
             </Card>
 
             <div className="grid grid-cols-2 gap-6 pt-2">
