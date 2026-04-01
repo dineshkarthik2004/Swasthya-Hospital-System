@@ -36,7 +36,7 @@ app.use(morgan("tiny"));
 
 // Robust CORS origin detector
 const prepareOrigins = () => {
-  const defaults = ["https://swasthya-hospital-system.onrender.com", "http://localhost:3000", "https://swasthya-hospital-system.vercel.app"];
+  const defaults = ["https://swasthya-hospital-system.vercel.app", "http://localhost:3000", "https://swasthya-hospital-system.vercel.app"];
   let envOrigin = process.env.FRONTEND_URL;
 
   if (envOrigin) {
