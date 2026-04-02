@@ -14,13 +14,13 @@ const loadMedicines = () => {
         const workbook = xlsx.readFile(filePath);
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const data = xlsx.utils.sheet_to_json(sheet);
-        
+
         // Map to a cleaner structure
         medicineCache = data.map(item => {
             const productName = item["Product Name"] || "";
             const composition = item["Composition"] || "";
             const productForm = item["Product Form"] || "";
-            
+
             // CLEAN PRODUCT NAME
             // Remove dosage patterns like "500mg", "1g", "100/325"
             // Also remove words like "Tablet", "Capsule" from the name if they exist
@@ -30,12 +30,12 @@ const loadMedicines = () => {
                 .replace(/\s(Tablet|Capsule|Syrup|Injection|Ointment|Pill|Cap|Tab|Syp|Inj)\b/i, '')
                 .replace(/\s+/g, ' ')
                 .trim();
-            
+
             // EXTRACT GENERIC AND DOSAGE FROM COMPOSITION
             // Format is often "Drug A (100mg) + Drug B (500mg)"
             let generics = [];
             let dosages = [];
-            
+
             // Find all (dosage) matches
             const dosageMatches = [...composition.matchAll(/\((.*?)\)/g)];
             if (dosageMatches.length > 0) {
@@ -45,19 +45,19 @@ const loadMedicines = () => {
             } else {
                 generics = [composition];
             }
-            
+
             return {
                 name: cleanName || productName,
                 generic: generics.join(' + '),
                 dosage: dosages.join(' / '),
-                type: productForm.toLowerCase().includes("tab") ? "Tab" : 
-                      productForm.toLowerCase().includes("cap") ? "Cap" : 
-                      productForm.toLowerCase().includes("syr") || productForm.toLowerCase().includes("syp") ? "Syp" : 
-                      productForm.toLowerCase().includes("inj") ? "Inj" : 
-                      productForm.toLowerCase().includes("oint") ? "Oint" : "Other"
+                type: productForm.toLowerCase().includes("tab") ? "Tab" :
+                    productForm.toLowerCase().includes("cap") ? "Cap" :
+                        productForm.toLowerCase().includes("syr") || productForm.toLowerCase().includes("syp") ? "Syp" :
+                            productForm.toLowerCase().includes("inj") ? "Inj" :
+                                productForm.toLowerCase().includes("oint") ? "Oint" : "Other"
             };
         });
-        
+
         console.log(`Loaded ${medicineCache.length} medicines into cache.`);
         return medicineCache;
     } catch (err) {
@@ -67,13 +67,14 @@ const loadMedicines = () => {
 };
 
 export const searchMedicines = async (req, res) => {
+    console.log("Hitting searchMedicines,the query is ", req.query.q)
     const query = req.query.q || "";
     if (query.length < 2) return res.json([]);
-    
+
     const medicines = loadMedicines();
     const results = medicines
         .filter(m => m.name.toLowerCase().includes(query.toLowerCase()))
         .slice(0, 10); // Limit to top 10 results
-        
+
     res.json(results);
 };
