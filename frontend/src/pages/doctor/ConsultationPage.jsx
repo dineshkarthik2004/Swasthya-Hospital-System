@@ -34,6 +34,18 @@ export default function ConsultationPage() {
    const [medicineSuggestions, setMedicineSuggestions] = useState([]);
    const [activeSearchIndex, setActiveSearchIndex] = useState(null);
 
+   // Debounce and Request cancellation refs
+   const searchTimeoutRef = React.useRef(null);
+   const abortControllerRef = React.useRef(null);
+
+   // Cleanup timeouts and requests on unmount
+   useEffect(() => {
+      return () => {
+         if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+         if (abortControllerRef.current) abortControllerRef.current.abort();
+      };
+   }, []);
+
    // Edit Vitals state
    const [editingVitals, setEditingVitals] = useState(false)
    const [vitalsTemp, setVitalsTemp] = useState({ bp: "", pulse: "", temp: "", weight: "", sugar: "", height: "" })
@@ -99,19 +111,51 @@ export default function ConsultationPage() {
       setMedicines(newMeds)
    }
 
-   const fetchMedicineSuggestions = async (index, query) => {
-      if (query.length < 2) {
+   const fetchMedicineSuggestions = (index, query) => {
+      // Clear existing timeout to debounce
+      if (searchTimeoutRef.current) {
+         clearTimeout(searchTimeoutRef.current);
+         searchTimeoutRef.current = null;
+      }
+
+      // Requirement: length less than 3, clear immediately
+      if (!query || query.trim().length < 3) {
          setMedicineSuggestions([]);
          setActiveSearchIndex(null);
+         // Cancel any pending request as well
+         if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+            abortControllerRef.current = null;
+         }
          return;
       }
-      try {
-         const res = await api.get(`/api/medicines/search?q=${query}`);
-         setMedicineSuggestions(res.data || []);
-         setActiveSearchIndex(index);
-      } catch (err) {
-         console.error("Search error:", err);
-      }
+
+      // Set debounce timeout (450ms)
+      searchTimeoutRef.current = setTimeout(async () => {
+         // Cancel previous request if still pending
+         if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+         }
+         
+         // New controller for this request
+         abortControllerRef.current = new AbortController();
+
+         try {
+            const res = await api.get(`/api/medicines/search?q=${query}`, {
+               signal: abortControllerRef.current.signal
+            });
+            
+            // Check if this results belong to the currently typed query to avoid race conditions
+            // (Though AbortController handles most of this, it's good practice)
+            setMedicineSuggestions(res.data || []);
+            setActiveSearchIndex(index);
+         } catch (err) {
+            // Only log errors that aren't cancellation-related
+            if (err.name !== 'CanceledError' && err.name !== 'AbortError') {
+               console.error("Search error:", err);
+            }
+         }
+      }, 450);
    };
 
    const handleSelectMedicine = (index, suggestion) => {
@@ -383,7 +427,7 @@ export default function ConsultationPage() {
                                         }
                                      }} 
                                      onFocus={() => {
-                                        if (med.name.length >= 2) fetchMedicineSuggestions(index, med.name);
+                                        if (med.name.length >= 3) fetchMedicineSuggestions(index, med.name);
                                      }}
                                      onBlur={() => {
                                         setTimeout(() => {
