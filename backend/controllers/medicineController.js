@@ -75,6 +75,6 @@ export const searchMedicines = async (req, res) => {
     const results = medicines
         .filter(m => m.name.toLowerCase().includes(query.toLowerCase()))
         .slice(0, 10); // Limit to top 10 results
-
+    console.log(results);
     res.json(results);
 };
