@@ -10,7 +10,7 @@ let medicineCache = null;
 const loadMedicines = () => {
     if (medicineCache) return medicineCache;
     try {
-        const filePath = path.join(__dirname, '..', '..', 'Medicine_List.xlsb');
+        const filePath = path.join(__dirname, '..', 'Medicine_List.xlsb');
         const workbook = xlsx.readFile(filePath);
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const data = xlsx.utils.sheet_to_json(sheet);
