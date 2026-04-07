@@ -99,10 +99,22 @@ export default function DoctorPatientHistoryDetails() {
             </div>
             <div>
               <h3 className="text-3xl font-black text-gray-900 tracking-tight mb-2">{patient.name || "Patient"}</h3>
-              <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-bold text-gray-500 uppercase tracking-wider">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-bold text-gray-500 uppercase tracking-wider">
                 <span>{gender}</span>
                 <span>·</span>
                 <span>{age} years</span>
+                {patient.bloodGroup && (
+                   <>
+                     <span>·</span>
+                     <span className="text-red-500 font-black">🩸 {patient.bloodGroup}</span>
+                   </>
+                )}
+                {patient.height && (
+                   <>
+                     <span>·</span>
+                     <span>📏 {patient.height}</span>
+                   </>
+                )}
                 <span>·</span>
                 <span>PH: {patient.phone || "N/A"}</span>
                 <span>·</span>

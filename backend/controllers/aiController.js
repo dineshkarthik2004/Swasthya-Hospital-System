@@ -29,23 +29,57 @@ export const extractAiData = async (req, res) => {
     } else if (type === "vital_height") {
       prompt = `Extract ONLY the height from this text. Return JSON exactly like: { "height": "175" }`;
     } else if (type === "prescription") {
-      prompt = `Extract structured prescription data.
-type (e.g. Tab, Syp, Cap, Inj), medicine, dosage, genericName (e.g. Paracetamol), timing (e.g. After Food/Before Food), and duration (days).
-Extract the pill frequency precisely into three separate numerical fields:
-"m" for morning (e.g., 1 for one pill, 0.5 for half a pill, 0 for none)
-"a" for afternoon
-"n" for night
-Return JSON ONLY exactly like this format:
+      prompt = `You are a medical prescription parser. Extract ALL medicines from the spoken text.
+
+For EACH medicine, extract these fields:
+- "medicine": the medicine/drug name only (e.g. "Paracetamol", "Azithromycin", "Dolo")
+- "dosage": the dosage mentioned (e.g. "650mg", "500mg", "10ml"). Keep as spoken.
+- "m": morning frequency as a number (1, 0.5, 0). Default 0 if not mentioned.
+- "a": afternoon frequency as a number (1, 0.5, 0). Default 0 if not mentioned.
+- "n": night frequency as a number (1, 0.5, 0). Default 0 if not mentioned.
+- "timing": one of: "After Food", "Before Food", "Empty Stomach", "Bedtime", "SOS", or "". 
+  Map spoken phrases: "after food"/"after lunch"/"after dinner"/"after breakfast" → "After Food",
+  "before food"/"before lunch"/"before dinner"/"before breakfast" → "Before Food",
+  "empty stomach" → "Empty Stomach", "bedtime"/"before sleep"/"at night" → "Bedtime",
+  "when needed"/"if required"/"sos"/"only if pain" → "SOS".
+- "duration": number of days as a NUMBER only. Extract from phrases like "for 5 days" → 5, "for one week" → 7, "for 2 weeks" → 14, "for 10 days" → 10, "for a month" → 30. If not mentioned, use 0.
+- "instruction": any special instruction like "take with warm water", "take after lunch", "apply on affected area", "use only when required", "do not take on empty stomach". If none mentioned, use "".
+
+Frequency mapping:
+- "once daily" or "once a day" → m:1, a:0, n:0
+- "twice daily" or "twice a day" → m:1, a:0, n:1
+- "thrice daily" or "three times a day" → m:1, a:1, n:1
+- "morning one afternoon zero night one" → m:1, a:0, n:1
+- "morning 1 night 1" → m:1, a:0, n:1
+- Numbers spoken as words: "one" → 1, "half" → 0.5, "zero" → 0
+
+IMPORTANT: Return a JSON object with a "medicines" array containing ALL extracted medicines.
+If only one medicine is found, still return it inside the array.
+
+Example output:
 {
-"type": "Tab",
-"medicine": "Dolo",
-"genericName": "Paracetamol",
-"dosage": "650mg",
-"m": 1,
-"a": 0,
-"n": 0.5,
-"timing": "After Food",
-"duration": "3"
+  "medicines": [
+    {
+      "medicine": "Paracetamol",
+      "dosage": "650mg",
+      "m": 1,
+      "a": 0,
+      "n": 1,
+      "timing": "After Food",
+      "duration": 5,
+      "instruction": "Take after lunch"
+    },
+    {
+      "medicine": "Azithromycin",
+      "dosage": "500mg",
+      "m": 1,
+      "a": 0,
+      "n": 0,
+      "timing": "After Food",
+      "duration": 3,
+      "instruction": "Take with warm water"
+    }
+  ]
 }` + englishConstraint;
     } else if (type === "diagnosis") {
       prompt = `Extract only the clinical diagnosis from this text. Return JSON exactly like:

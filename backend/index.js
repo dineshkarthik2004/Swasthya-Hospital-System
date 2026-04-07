@@ -224,8 +224,7 @@ const prepareOrigins = () => {
   const defaults = [
     "http://localhost:5173",
     "http://localhost:3000",
-    "https://swasthya-hospital-system.vercel.app",
-    "https://swasthya-hospital-system-nef0tinmd.vercel.app",
+    "https://app.samjnaanalytics.ai"
   ];
 
   let envOrigin = process.env.FRONTEND_URL;

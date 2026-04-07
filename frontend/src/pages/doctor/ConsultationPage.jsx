@@ -34,6 +34,9 @@ export default function ConsultationPage() {
    const [medicineSuggestions, setMedicineSuggestions] = useState([]);
    const [activeSearchIndex, setActiveSearchIndex] = useState(null);
 
+   // Voice candidates dropdown — shows when voice-match returns multiple options
+   const [voiceCandidates, setVoiceCandidates] = useState({});
+
    // Debounce and Request cancellation refs
    const searchTimeoutRef = React.useRef(null);
    const abortControllerRef = React.useRef(null);
@@ -172,23 +175,27 @@ export default function ConsultationPage() {
       setActiveSearchIndex(null);
    };
 
+   // Handle selecting a voice candidate from dropdown
+   const handleSelectVoiceCandidate = (index, candidate) => {
+      const newMeds = [...medicines];
+      newMeds[index] = {
+         ...newMeds[index],
+         name: candidate.name,
+         generic: candidate.generic || newMeds[index].generic,
+         dosage: candidate.dosage || newMeds[index].dosage,
+         type: candidate.type || newMeds[index].type
+      };
+      setMedicines(newMeds);
+      // Remove candidates for this row (close dropdown)
+      setVoiceCandidates(prev => {
+         const updated = { ...prev };
+         delete updated[index];
+         return updated;
+      });
+   };
+
    // Finalize
    const applyExtractedData = (data, type) => {
-      if (type === "prescription") {
-         setMedicines(prev => [
-            ...prev,
-            {
-               type: data.type || "Tab",
-               name: data.medicine || "",
-               generic: data.genericName || "",
-               dosage: data.dosage || "",
-               m: data.m || 0, a: data.a || 0, n: data.n || 0,
-               timing: "",
-               duration: "",
-               instruction: ""
-            }
-         ]);
-      }
       if (type === "diagnosis" || type === "diseases_only") {
          setDiagnosis(data.diseases || data.diagnosis || "");
       }
@@ -203,11 +210,127 @@ export default function ConsultationPage() {
       }
    };
 
+   // Voice prescription flow: AI extract → voice-match → auto-fill
+   const handleVoicePrescription = async (text) => {
+      try {
+         // Step 1: AI extraction to get structured medicines array
+         const aiRes = await api.post("/api/ai/extract", { text, type: "prescription" });
+         const aiData = aiRes.data?.data || aiRes.data;
+         console.log("AI PRESCRIPTION RESPONSE:", aiData);
+
+         // Normalize: AI now returns { medicines: [...] } array format
+         let extractedMeds = [];
+         if (aiData.medicines && Array.isArray(aiData.medicines)) {
+            extractedMeds = aiData.medicines;
+         } else if (aiData.medicine) {
+            // Fallback: single medicine object (legacy format)
+            extractedMeds = [aiData];
+         }
+
+         if (extractedMeds.length === 0) {
+            toast({ title: "No medicines found", description: "Could not extract medicines from voice", variant: "destructive" });
+            return;
+         }
+
+         // Step 2: Build voice-match request payload
+         const voiceMatchPayload = {
+            medicines: extractedMeds.map(med => ({
+               spoken_name: med.medicine || med.name || "",
+               dosage: med.dosage || "",
+               morning: Number(med.m) || 0,
+               afternoon: Number(med.a) || 0,
+               night: Number(med.n) || 0,
+               timing: med.timing || "",
+               duration: med.duration || 0,
+               instruction: med.instruction || ""
+            }))
+         };
+
+         console.log("Voice-match payload:", voiceMatchPayload);
+
+         // Step 3: Call voice-match API for smart medicine matching
+         const matchRes = await api.post("/api/medicines/voice-match", voiceMatchPayload);
+         const matchData = matchRes.data;
+         console.log("Voice-match response:", matchData);
+
+         if (!matchData.success || !matchData.medicines) {
+            toast({ title: "Matching failed", description: "Medicine matching API returned no results", variant: "destructive" });
+            return;
+         }
+
+         // Step 4: Map matched medicines into prescription rows
+         const currentLength = medicines.length; // Track starting index for candidates
+         const newRows = matchData.medicines.map(med => ({
+            type: med.type || "Tab",
+            name: med.name || med.spoken_name || "",
+            generic: med.generic || "",
+            dosage: med.dosage || "",
+            m: Number(med.morning) || 0,
+            a: Number(med.afternoon) || 0,
+            n: Number(med.night) || 0,
+            timing: med.timing || "",
+            duration: med.duration || "",
+            instruction: med.instruction || ""
+         }));
+
+         // Add rows to prescription table
+         setMedicines(prev => [...prev, ...newRows]);
+
+         // Step 5: Store voice candidates for rows that have multiple matches (for dropdown)
+         const newCandidates = {};
+         matchData.medicines.forEach((med, i) => {
+            if (med.candidates && med.candidates.length > 1) {
+               newCandidates[currentLength + i] = med.candidates;
+            }
+         });
+         if (Object.keys(newCandidates).length > 0) {
+            setVoiceCandidates(prev => ({ ...prev, ...newCandidates }));
+         }
+
+         // Step 6: Show toasts
+         const unmatched = matchData.medicines.filter(m => !m.matched);
+         if (unmatched.length > 0) {
+            const names = unmatched.map(m => m.spoken_name).join(", ");
+            toast({
+               title: "⚠️ No medicines matched",
+               description: `Could not match: ${names}. Please verify these entries.`,
+               variant: "destructive"
+            });
+         }
+
+         const withCandidates = matchData.medicines.filter(m => m.candidates && m.candidates.length > 1);
+         const exactMatched = matchData.medicines.filter(m => m.matched && (!m.candidates || m.candidates.length <= 1));
+
+         if (exactMatched.length > 0) {
+            toast({
+               title: "✅ Medicines matched",
+               description: `${exactMatched.length} medicine(s) auto-filled from dataset.`
+            });
+         }
+         if (withCandidates.length > 0) {
+            toast({
+               title: "📋 Multiple matches found",
+               description: `${withCandidates.length} medicine(s) have multiple options. Please select from dropdown.`
+            });
+         }
+
+      } catch (err) {
+         console.error("Voice prescription error:", err);
+         toast({ title: "Error", description: "Failed to process voice prescription", variant: "destructive" });
+      }
+   };
+
    const handleVoiceResult = async (text, type) => {
       // Direct transcription for remarks/advice as requested
       if (type === "remarks" || type === "advice") {
          if (type === "remarks") setRemarks(text);
          if (type === "advice") setAdviceInstructions(text);
+         return;
+      }
+
+      // Voice prescription uses the new intelligent matching flow
+      if (type === "prescription") {
+         await handleVoicePrescription(text);
          return;
       }
 
@@ -454,6 +577,32 @@ export default function ConsultationPage() {
                                               <div className="text-[13px] font-semibold text-gray-800 group-hover:text-blue-600">{s.name}</div>
                                               <div className="text-[11px] text-gray-400 mt-0.5 truncate font-medium">
                                                  {s.type} • {s.dosage || 'NA'} • {s.generic}
+                                              </div>
+                                           </div>
+                                        ))}
+                                     </div>
+                                  )}
+
+                                  {/* Voice candidates dropdown — multiple matches from voice */}
+                                  {voiceCandidates[index] && voiceCandidates[index].length > 0 && (
+                                     <div className="absolute top-full left-0 mt-1.5 bg-white border-2 border-blue-200 shadow-2xl rounded-xl overflow-hidden z-[502] max-h-80 overflow-y-auto py-1 animate-in fade-in zoom-in-95 duration-100 min-w-[500px]">
+                                        <div className="px-4 py-2 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
+                                           <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wide">🎤 Multiple matches — select one</span>
+                                           <button
+                                              type="button"
+                                              onClick={() => setVoiceCandidates(prev => { const u = { ...prev }; delete u[index]; return u; })}
+                                              className="text-[10px] font-bold text-gray-400 hover:text-red-500 transition-colors"
+                                           >✕ Close</button>
+                                        </div>
+                                        {voiceCandidates[index].map((c, ci) => (
+                                           <div
+                                              key={ci}
+                                              onClick={() => handleSelectVoiceCandidate(index, c)}
+                                              className="px-4 py-2.5 hover:bg-blue-50 cursor-pointer group transition-colors border-b border-gray-50/50 last:border-none"
+                                           >
+                                              <div className="text-[13px] font-semibold text-gray-800 group-hover:text-blue-600">{c.name}</div>
+                                              <div className="text-[11px] text-gray-400 mt-0.5 truncate font-medium">
+                                                 {c.type} • {c.dosage || 'NA'} • {c.generic}
                                               </div>
                                            </div>
                                         ))}
