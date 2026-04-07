@@ -223,6 +223,7 @@ app.use(express.json());
 const prepareOrigins = () => {
   const defaults = [
     "http://localhost:5173",
+    "http://localhost:3001",
     "http://localhost:3000",
     "https://app.samjnaanalytics.ai"
   ];

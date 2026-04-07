@@ -100,8 +100,7 @@ export default function ConsultationPage() {
       setMedicines([...medicines, { type: "Tab", name: "", generic: "", dosage: "", m: 0, a: 0, n: 0, timing: "", duration: "", instruction: "" }])
    }
 
-   // Validate English-only for medicine names
-   const isEnglishOnly = (text) => /^[a-zA-Z0-9\s\-\/\.\,\(\)\+\%]*$/.test(text)
+
 
    const updateMedicine = (index, field, value) => {
       const newMeds = [...medicines]
@@ -121,7 +120,7 @@ export default function ConsultationPage() {
          searchTimeoutRef.current = null;
       }
 
-      // Requirement: length less than 3, clear immediately
+      // Minimum 3 characters to reduce backend load
       if (!query || query.trim().length < 3) {
          setMedicineSuggestions([]);
          setActiveSearchIndex(null);
@@ -144,7 +143,7 @@ export default function ConsultationPage() {
          abortControllerRef.current = new AbortController();
 
          try {
-            const res = await api.get(`/api/medicines/search?q=${query}`, {
+            const res = await api.get(`/api/medicines/search?q=${encodeURIComponent(query)}`, {
                signal: abortControllerRef.current.signal
             });
             
@@ -544,10 +543,8 @@ export default function ConsultationPage() {
                                      value={med.name} 
                                      onChange={(e) => {
                                         const val = e.target.value;
-                                        if (isEnglishOnly(val)) {
-                                           updateMedicine(index, 'name', val);
-                                           fetchMedicineSuggestions(index, val);
-                                        }
+                                        updateMedicine(index, 'name', val);
+                                        fetchMedicineSuggestions(index, val);
                                      }} 
                                      onFocus={() => {
                                         if (med.name.length >= 3) fetchMedicineSuggestions(index, med.name);
@@ -564,7 +561,7 @@ export default function ConsultationPage() {
                                   />
                                   
                                   {activeSearchIndex === index && medicineSuggestions.length > 0 && (
-                                     <div className="absolute top-full left-0 mt-1.5 bg-white border border-gray-200 shadow-2xl rounded-xl overflow-hidden z-[501] max-h-80 overflow-y-auto py-1 animate-in fade-in zoom-in-95 duration-100 min-w-[500px]">
+                                     <div className="absolute top-full left-0 mt-1.5 bg-white border border-gray-200 shadow-2xl rounded-xl overflow-hidden z-[501] max-h-72 overflow-y-auto py-1 animate-in fade-in zoom-in-95 duration-100 w-[650px]">
                                         {medicineSuggestions.map((s, i) => (
                                            <div 
                                               key={i} 
@@ -585,7 +582,7 @@ export default function ConsultationPage() {
 
                                   {/* Voice candidates dropdown — multiple matches from voice */}
                                   {voiceCandidates[index] && voiceCandidates[index].length > 0 && (
-                                     <div className="absolute top-full left-0 mt-1.5 bg-white border-2 border-blue-200 shadow-2xl rounded-xl overflow-hidden z-[502] max-h-80 overflow-y-auto py-1 animate-in fade-in zoom-in-95 duration-100 min-w-[500px]">
+                                     <div className="absolute top-full left-0 mt-1.5 bg-white border-2 border-blue-200 shadow-2xl rounded-xl overflow-hidden z-[502] max-h-72 overflow-y-auto py-1 animate-in fade-in zoom-in-95 duration-100 w-[650px]">
                                         <div className="px-4 py-2 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
                                            <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wide">🎤 Multiple matches — select one</span>
                                            <button

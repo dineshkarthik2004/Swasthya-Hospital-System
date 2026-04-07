@@ -15,47 +15,40 @@ const loadMedicines = () => {
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const data = xlsx.utils.sheet_to_json(sheet);
 
-        // Map to a cleaner structure
+        // Map to a cleaner structure — PRESERVE original product name for search
         medicineCache = data.map(item => {
-            const productName = item["Product Name"] || "";
+            const productName = (item["Product Name"] || "").trim();
             const composition = item["Composition"] || "";
             const productForm = item["Product Form"] || "";
-
-            // CLEAN PRODUCT NAME
-            // Remove dosage patterns like "500mg", "1g", "100/325"
-            // Also remove words like "Tablet", "Capsule" from the name if they exist
-            let cleanName = productName
-                .replace(/\d+\s*(mg|g|mcg|ml|tab|cap|tablet|capsule|pill|syp|syr|inj|ointment|cream)/i, '')
-                .replace(/\d+\/\d+/g, '') // remove "100/325"
-                .replace(/\s(Tablet|Capsule|Syrup|Injection|Ointment|Pill|Cap|Tab|Syp|Inj)\b/i, '')
-                .replace(/\s+/g, ' ')
-                .trim();
 
             // EXTRACT GENERIC AND DOSAGE FROM COMPOSITION
             // Format is often "Drug A (100mg) + Drug B (500mg)"
             let generics = [];
             let dosages = [];
 
-            // Find all (dosage) matches
             const dosageMatches = [...composition.matchAll(/\((.*?)\)/g)];
             if (dosageMatches.length > 0) {
                 dosages = dosageMatches.map(m => m[1]);
-                // Remove (dosage) from composition to get generics
                 generics = [composition.replace(/\(.*?\)/g, '').replace(/\+/g, '/').replace(/\s+/g, ' ').trim()];
             } else {
                 generics = [composition];
             }
 
+            // Determine type from product form
+            const formLower = productForm.toLowerCase();
+            let type = "Other";
+            if (formLower.includes("tab")) type = "Tab";
+            else if (formLower.includes("cap")) type = "Cap";
+            else if (formLower.includes("syr") || formLower.includes("syp")) type = "Syp";
+            else if (formLower.includes("inj")) type = "Inj";
+            else if (formLower.includes("oint")) type = "Oint";
+
             return {
-                name: cleanName || productName,
-                fullProductName: productName, // Keep original for dosage matching
+                name: productName,                  // ORIGINAL product name — used for display AND search
+                nameLower: productName.toLowerCase(), // Pre-computed lowercase for fast search
                 generic: generics.join(' + '),
                 dosage: dosages.join(' / '),
-                type: productForm.toLowerCase().includes("tab") ? "Tab" :
-                    productForm.toLowerCase().includes("cap") ? "Cap" :
-                        productForm.toLowerCase().includes("syr") || productForm.toLowerCase().includes("syp") ? "Syp" :
-                            productForm.toLowerCase().includes("inj") ? "Inj" :
-                                productForm.toLowerCase().includes("oint") ? "Oint" : "Other"
+                type
             };
         });
 
@@ -67,129 +60,119 @@ const loadMedicines = () => {
     }
 };
 
-// ─── Existing search endpoint (unchanged) ───────────────────────────────────
+// ─── Reusable medicine ranking helper ─────────────────────────────────────────
+// Used by BOTH manual search and voice matching for consistent behavior.
+// Returns ALL matches, sorted: startsWith first, then contains.
+// No result limit.
+const rankMedicines = (query, allMedicines) => {
+    if (!query) return [];
+
+    const q = query.toLowerCase().trim();
+    if (q.length === 0) return [];
+
+    const startsWithMatches = [];
+    const containsMatches = [];
+
+    for (const med of allMedicines) {
+        if (med.nameLower.startsWith(q)) {
+            startsWithMatches.push(med);
+        } else if (med.nameLower.includes(q)) {
+            containsMatches.push(med);
+        }
+    }
+
+    // Sort each group alphabetically by name for consistent ordering
+    startsWithMatches.sort((a, b) => a.nameLower.localeCompare(b.nameLower));
+    containsMatches.sort((a, b) => a.nameLower.localeCompare(b.nameLower));
+
+    // Priority 1 first, then Priority 2
+    return [...startsWithMatches, ...containsMatches];
+};
+
+// ─── Manual search endpoint ──────────────────────────────────────────────────
 export const searchMedicines = async (req, res) => {
-    console.log("Hitting searchMedicines,the query is ", req.query.q)
-    const query = req.query.q || "";
-    if (query.length < 2) return res.json([]);
+    const query = (req.query.q || "").trim();
+    console.log("Hitting searchMedicines, the query is:", query);
+
+    // Minimum 3 characters to avoid excessive load
+    if (query.length < 3) return res.json([]);
 
     const medicines = loadMedicines();
-    const results = medicines
-        .filter(m => m.name.toLowerCase().includes(query.toLowerCase()))
-        .slice(0, 10); // Limit to top 10 results
-    console.log(results);
-    res.json(results);
+    const results = rankMedicines(query, medicines);
+
+    // Return ALL matches — no .slice() cap
+    // Map to return format (exclude internal nameLower field)
+    const response = results.map(m => ({
+        name: m.name,
+        generic: m.generic,
+        dosage: m.dosage,
+        type: m.type
+    }));
+
+    console.log(`Search "${query}" → ${response.length} results`);
+    res.json(response);
 };
 
 // ─── Helper: Extract numeric dosage value from a dosage string ──────────────
 const extractDosageNumber = (dosageStr) => {
     if (!dosageStr) return 0;
     const str = String(dosageStr).toLowerCase().trim();
-    // Match patterns like "500mg", "500 mg", "1.5g", "250 mcg", "10ml"
     const match = str.match(/([\d.]+)\s*(mg|g|mcg|ml|iu)?/i);
     if (!match) return 0;
     let value = parseFloat(match[1]);
     const unit = (match[2] || '').toLowerCase();
-    // Normalize to mg for comparison
     if (unit === 'g') value *= 1000;
     if (unit === 'mcg') value /= 1000;
     return value;
 };
 
-// ─── Helper: Score medicines against a query (used by voice matching) ───────
-const scoreMedicines = (query, allMedicines) => {
-    const scored = [];
-
-    for (const med of allMedicines) {
-        const medName = med.name.toLowerCase().trim();
-        let score = 0;
-
-        // Priority 1 (100): Exact full name match
-        if (medName === query) {
-            score = 100;
-        }
-        // Priority 2 (90): Medicine name starts with full spoken name
-        else if (medName.startsWith(query)) {
-            score = 90;
-        }
-        // Priority 3 (80): Spoken name starts with medicine name
-        else if (query.startsWith(medName)) {
-            score = 80;
-        }
-        // Priority 4 (70): Full spoken name appears as a whole word in medicine name
-        else if (query.length >= 3 && new RegExp(`\\b${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i').test(medName)) {
-            score = 70;
-        }
-        // Priority 5 (50): Medicine name contains full spoken name as substring (min 4 chars)
-        else if (query.length >= 4 && medName.includes(query)) {
-            score = 50;
-        }
-
-        if (score > 0) {
-            scored.push({ med, score });
-        }
-    }
-
-    return scored;
-};
-
-// ─── Helper: Voice matching — 2-step strategy ──────────────────────────────
-// Step 1: Strict full-name match
-// Step 2: Fallback to first 4 letters if Step 1 finds nothing
+// ─── Helper: Voice matching — uses the same rankMedicines logic ─────────────
+// Step 1: Strict full-name ranking
+// Step 2: Fallback to prefix if Step 1 finds nothing
 // Returns { bestMatch, candidates, matchType }
 const findBestMatch = (spokenName, spokenDosage, allMedicines) => {
     if (!spokenName) return { bestMatch: null, candidates: [], matchType: "none" };
 
     const query = spokenName.toLowerCase().trim();
-    const spokenDosageNum = extractDosageNumber(spokenDosage);
 
-    // ── STEP 1: Strict full-name matching ──────────────────────────────────
-    let scored = scoreMedicines(query, allMedicines);
-
+    // ── STEP 1: Use the same rankMedicines function ───────────────────────
+    let results = rankMedicines(query, allMedicines);
     let matchType = "full_name";
 
     // ── STEP 2: Fallback — use first 4 letters (or 3 if name is short) ────
-    if (scored.length === 0) {
+    if (results.length === 0) {
         const prefixLen = query.length >= 4 ? 4 : Math.min(query.length, 3);
         const prefix = query.substring(0, prefixLen);
 
         console.log(`[voice-match] Step 1 failed for "${query}", falling back to prefix "${prefix}"`);
 
-        // Search using prefix — startsWith only (not includes, to avoid false positives)
-        for (const med of allMedicines) {
-            const medName = med.name.toLowerCase().trim();
-            if (medName.startsWith(prefix)) {
-                scored.push({ med, score: 30 }); // Lower score for fallback matches
-            }
-        }
+        results = rankMedicines(prefix, allMedicines);
         matchType = "prefix_fallback";
     }
 
-    if (scored.length === 0) {
+    if (results.length === 0) {
         console.log(`[voice-match] No match found for "${query}" in both steps`);
         return { bestMatch: null, candidates: [], matchType: "none" };
     }
 
-    // Sort by score descending
-    scored.sort((a, b) => b.score - a.score);
+    console.log(`[voice-match] "${query}" → ${results.length} results (${matchType})`);
 
-    // Get top-tier candidates (same highest score)
-    const topScore = scored[0].score;
-    let candidates = scored.filter(s => s.score === topScore).map(s => s.med);
+    // Best match is the first result (startsWith matches come first due to rankMedicines)
+    const bestMatch = results[0];
 
-    console.log(`[voice-match] "${query}" → ${candidates.length} candidates at score ${topScore} (${matchType})`);
+    // Return ALL candidates (no cap) — let frontend/voice flow handle display
+    const candidates = results;
 
-    // ── Single candidate? Return immediately ───────────────────────────────
+    // Single candidate? Return immediately
     if (candidates.length === 1) {
-        return { bestMatch: candidates[0], candidates: [], matchType };
+        return { bestMatch, candidates: [], matchType };
     }
 
-    // ── Multiple candidates: always show dropdown, let doctor pick ──────────
-    // Pre-fill the first match, but show all options in dropdown
-    return { bestMatch: candidates[0], candidates: candidates.slice(0, 10), matchType };
+    // Multiple candidates: return all for dropdown
+    return { bestMatch, candidates, matchType };
 };
 
-// ─── NEW: Voice match endpoint ──────────────────────────────────────────────
+// ─── Voice match endpoint ──────────────────────────────────────────────────
 export const voiceMatchMedicines = async (req, res) => {
     try {
         const { medicines: spokenMedicines } = req.body;
@@ -217,8 +200,8 @@ export const voiceMatchMedicines = async (req, res) => {
             if (bestMatch) {
                 console.log(`[voice-match] ✅ Matched "${spokenName}" → "${bestMatch.name}" (${bestMatch.dosage}) via ${matchType}`);
 
-                // Smart dosage: prefer dataset dosage, use voice dosage as fallback
-                let finalDosage = bestMatch.dosage || spokenDosage || "";
+                // Smart dosage: prefer spoken dosage if clearly specified, otherwise use dataset
+                let finalDosage = spokenDosage || bestMatch.dosage || "";
 
                 const result = {
                     matched: true,
