@@ -35,6 +35,10 @@ export default function VisitHistoryPage() {
      const phone = (v.patient?.phone || "").toLowerCase()
      const s = search.toLowerCase()
      const matchesSearch = name.includes(s) || phone.includes(s)
+      
+      // Only show completed visits in history
+      const historyStatuses = ["PAYMENT_COLLECTED", "PRESCRIPTION_COMPLETED", "CONSULTED", "COMPLETED"]
+      const matchesStatus = historyStatuses.includes(v.status)
      
      // Date range filter
      if (dateRange.start && dateRange.end) {
@@ -44,10 +48,10 @@ export default function VisitHistoryPage() {
         start.setHours(0,0,0,0);
         const end = new Date(dateRange.end);
         end.setHours(0,0,0,0);
-        return matchesSearch && (vDate >= start && vDate <= end);
+        return matchesSearch && matchesStatus && (vDate >= start && vDate <= end);
      }
      
-     return matchesSearch;
+     return matchesSearch && matchesStatus;
   })
 
   if (loading) return <div className="p-20 flex justify-center"><Loader2 className="w-10 h-10 animate-spin text-blue-500" /></div>

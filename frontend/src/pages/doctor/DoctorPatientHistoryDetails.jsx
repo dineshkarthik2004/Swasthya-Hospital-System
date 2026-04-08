@@ -166,8 +166,7 @@ export default function DoctorPatientHistoryDetails() {
                   <TableRow className="border-none hover:bg-transparent">
                     <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-6 w-[60px]">S.No</TableHead>
                     <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-[20%]">Medicine Name</TableHead>
-                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-[20%]">Generic Name</TableHead>
-                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Dosage</TableHead>
+                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-[20%]">Composition</TableHead>
                     <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">M-A-N</TableHead>
                     <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Duration</TableHead>
                     <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest pr-6 text-right">Instructions</TableHead>
@@ -181,9 +180,8 @@ export default function DoctorPatientHistoryDetails() {
                         <span className="font-bold text-gray-900 text-sm uppercase">{med.medicineName}</span>
                       </TableCell>
                       <TableCell className="py-4">
-                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-tight italic">{med.genericName || "-"}</span>
+                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-tight italic">{med.composition || "-"}</span>
                       </TableCell>
-                      <TableCell className="font-bold text-gray-700 text-sm">{med.dosage || "-"}</TableCell>
                       <TableCell className="text-center font-black text-blue-600 text-xs tracking-[0.3em]">{med.dosageMorning}-{med.dosageAfternoon}-{med.dosageNight}</TableCell>
                       <TableCell className="font-bold text-gray-900 text-sm">{med.days} days</TableCell>
                       <TableCell className="text-right pr-6 font-bold text-gray-500 text-xs">{med.instructions || "-"}</TableCell>

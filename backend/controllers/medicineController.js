@@ -104,9 +104,7 @@ export const searchMedicines = async (req, res) => {
     // Map to return format (exclude internal nameLower field)
     const response = results.map(m => ({
         name: m.name,
-        generic: m.generic,
-        dosage: m.dosage,
-        type: m.type
+        composition: m.generic
     }));
 
     console.log(`Search "${query}" → ${response.length} results`);
@@ -198,19 +196,14 @@ export const voiceMatchMedicines = async (req, res) => {
             const { bestMatch, candidates, matchType } = findBestMatch(spokenName, spokenDosage, allMedicines);
 
             if (bestMatch) {
-                console.log(`[voice-match] ✅ Matched "${spokenName}" → "${bestMatch.name}" (${bestMatch.dosage}) via ${matchType}`);
-
-                // Smart dosage: prefer spoken dosage if clearly specified, otherwise use dataset
-                let finalDosage = spokenDosage || bestMatch.dosage || "";
+                console.log(`[voice-match] ✅ Matched "${spokenName}" → "${bestMatch.name}" via ${matchType}`);
 
                 const result = {
                     matched: true,
                     matchType,
                     spoken_name: spokenName,
                     name: bestMatch.name,
-                    generic: bestMatch.generic || "",
-                    dosage: finalDosage,
-                    type: bestMatch.type || "Tab",
+                    composition: bestMatch.generic || "",
                     morning: Number(spoken.morning) || 0,
                     afternoon: Number(spoken.afternoon) || 0,
                     night: Number(spoken.night) || 0,
@@ -223,9 +216,7 @@ export const voiceMatchMedicines = async (req, res) => {
                 if (candidates.length > 1) {
                     result.candidates = candidates.map(c => ({
                         name: c.name,
-                        generic: c.generic || "",
-                        dosage: c.dosage || "",
-                        type: c.type || "Tab"
+                        composition: c.generic || ""
                     }));
                 }
 
@@ -238,9 +229,7 @@ export const voiceMatchMedicines = async (req, res) => {
                     matchType: "none",
                     spoken_name: spokenName,
                     name: spokenName,
-                    generic: "",
-                    dosage: spokenDosage || "",
-                    type: "",
+                    composition: "",
                     morning: Number(spoken.morning) || 0,
                     afternoon: Number(spoken.afternoon) || 0,
                     night: Number(spoken.night) || 0,

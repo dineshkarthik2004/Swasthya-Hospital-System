@@ -28,6 +28,7 @@ enum VisitStatus {
   ASSIGNED_TO_DOCTOR
   CONSULTED
   PRESCRIPTION_COMPLETED
+  PAYMENT_COLLECTED
 }
 
 enum PaymentStatus {
@@ -157,8 +158,7 @@ model Prescription {
 model PrescriptionItem {
   id             String   @id @default(cuid())
   medicineName   String
-  genericName    String?  // Salt name like "Paracetamol"
-  dosage         String?  // "500mg"
+  composition    String?  // Salt/composition like "Paracetamol"
   dosageMorning  Float?   // 1, 0.5, 0
   dosageAfternoon Float?
   dosageNight    Float?

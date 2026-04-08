@@ -46,8 +46,7 @@ export async function finalizeConsultation(req, res) {
 
     const prescriptionList = Array.isArray(prescription) ? prescription.map(item => ({
       medicineName: item.medicineName || "Unknown",
-      genericName: item.genericName || "",
-      dosage: item.dosage || "",
+      composition: item.composition || "",
       dosageMorning: Number(item.dosageMorning) || 0,
       dosageAfternoon: Number(item.dosageAfternoon) || 0,
       dosageNight: Number(item.dosageNight) || 0,
@@ -217,7 +216,7 @@ export async function savePrescription(req, res) {
       const itemsData = items.map(item => ({
         prescriptionId: prescription.id,
         medicineName: item.medicineName || item.name,
-        dosage: item.dosage || "",
+        composition: item.composition || "",
         dosageMorning: item.dosageMorning || 0,
         dosageAfternoon: item.dosageAfternoon || 0,
         dosageNight: item.dosageNight || 0,

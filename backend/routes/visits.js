@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticateToken, requireRole } from "../middleware/auth.js";
-import { createVisit, listVisits, assignDoctor, updateVisitStatus, getReceptionistStats, getVisitDetails, receptionCreateVisit } from "../controllers/visitController.js";
+import { createVisit, listVisits, assignDoctor, updateVisitStatus, getReceptionistStats, getVisitDetails, receptionCreateVisit, collectFee } from "../controllers/visitController.js";
 
 const router = Router();
 
@@ -13,6 +13,9 @@ router.get("/:id", authenticateToken, requireRole("RECEPTIONIST", "DOCTOR", "PAT
 router.post("/", authenticateToken, requireRole("RECEPTIONIST", "PATIENT", "ADMIN"), createVisit);
 router.post("/reception-create", authenticateToken, requireRole("RECEPTIONIST", "ADMIN"), receptionCreateVisit);
 router.patch("/:id/assign", authenticateToken, requireRole("RECEPTIONIST", "ADMIN"), assignDoctor);
+
+// Receptionist collects fee → moves visit to history
+router.post("/:id/collect-fee", authenticateToken, requireRole("RECEPTIONIST", "ADMIN"), collectFee);
 
 // Receptionist updates status generally
 router.patch("/:id/status", authenticateToken, requireRole("RECEPTIONIST", "DOCTOR"), updateVisitStatus);

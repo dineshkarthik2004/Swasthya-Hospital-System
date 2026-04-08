@@ -79,10 +79,8 @@ export default function ConsultationPage() {
                // prepopulate medicines if they exist
                if (found.consultation.prescription && found.consultation.prescription.length > 0) {
                   setMedicines(found.consultation.prescription.map(m => ({
-                     type: m.medicineName?.split(' ')[0] || "Tab",
-                     name: m.medicineName?.split(' ').slice(1).join(' ') || m.medicineName,
-                     generic: m.genericName || "",
-                     dosage: m.dosage || "",
+                     name: m.medicineName || "",
+                     composition: m.composition || "",
                      m: m.dosageMorning || 0,
                      a: m.dosageAfternoon || 0,
                      n: m.dosageNight || 0,
@@ -97,7 +95,7 @@ export default function ConsultationPage() {
    }, [id])
 
    const handleAddMedicine = () => {
-      setMedicines([...medicines, { type: "Tab", name: "", generic: "", dosage: "", m: 0, a: 0, n: 0, timing: "", duration: "", instruction: "" }])
+      setMedicines([...medicines, { name: "", composition: "", m: 0, a: 0, n: 0, timing: "", duration: "", instruction: "" }])
    }
 
 
@@ -165,9 +163,7 @@ export default function ConsultationPage() {
       newMeds[index] = {
          ...newMeds[index],
          name: suggestion.name,
-         generic: suggestion.generic,
-         dosage: suggestion.dosage || newMeds[index].dosage,
-         type: suggestion.type || newMeds[index].type
+         composition: suggestion.composition || ""
       };
       setMedicines(newMeds);
       setMedicineSuggestions([]);
@@ -180,9 +176,7 @@ export default function ConsultationPage() {
       newMeds[index] = {
          ...newMeds[index],
          name: candidate.name,
-         generic: candidate.generic || newMeds[index].generic,
-         dosage: candidate.dosage || newMeds[index].dosage,
-         type: candidate.type || newMeds[index].type
+         composition: candidate.composition || ""
       };
       setMedicines(newMeds);
       // Remove candidates for this row (close dropdown)
@@ -235,7 +229,6 @@ export default function ConsultationPage() {
          const voiceMatchPayload = {
             medicines: extractedMeds.map(med => ({
                spoken_name: med.medicine || med.name || "",
-               dosage: med.dosage || "",
                morning: Number(med.m) || 0,
                afternoon: Number(med.a) || 0,
                night: Number(med.n) || 0,
@@ -260,10 +253,8 @@ export default function ConsultationPage() {
          // Step 4: Map matched medicines into prescription rows
          const currentLength = medicines.length; // Track starting index for candidates
          const newRows = matchData.medicines.map(med => ({
-            type: med.type || "Tab",
             name: med.name || med.spoken_name || "",
-            generic: med.generic || "",
-            dosage: med.dosage || "",
+            composition: med.composition || "",
             m: Number(med.morning) || 0,
             a: Number(med.afternoon) || 0,
             n: Number(med.night) || 0,
@@ -350,9 +341,8 @@ export default function ConsultationPage() {
       setSubmitting(true)
       try {
          const validMedicines = medicines.filter(m => m.name.trim() !== "").map(m => ({
-            medicineName: m.type + " " + m.name,
-            genericName: m.generic || "",
-            dosage: m.dosage,
+            medicineName: m.name,
+            composition: m.composition || "",
             dosageMorning: Number(m.m) || 0,
             dosageAfternoon: Number(m.a) || 0,
             dosageNight: Number(m.n) || 0,
@@ -370,7 +360,8 @@ export default function ConsultationPage() {
             prescription: validMedicines,
             adviceInstructions,
             followUpDate,
-            labPending
+            labPending,
+            feeType
          })
 
          toast({ title: "Success", description: "Prescription finalized!" })
@@ -509,10 +500,8 @@ export default function ConsultationPage() {
                <Table className="overflow-visible">
                   <TableHeader className="bg-transparent h-12">
                      <TableRow className="border-b border-gray-100 hover:bg-transparent">
-                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-6 w-[80px]">Type</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[25%]">Medicine Name</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[20%]">Generic Name</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[100px]">Dosage</TableHead>
+                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-6 w-[25%]">Medicine Name</TableHead>
+                        <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[20%]">Composition</TableHead>
                         <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center w-[120px]">Frequency</TableHead>
                         <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[140px]">Timing</TableHead>
                         <TableHead className="text-[10px] font-bold text-gray-500 uppercase tracking-widest w-[80px]">Duration</TableHead>
@@ -523,20 +512,7 @@ export default function ConsultationPage() {
                      {(medicines || []).map((med, index) => (
                         <React.Fragment key={index}>
                         <TableRow className="hover:bg-transparent transition-all border-b border-gray-50 h-16 relative z-[50]">
-                           <TableCell className="p-2 pl-6 relative z-[200]">
-                              <Select value={med.type} onValueChange={(v) => updateMedicine(index, 'type', v)}>
-                                 <SelectTrigger className="h-9 text-xs font-bold border-none bg-transparent hover:bg-gray-50 px-2 rounded-lg shadow-none focus:ring-0 w-full"><SelectValue /></SelectTrigger>
-                                 <SelectContent className="rounded-xl border border-gray-100 shadow-2xl z-[99999] bg-white" position="popper" sideOffset={5}>
-                                    <SelectItem value="Tab">Tab</SelectItem>
-                                    <SelectItem value="Syp">Syp</SelectItem>
-                                    <SelectItem value="Cap">Cap</SelectItem>
-                                    <SelectItem value="Inj">Inj</SelectItem>
-                                    <SelectItem value="Oint">Oint</SelectItem>
-                                    <SelectItem value="Other">Other</SelectItem>
-                                 </SelectContent>
-                              </Select>
-                           </TableCell>
-                            <TableCell className="p-2 relative z-[100]">
+                            <TableCell className="p-2 pl-6 relative z-[100]">
                                <div className="relative">
                                   <Input 
                                      placeholder="Search or type medicine..." 
@@ -573,7 +549,7 @@ export default function ConsultationPage() {
                                            >
                                               <div className="text-[13px] font-semibold text-gray-800 group-hover:text-blue-600">{s.name}</div>
                                               <div className="text-[11px] text-gray-400 mt-0.5 truncate font-medium">
-                                                 {s.type} • {s.dosage || 'NA'} • {s.generic}
+                                                 {s.composition || 'NA'}
                                               </div>
                                            </div>
                                         ))}
@@ -599,7 +575,7 @@ export default function ConsultationPage() {
                                            >
                                               <div className="text-[13px] font-semibold text-gray-800 group-hover:text-blue-600">{c.name}</div>
                                               <div className="text-[11px] text-gray-400 mt-0.5 truncate font-medium">
-                                                 {c.type} • {c.dosage || 'NA'} • {c.generic}
+                                                 {c.composition || 'NA'}
                                               </div>
                                            </div>
                                         ))}
@@ -608,10 +584,7 @@ export default function ConsultationPage() {
                                </div>
                             </TableCell>
                            <TableCell className="p-2">
-                              <Input placeholder="Paracetamol" value={med.generic} onChange={(e) => updateMedicine(index, 'generic', e.target.value)} className="h-9 text-sm font-medium border-none bg-gray-50/50 rounded-full px-4 shadow-none text-gray-400 focus-visible:ring-1 w-full" />
-                           </TableCell>
-                           <TableCell className="p-2">
-                              <Input placeholder="650mg" value={med.dosage} onChange={(e) => updateMedicine(index, 'dosage', e.target.value)} className="h-9 text-sm font-medium border-none bg-gray-50 rounded-full px-4 text-center shadow-none focus-visible:ring-1 w-[80px]" />
+                              <Input placeholder="Paracetamol" value={med.composition} onChange={(e) => updateMedicine(index, 'composition', e.target.value)} className="h-9 text-sm font-medium border-none bg-gray-50/50 rounded-full px-4 shadow-none text-gray-400 focus-visible:ring-1 w-full" />
                            </TableCell>
                            <TableCell className="p-2 text-center">
                               <div className="flex items-center justify-center gap-1">
@@ -652,7 +625,7 @@ export default function ConsultationPage() {
                         </TableRow>
                         {/* Per-medicine instruction row */}
                          <TableRow key={`instruction-${index}`} className="hover:bg-transparent border-b border-gray-100 relative z-[40]">
-                            <TableCell colSpan={8} className="py-2 px-6">
+                            <TableCell colSpan={6} className="py-2 px-6">
                                <div className="w-full bg-gray-50/80 rounded-2xl p-3 px-6 shadow-sm flex items-center gap-2 border border-gray-100">
                                   <span className="text-yellow-500 not-italic text-[11px] shrink-0">💡</span>
                                  <Input 

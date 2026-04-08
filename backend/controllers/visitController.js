@@ -276,6 +276,30 @@ export async function updateVisitStatus(req, res) {
     return res.status(500).json({ error: "Failed to update visit status" });
   }
 }
+
+// POST /api/visits/:id/collect-fee
+// Receptionist collects fee → marks PAID + moves to PAYMENT_COLLECTED
+export async function collectFee(req, res) {
+  try {
+    const { id } = req.params;
+
+    const visit = await prisma.visit.update({
+      where: { id },
+      data: {
+        paymentStatus: "PAID",
+        status: "PAYMENT_COLLECTED"
+      },
+      include: {
+        patient: true
+      }
+    });
+
+    return res.status(200).json({ success: true, message: "Fee collected. Visit moved to history.", visit });
+  } catch (error) {
+    console.error("[VisitController] Error collecting fee:", error);
+    return res.status(500).json({ error: "Failed to collect fee" });
+  }
+}
 // GET /visits/stats/receptionist
 export async function getReceptionistStats(req, res) {
   try {

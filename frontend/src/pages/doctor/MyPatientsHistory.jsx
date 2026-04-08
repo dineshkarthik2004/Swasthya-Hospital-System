@@ -23,7 +23,8 @@ export default function MyPatientsHistory() {
         const completed = (data || []).filter(v => 
           v.status === "COMPLETED" || 
           v.status === "CONSULTED" || 
-          v.status === "PRESCRIPTION_COMPLETED"
+          v.status === "PRESCRIPTION_COMPLETED" ||
+          v.status === "PAYMENT_COLLECTED"
         );
         const filtered = completed.filter(v => v.doctorId === user?.id);
         filtered.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));

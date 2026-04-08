@@ -175,8 +175,7 @@ export default function PrintPrescription() {
                            <tr className="bg-slate-50/50 border-y border-slate-200">
                               <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 w-10">#</th>
                               <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400">Medicine Name</th>
-                              <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400">Generic Name</th>
-                              <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 w-24">Dosage</th>
+                              <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400">Composition</th>
                               <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 text-center w-28">Frequency</th>
                               <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 w-28">Timing</th>
                               <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 text-right w-16">Days</th>
@@ -190,9 +189,8 @@ export default function PrintPrescription() {
                                     <span className={cn("font-bold text-slate-900 uppercase tracking-tight", tableFontSize)}>{m.medicineName}</span>
                                  </td>
                                  <td className={cn("px-2", rowPadding)}>
-                                    <span className={cn("text-slate-500 italic font-serif leading-none", tableFontSize)}>{m.genericName || "-"}</span>
+                                    <span className={cn("text-slate-500 italic font-serif leading-none", tableFontSize)}>{m.composition || "-"}</span>
                                  </td>
-                                 <td className={cn("px-2 font-bold text-slate-700", rowPadding, tableFontSize)}>{m.dosage || "-"}</td>
                                  <td className={cn("px-2 font-black text-blue-600 text-center tracking-widest", rowPadding, tableFontSize)}>{m.dosageMorning}-{m.dosageAfternoon}-{m.dosageNight}</td>
                                  <td className={cn("px-2 text-slate-500 font-medium italic", rowPadding, tableFontSize)}>{m.instructions || "After Food"}</td>
                                  <td className={cn("px-2 text-right font-bold text-slate-900", rowPadding, tableFontSize)}>{m.days}</td>

@@ -181,8 +181,8 @@ export default function DailyVisitsPage() {
    const handleCollectMoney = async (visitId) => {
       console.log("[VisitsPage] Collecting money for visit:", visitId)
       try {
-         await api.patch(`/api/visits/${visitId}/status`, { paymentStatus: "PAID" })
-         toast({ title: "Payment Recorded", description: "Fee status has been updated to PAID." })
+         await api.post(`/api/visits/${visitId}/collect-fee`)
+         toast({ title: "Payment Collected", description: "Fee collected. Visit moved to history." })
          loadData()
       } catch (err) {
          console.error("[VisitsPage] Error updating payment:", err)
@@ -193,7 +193,7 @@ export default function DailyVisitsPage() {
    useEffect(() => { loadData() }, [])
 
    const filteredVisits = visits.filter(v => {
-      const roleMatches = ["WAITING", "VITALS_COMPLETED", "ASSIGNED_TO_DOCTOR"].includes(v.status);
+      const roleMatches = ["WAITING", "VITALS_COMPLETED", "ASSIGNED_TO_DOCTOR", "PRESCRIPTION_COMPLETED"].includes(v.status);
       const searchMatches = (
          (v.patient?.name || "").toLowerCase().includes(search.toLowerCase()) ||
          (v.notes || "").toLowerCase().includes(search.toLowerCase()) ||
@@ -270,7 +270,9 @@ export default function DailyVisitsPage() {
                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Patient</TableHead>
                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Problem / Symptoms</TableHead>
                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Physician</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 text-center">Fees Status</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 text-center">Status</TableHead>
+                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 text-center">Fee Type</TableHead>
+                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 text-center">Payment</TableHead>
                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 text-right pr-10">Actions</TableHead>
                      </TableRow>
                   </TableHeader>
@@ -328,10 +330,17 @@ export default function DailyVisitsPage() {
                               </div>
                            </TableCell>
                            <TableCell className="text-center">
-                              <Badge
-                                 className={`rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-widest border-none shadow-sm ${v.paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-red-50 text-red-500'
-                                    }`}
-                              >
+                              <Badge className={`rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-widest border-none shadow-sm ${v.status === 'PRESCRIPTION_COMPLETED' ? 'bg-emerald-100 text-emerald-700' : v.status === 'ASSIGNED_TO_DOCTOR' ? 'bg-blue-50 text-blue-600' : 'bg-orange-50 text-orange-500'}`}>{v.status === 'PRESCRIPTION_COMPLETED' ? 'CONSULTATION COMPLETED' : v.status === 'ASSIGNED_TO_DOCTOR' ? 'DOCTOR ALLOCATED' : 'WAITING'}</Badge>
+                           </TableCell>
+                           <TableCell className="text-center">
+                              {v.feeType ? (
+                                 <span className="font-black text-[11px] text-gray-900">{v.feeType}</span>
+                              ) : (
+                                 <span className="text-[10px] font-bold text-gray-300">--</span>
+                              )}
+                           </TableCell>
+                           <TableCell className="text-center">
+                              <Badge className={`rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-widest border-none shadow-sm ${v.paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-red-50 text-red-500'}`}>
                                  {v.paymentStatus || "UNPAID"}
                               </Badge>
                            </TableCell>
@@ -388,7 +397,7 @@ export default function DailyVisitsPage() {
                         </TableRow>
                      ))}
                      {filteredVisits.length === 0 && (
-                        <TableRow><TableCell colSpan={6} className="text-center py-32 text-gray-300 font-bold flex flex-col items-center gap-4">
+                        <TableRow><TableCell colSpan={8} className="text-center py-32 text-gray-300 font-bold flex flex-col items-center gap-4">
                            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center border border-dashed border-gray-200"><AlertCircle className="w-8 h-8 opacity-20" /></div>
                            <p className="uppercase tracking-[0.2em] text-[10px] opacity-70">No matching visits found</p>
                         </TableCell></TableRow>
@@ -517,7 +526,9 @@ export default function DailyVisitsPage() {
                   </div>
                </div>
 
-               <div className="mb-6 pt-2 border-t border-gray-100">
+
+
+<div className="mb-6 pt-2 border-t border-gray-100">
                   <h3 className="font-black text-xs text-gray-500 uppercase tracking-widest mb-4 mt-4">Vitals Tracking</h3>
                   <div className="space-y-4">
                      <div className="space-y-1">
