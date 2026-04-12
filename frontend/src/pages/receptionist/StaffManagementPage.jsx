@@ -7,11 +7,12 @@ import api from "@/services/api"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { useNavigate } from "react-router-dom"
+import StaffForm from "@/components/StaffForm"
 
 export default function StaffManagementPage() {
   const navigate = useNavigate()
@@ -20,14 +21,6 @@ export default function StaffManagementPage() {
   const [search, setSearch] = useState("")
   const [roleFilter, setRoleFilter] = useState("ALL")
   const { toast } = useToast()
-
-  // Add Staff Dialog
-  const [isAddOpen, setIsAddOpen] = useState(false)
-  const [addForm, setAddForm] = useState({ name: "", email: "", password: "password123", role: "DOCTOR", specialization: "", licenseNumber: "" })
-
-  // Edit Staff Dialog
-  const [isEditOpen, setIsEditOpen] = useState(false)
-  const [editForm, setEditForm] = useState({ id: "", name: "", email: "", role: "DOCTOR", specialization: "", licenseNumber: "" })
 
   const loadData = async () => {
     try {
@@ -47,21 +40,6 @@ export default function StaffManagementPage() {
 
   useEffect(() => { loadData() }, [])
 
-  // CREATE STAFF
-  const handleAddStaff = async (e) => {
-    e.preventDefault()
-    console.log("[StaffPage] Creating staff:", addForm)
-    try {
-      await api.post("/api/staff/create", addForm)
-      toast({ title: "Staff Registered", description: `${addForm.name} has been added to the system.` })
-      setIsAddOpen(false)
-      setAddForm({ name: "", email: "", password: "password123", role: "DOCTOR", specialization: "", licenseNumber: "" })
-      loadData()
-    } catch (err) {
-      console.error("[StaffPage] Error creating staff:", err)
-      toast({ title: "Failed to Add Staff", description: err.response?.data?.error || "Registration error", variant: "destructive" })
-    }
-  }
 
   // TOGGLE STAFF STATUS (Activate / Deactivate)
   const handleToggleStatus = async (staffMember) => {
@@ -77,41 +55,20 @@ export default function StaffManagementPage() {
     }
   }
 
-  // OPEN EDIT DIALOG
-  const openEditDialog = (staffMember) => {
-    console.log("[StaffPage] Opening edit dialog for:", staffMember.name)
-    setEditForm({
-      id: staffMember.id,
-      name: staffMember.name || "",
-      email: staffMember.email || "",
-      role: staffMember.role || "DOCTOR",
-      specialization: staffMember.specialization || "",
-      licenseNumber: staffMember.licenseNumber || ""
-    })
-    setIsEditOpen(true)
-  }
 
   // SAVE EDIT
-  const handleEditStaff = async (e) => {
-    e.preventDefault()
-    console.log("[StaffPage] Saving edit for:", editForm.id)
+  const handleEditStaff = async (id, formData) => {
+    console.log("[StaffPage] Saving edit for:", id)
     try {
-      await api.put(`/api/staff/${editForm.id}`, {
-        name: editForm.name,
-        email: editForm.email,
-        role: editForm.role,
-        specialization: editForm.specialization,
-        licenseNumber: editForm.licenseNumber
-      })
-      toast({ title: "Profile Updated", description: `${editForm.name}'s profile has been saved.` })
-      setIsEditOpen(false)
+      await api.put(`/api/staff/${id}`, formData)
+      toast({ title: "Profile Updated", description: "The staff profile has been explicitly saved and updated." })
+      document.body.style.pointerEvents = ""; // Safely release any generic shadcn locks
       loadData()
     } catch (err) {
       console.error("[StaffPage] Error editing staff:", err)
       toast({ title: "Update Failed", description: err.response?.data?.error || "Could not update profile", variant: "destructive" })
     }
   }
-
   const filteredStaff = staff.filter(s => {
     const name = s.name?.toLowerCase() || ""
     const email = s.email?.toLowerCase() || ""
@@ -141,7 +98,6 @@ export default function StaffManagementPage() {
         <Button
           type="button"
           onClick={() => {
-            console.log("[StaffPage] Navigating to Staff Registration page");
             navigate("/receptionist/staff/register");
           }}
           className="bg-blue-600 hover:bg-blue-700 rounded-2xl font-black uppercase tracking-widest text-[11px] px-10 h-14 flex gap-3 shadow-xl shadow-blue-100 transition-all hover:scale-105 active:scale-95"
@@ -202,6 +158,7 @@ export default function StaffManagementPage() {
           <TableHeader className="bg-gray-50/10 h-16">
             <TableRow className="hover:bg-transparent border-gray-50">
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 pl-12">Identity</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Qualification</TableHead>
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Email ID</TableHead>
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Role</TableHead>
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Specialization</TableHead>
@@ -220,6 +177,7 @@ export default function StaffManagementPage() {
                     <span className="font-black text-gray-900 text-sm whitespace-nowrap">{(s.role === 'DOCTOR' ? 'Dr. ' : '') + (s.name || "")}</span>
                   </div>
                 </TableCell>
+                <TableCell className="text-[12px] font-bold text-gray-500 uppercase">{s.qualification || "--"}</TableCell>
                 <TableCell className="text-[12px] font-bold text-gray-500">{s.email || ""}</TableCell>
                 <TableCell>
                   <Badge className={`rounded-xl px-4 py-1.5 text-[9px] font-black uppercase tracking-widest border-none ${
@@ -241,7 +199,7 @@ export default function StaffManagementPage() {
                         <MoreHorizontal className="w-5 h-5"/>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-60 rounded-[2rem] border-gray-100 shadow-2xl p-4 bg-white ring-1 ring-black/5 z-[150]">
+                    <DropdownMenuContent align="end" className="w-60 rounded-[2rem] border-gray-100 shadow-2xl p-4 bg-white ring-1 ring-black/5 z-[50]">
                       <DropdownMenuLabel className="text-[10px] font-black uppercase text-gray-400 px-4 py-2 tracking-[0.2em]">Actions</DropdownMenuLabel>
 
                       <DropdownMenuItem
@@ -257,10 +215,7 @@ export default function StaffManagementPage() {
 
                       <DropdownMenuItem
                         className="rounded-2xl font-black text-[11px] uppercase tracking-widest gap-4 py-4 hover:bg-blue-50 text-blue-600 cursor-pointer transition-colors"
-                        onSelect={(e) => {
-                          e.preventDefault();
-                          setTimeout(() => openEditDialog(s), 0);
-                        }}
+                        onSelect={() => navigate("/receptionist/staff/register", { state: { editData: s } })}
                       >
                         <PenSquare className="w-4 h-4" /> Edit Profile
                       </DropdownMenuItem>
@@ -300,98 +255,6 @@ export default function StaffManagementPage() {
         </Table>
       </Card>
 
-      {/* ADD STAFF DIALOG */}
-      <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-        <DialogContent className="max-w-[480px] rounded-[3rem] p-0 overflow-hidden border-none shadow-2xl bg-white z-[100]">
-          <div className="p-10 pb-6">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-black tracking-tight">Add New Staff</DialogTitle>
-              <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mt-2">Register a new team member.</p>
-            </DialogHeader>
-          </div>
-          <form onSubmit={handleAddStaff} className="p-10 pt-0 space-y-6">
-            <div className="grid grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Full Name</Label>
-                <Input className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800" value={addForm.name} onChange={e => setAddForm({...addForm, name: e.target.value})} placeholder="Dr. John Doe" required />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Email Address</Label>
-                <Input type="email" className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800" value={addForm.email} onChange={e => setAddForm({...addForm, email: e.target.value})} placeholder="doctor@hospital.com" required />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Staff Role</Label>
-                <Select value={addForm.role} onValueChange={v => setAddForm({...addForm, role: v})}>
-                  <SelectTrigger className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold shadow-none"><SelectValue/></SelectTrigger>
-                  <SelectContent className="rounded-2xl border-gray-100">
-                    <SelectItem value="DOCTOR">Physician (Doctor)</SelectItem>
-                    <SelectItem value="RECEPTIONIST">Receptionist</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Password</Label>
-                <Input type="password" className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold" value={addForm.password} onChange={e => setAddForm({...addForm, password: e.target.value})} required />
-              </div>
-            </div>
-
-            {addForm.role === 'DOCTOR' && (
-              <div className="grid grid-cols-2 gap-5 animate-in fade-in slide-in-from-top-3">
-                <div className="space-y-1.5">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Specialization</Label>
-                  <Input className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold" value={addForm.specialization} onChange={e => setAddForm({...addForm, specialization: e.target.value})} placeholder="General Practice" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">License Number</Label>
-                  <Input className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold" value={addForm.licenseNumber} onChange={e => setAddForm({...addForm, licenseNumber: e.target.value})} placeholder="MC-XXXXX" />
-                </div>
-              </div>
-            )}
-
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 rounded-[1.5rem] h-16 font-black uppercase tracking-widest text-[11px] mt-6 shadow-xl shadow-blue-100">Create Staff Profile</Button>
-            <Button type="button" variant="ghost" className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-gray-300" onClick={() => setIsAddOpen(false)}>Cancel</Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* EDIT STAFF DIALOG */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-[480px] rounded-[3rem] p-0 overflow-hidden border-none shadow-2xl bg-white z-[100]">
-          <div className="p-10 pb-6">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-black tracking-tight">Edit Staff Profile</DialogTitle>
-              <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mt-2">Update team member information.</p>
-            </DialogHeader>
-          </div>
-          <form onSubmit={handleEditStaff} className="p-10 pt-0 space-y-6">
-            <div className="grid grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Full Name</Label>
-                <Input className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} required />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Email</Label>
-                <Input type="email" className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800" value={editForm.email} onChange={e => setEditForm({...editForm, email: e.target.value})} required />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Specialization</Label>
-                <Input className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold" value={editForm.specialization} onChange={e => setEditForm({...editForm, specialization: e.target.value})} placeholder="Cardiology" />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">License Number</Label>
-                <Input className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold" value={editForm.licenseNumber} onChange={e => setEditForm({...editForm, licenseNumber: e.target.value})} placeholder="MC-XXXXX" />
-              </div>
-            </div>
-
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 rounded-[1.5rem] h-16 font-black uppercase tracking-widest text-[11px] mt-6 shadow-xl shadow-blue-100">Save Changes</Button>
-            <Button type="button" variant="ghost" className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-gray-300" onClick={() => setIsEditOpen(false)}>Cancel</Button>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

@@ -179,7 +179,7 @@ export async function listVisits(req, res) {
       include: {
         patient: true,
         receptionist: { select: { name: true } },
-        doctor: { select: { name: true } },
+        doctor: { select: { name: true, qualification: true, specialization: true, licenseNumber: true, clinicName: true, phone: true } },
         vitals: true,
         consultation: {
           include: {
@@ -206,7 +206,22 @@ export async function getVisitDetails(req, res) {
       patient: true,
       vitals: true,
       receptionist: { select: { name: true } },
-      doctor: { select: { name: true } },
+      doctor: { 
+        select: { 
+          name: true, 
+          clinicName: true,
+          doorNo: true,
+          street: true,
+          area: true,
+          city: true,
+          state: true,
+          pincode: true,
+          phone: true,
+          qualification: true,
+          specialization: true,
+          licenseNumber: true
+        } 
+      },
       consultation: { 
         include: { 
           prescription: {

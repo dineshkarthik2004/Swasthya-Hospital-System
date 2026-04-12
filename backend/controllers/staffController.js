@@ -19,6 +19,14 @@ export async function listStaff(req, res) {
         role: true,
         specialization: true,
         licenseNumber: true,
+        qualification: true,
+        clinicName: true,
+        doorNo: true,
+        street: true,
+        area: true,
+        city: true,
+        state: true,
+        pincode: true,
         isActive: true,
         createdAt: true
       },
@@ -42,7 +50,16 @@ export async function listDoctors(req, res) {
       select: {
         id: true,
         name: true,
-        specialization: true
+        specialization: true,
+        qualification: true,
+        clinicName: true,
+        doorNo: true,
+        street: true,
+        area: true,
+        city: true,
+        state: true,
+        pincode: true,
+        phone: true
       },
       orderBy: { name: "asc" }
     });
@@ -60,7 +77,7 @@ export async function createStaff(req, res) {
   try {
     const data = req.body;
     if (!data || typeof data !== "object") return res.status(400).json({ error: "Invalid input" });
-    const { name, email, password, role, specialization, licenseNumber, phone } = data;
+    const { name, email, password, role, specialization, licenseNumber, phone, qualification, clinicName, doorNo, street, area, city, state, pincode } = data;
     console.log("[StaffController] Creating new staff:", { name, email, role });
 
     if (!name || !email || !password || !role) {
@@ -84,6 +101,14 @@ export async function createStaff(req, res) {
         role: role.toUpperCase(),
         specialization: specialization || null,
         licenseNumber: licenseNumber || null,
+        qualification: qualification || null,
+        clinicName: clinicName || null,
+        doorNo: doorNo || null,
+        street: street || null,
+        area: area || null,
+        city: city || null,
+        state: state || null,
+        pincode: pincode || null,
         isActive: true
       },
       select: {
@@ -94,6 +119,14 @@ export async function createStaff(req, res) {
         role: true,
         specialization: true,
         licenseNumber: true,
+        qualification: true,
+        clinicName: true,
+        doorNo: true,
+        street: true,
+        area: true,
+        city: true,
+        state: true,
+        pincode: true,
         isActive: true,
         createdAt: true
       }
@@ -116,7 +149,7 @@ export async function updateStaff(req, res) {
     const { id } = req.params;
     const reqData = req.body;
     if (!reqData || typeof reqData !== "object") return res.status(400).json({ error: "Invalid input" });
-    const { name, email, specialization, licenseNumber, role } = reqData;
+    const { name, email, specialization, licenseNumber, role, phone, qualification, clinicName, doorNo, street, area, city, state, pincode } = reqData;
     console.log("[StaffController] Updating staff:", id);
 
     const data = {};
@@ -125,6 +158,15 @@ export async function updateStaff(req, res) {
     if (specialization !== undefined) data.specialization = specialization;
     if (licenseNumber !== undefined) data.licenseNumber = licenseNumber;
     if (role) data.role = role.toUpperCase();
+    if (phone !== undefined) data.phone = phone;
+    if (qualification !== undefined) data.qualification = qualification;
+    if (clinicName !== undefined) data.clinicName = clinicName;
+    if (doorNo !== undefined) data.doorNo = doorNo;
+    if (street !== undefined) data.street = street;
+    if (area !== undefined) data.area = area;
+    if (city !== undefined) data.city = city;
+    if (state !== undefined) data.state = state;
+    if (pincode !== undefined) data.pincode = pincode;
 
     const updated = await prisma.user.update({
       where: { id },
@@ -136,6 +178,14 @@ export async function updateStaff(req, res) {
         role: true,
         specialization: true,
         licenseNumber: true,
+        qualification: true,
+        clinicName: true,
+        doorNo: true,
+        street: true,
+        area: true,
+        city: true,
+        state: true,
+        pincode: true,
         isActive: true,
         createdAt: true
       }

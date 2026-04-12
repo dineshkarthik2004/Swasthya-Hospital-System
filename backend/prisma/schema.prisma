@@ -48,6 +48,14 @@ model User {
   role           Role      @default(RECEPTIONIST)
   specialization String?   // for DOCTOR
   licenseNumber  String?   // for DOCTOR
+  qualification  String?
+  clinicName     String?
+  doorNo         String?
+  street         String?
+  area           String?
+  city           String?
+  state          String?
+  pincode        String?
   isActive       Boolean   @default(true)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt

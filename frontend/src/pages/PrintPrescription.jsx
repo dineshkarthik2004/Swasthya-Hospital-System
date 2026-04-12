@@ -92,15 +92,23 @@ export default function PrintPrescription() {
                <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-slate-900 text-white flex items-center justify-center font-bold rounded shadow-lg">H+</div>
                   <div>
-                     <h1 className="text-3xl font-bold tracking-tighter uppercase leading-none mb-1">Jotham Health Care</h1>
-                     <p className="text-xs italic text-gray-500">"tag line tag line"</p>
-                     <p className="text-[10px] text-gray-400 mt-1">123 Tech Park, Chennai, Tamil Nadu - 600001.</p>
+                     <h1 className="text-3xl font-bold tracking-tighter uppercase leading-none mb-1">{visit.doctor?.clinicName || "Hospital"}</h1>
+                     {visit.doctor?.doorNo || visit.doctor?.street || visit.doctor?.area || visit.doctor?.city ? (
+                         <div className="text-[10px] text-gray-500 mt-1 uppercase font-bold">
+                             <p>{visit.doctor?.doorNo ? `No: ${visit.doctor.doorNo}, ` : ""}{visit.doctor?.street ? `${visit.doctor.street},` : ""}</p>
+                             <p>{visit.doctor?.area ? `${visit.doctor.area}, ` : ""}{visit.doctor?.city || ""} {visit.doctor?.pincode ? `- ${visit.doctor.pincode}` : ""}</p>
+                             {visit.doctor?.state && <p>{visit.doctor.state}</p>}
+                         </div>
+                     ) : (
+                         <div className="text-[10px] text-gray-400 mt-1"></div>
+                     )}
                   </div>
                </div>
                <div className="text-right">
                   <h2 className="text-xl font-bold leading-none mb-1">Dr. {visit.doctor?.name || "Shivananda Manohar"}</h2>
-                  <p className="text-xs text-gray-500 italic mb-1">Consultant Physician</p>
-                  <p className="text-[10px] font-bold text-gray-800">REG: MMC-12345 · PH: 9876543210</p>
+                  {visit.doctor?.qualification && <p className="text-xs text-gray-500 italic mb-1 uppercase font-bold">{visit.doctor.qualification}</p>}
+                  <p className="text-xs text-gray-500 italic mb-1">{visit.doctor?.specialization || "Consultant Physician"}</p>
+                  <p className="text-[10px] font-bold text-gray-800">{visit.doctor?.licenseNumber ? `REG: ${visit.doctor.licenseNumber}` : "REG: MMC-12345"} {visit.doctor?.phone ? `· PH: ${visit.doctor.phone}` : ""}</p>
                </div>
             </div>
 
@@ -223,6 +231,7 @@ export default function PrintPrescription() {
                      <div className="border-t-2 border-dashed border-slate-900 w-48 mb-2 mx-auto opacity-20 group-hover:opacity-100 transition-opacity"></div>
                      <p className="text-[9px] text-slate-400 italic tracking-[0.3em] uppercase mb-1">Clinic Signature</p>
                      <h3 className="text-xl font-bold text-slate-900 leading-none uppercase tracking-tight">Dr. {visit.doctor?.name || "Shivananda Manohar"}</h3>
+                     {visit.doctor?.qualification && <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase">{visit.doctor.qualification}</p>}
                      <p className="text-[8px] text-slate-300 mt-1 uppercase tracking-widest">
                         {new Date(visit.updatedAt || Date.now()).toLocaleDateString("en-US", { hour: '2-digit', minute: '2-digit' })}
                      </p>
