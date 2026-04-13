@@ -119,8 +119,10 @@ export default function VisitHistoryPage() {
                     key={v.id} 
                     className={`transition-colors border-gray-50 h-14 ${['COMPLETED', 'PRESCRIPTION_COMPLETED', 'CONSULTED'].includes(v.status) ? 'cursor-pointer hover:bg-blue-50/50' : 'hover:bg-gray-50/50'}`}
                     onClick={() => {
-                       if (['COMPLETED', 'PRESCRIPTION_COMPLETED', 'CONSULTED'].includes(v.status)) {
+                       if ((v.paymentStatus || "").toUpperCase() === "PAID") {
                           navigate(`/print/${v.id}`)
+                       } else {
+                          alert("Payment not done");
                        }
                     }}
                  >

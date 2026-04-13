@@ -145,7 +145,13 @@ export default function MyPatientsHistory() {
                   <TableRow 
                     key={visit.id} 
                     className="group hover:bg-blue-50/30 cursor-pointer h-24 border-b border-gray-50 transition-all duration-200"
-                    onClick={() => navigate(`/doctor/history/${visit.id}`)}
+                    onClick={() => {
+                        if ((visit.paymentStatus || "").toUpperCase() === "PAID") {
+                            navigate(`/doctor/history/${visit.id}`);
+                        } else {
+                            alert("Payment not done");
+                        }
+                    }}
                   >
                     <TableCell className="px-8">
                       <div className="flex flex-col">
