@@ -130,6 +130,10 @@ export default function PrintPrescription() {
                            <p className="text-sm border-l border-gray-300 pl-4"><span className="text-gray-500 uppercase text-[10px] mr-2">Height:</span> <span className="font-medium uppercase">{patient.height}</span></p>
                         )}
                      </div>
+                     <div className="flex items-center gap-4 mt-1">
+                        <p className="text-sm"><span className="text-gray-500 uppercase text-[10px] mr-2">Phone:</span> <span className="font-medium">{patient.phone || "N/A"}</span></p>
+                        <p className="text-sm border-l border-gray-300 pl-4"><span className="text-gray-500 uppercase text-[10px] mr-2">ABHA:</span> <span className="font-medium">{patient.abhaNumber || patient.abha || "xx-xxxx-xxxx-xxxx"}</span></p>
+                     </div>
                   </div>
                   <div className="text-right space-y-1">
                      <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">Visit Info</p>
