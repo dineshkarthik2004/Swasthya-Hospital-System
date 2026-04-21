@@ -118,7 +118,11 @@ export default function DoctorPatientHistoryDetails() {
                 <span>·</span>
                 <span>PH: {patient.phone || "N/A"}</span>
                 <span>·</span>
-                <span className="text-blue-600 bg-blue-100 px-3 py-0.5 rounded-full">ID: {patient.id?.slice(-8)}</span>
+                <span className="text-blue-600 bg-blue-100 px-3 py-0.5 rounded-full">UHID: {patient.uhid || "N/A"}</span>
+                <span>·</span>
+                <span className="text-emerald-600 bg-emerald-100 px-3 py-0.5 rounded-full">ABHA: {patient.abha || "N/A"}</span>
+                <span>·</span>
+                <span className="text-gray-600 bg-gray-100 px-3 py-0.5 rounded-full">ID: {patient.id?.slice(-8)}</span>
               </div>
               <p className="text-xs font-bold text-gray-400 mt-2 uppercase tracking-[0.2em]">
                 Visit Date: {new Date(selectedVisit.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}
@@ -209,11 +213,11 @@ export default function DoctorPatientHistoryDetails() {
               </div>
             </div>
             <div className="space-y-3">
-              <h4 className="text-xs font-black tracking-[0.2em] text-gray-500 uppercase ml-1">Remarks</h4>
+              <h4 className="text-xs font-black tracking-[0.2em] text-gray-500 uppercase ml-1">Investigation</h4>
               <div className="bg-orange-50/30 p-8 rounded-[2rem] border border-orange-100 text-gray-700 font-medium leading-relaxed shadow-inner min-h-[120px]">
                 {(() => {
                   const val = selectedVisit.consultation?.consultationNotes?.split('\nRemarks:')[1]?.trim();
-                  return (!val || val.toLowerCase() === 'none' || val === 'undefined') ? "No remarks provided." : val;
+                  return (!val || val.toLowerCase() === 'none' || val === 'undefined') ? "No investigation provided." : val;
                 })()}
               </div>
             </div>

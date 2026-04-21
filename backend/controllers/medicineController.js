@@ -64,7 +64,7 @@ const loadMedicines = () => {
 // Used by BOTH manual search and voice matching for consistent behavior.
 // Returns ALL matches, sorted: startsWith first, then contains.
 // No result limit.
-const rankMedicines = (query, allMedicines) => {
+const rankMedicines = (query, allMedicines, searchField = 'name') => {
     if (!query) return [];
 
     const q = query.toLowerCase().trim();
@@ -74,9 +74,15 @@ const rankMedicines = (query, allMedicines) => {
     const containsMatches = [];
 
     for (const med of allMedicines) {
-        if (med.nameLower.startsWith(q)) {
+        let fieldToSearch = med.nameLower; // default to name search
+        // Check if searching by composition
+        if (searchField === 'composition') {
+             fieldToSearch = (med.generic || "").toLowerCase();
+        }
+
+        if (fieldToSearch.startsWith(q)) {
             startsWithMatches.push(med);
-        } else if (med.nameLower.includes(q)) {
+        } else if (fieldToSearch.includes(q)) {
             containsMatches.push(med);
         }
     }
@@ -92,13 +98,14 @@ const rankMedicines = (query, allMedicines) => {
 // ─── Manual search endpoint ──────────────────────────────────────────────────
 export const searchMedicines = async (req, res) => {
     const query = (req.query.q || "").trim();
-    console.log("Hitting searchMedicines, the query is:", query);
+    const field = (req.query.field || "name").trim(); // new optional search field filter
+    console.log(`Hitting searchMedicines, the query is: ${query}, field: ${field}`);
 
     // Minimum 3 characters to avoid excessive load
     if (query.length < 3) return res.json([]);
 
     const medicines = loadMedicines();
-    const results = rankMedicines(query, medicines);
+    const results = rankMedicines(query, medicines, field);
 
     // Return ALL matches — no .slice() cap
     // Map to return format (exclude internal nameLower field)
@@ -107,7 +114,7 @@ export const searchMedicines = async (req, res) => {
         composition: m.generic
     }));
 
-    console.log(`Search "${query}" → ${response.length} results`);
+    console.log(`Search "${query}" by ${field} → ${response.length} results`);
     res.json(response);
 };
 

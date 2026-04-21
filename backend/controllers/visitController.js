@@ -364,7 +364,9 @@ export async function receptionCreateVisit(req, res) {
       doctorId,
       bloodGroup,
       appointmentDate,
-      appointmentTime
+      appointmentTime,
+      uhid,
+      abha
     } = req.body;
 
     if (!name || !phone || !age || !gender) {
@@ -389,6 +391,8 @@ export async function receptionCreateVisit(req, res) {
       if (gender) updateData.gender = gender.toUpperCase();
       if (dob) updateData.dateOfBirth = dob;
       if (bloodGroup) updateData.bloodGroup = bloodGroup;
+      if (uhid) updateData.uhid = uhid;
+      if (abha) updateData.abha = abha;
 
       patient = await prisma.patient.update({
         where: { id: patient.id },
@@ -404,7 +408,9 @@ export async function receptionCreateVisit(req, res) {
           gender: gender ? gender.toUpperCase() : "MALE",
           dateOfBirth: dob,
           registeredById: req.user.userId,
-          bloodGroup: bloodGroup || null
+          bloodGroup: bloodGroup || null,
+          uhid: uhid || null,
+          abha: abha || null
         }
       });
     }
@@ -455,5 +461,33 @@ export async function receptionCreateVisit(req, res) {
   } catch (error) {
     console.error("[VisitController] Error in reception-create:", error);
     return res.status(500).json({ error: "Failed to create visit" });
+  }
+}
+
+// PATCH /api/visits/:id/patient-identity
+export async function updatePatientIdentity(req, res) {
+  try {
+    const { id } = req.params; // visit id
+    const { uhid, abha } = req.body;
+
+    const visit = await prisma.visit.findUnique({
+      where: { id },
+      include: { patient: true }
+    });
+
+    if (!visit) return res.status(404).json({ error: "Visit not found" });
+
+    const updatedPatient = await prisma.patient.update({
+      where: { id: visit.patientId },
+      data: { 
+        uhid: uhid || undefined, 
+        abha: abha || undefined 
+      }
+    });
+
+    return res.status(200).json(updatedPatient);
+  } catch (error) {
+    console.error("[VisitController] Error updating identity:", error);
+    return res.status(500).json({ error: "Failed to update patient identity" });
   }
 }

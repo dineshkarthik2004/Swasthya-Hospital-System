@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticateToken, requireRole } from "../middleware/auth.js";
-import { createVisit, listVisits, assignDoctor, updateVisitStatus, getReceptionistStats, getVisitDetails, receptionCreateVisit, collectFee } from "../controllers/visitController.js";
+import { createVisit, listVisits, assignDoctor, updateVisitStatus, getReceptionistStats, getVisitDetails, receptionCreateVisit, collectFee, updatePatientIdentity } from "../controllers/visitController.js";
 
 const router = Router();
 
@@ -19,5 +19,6 @@ router.post("/:id/collect-fee", authenticateToken, requireRole("RECEPTIONIST", "
 
 // Receptionist updates status generally
 router.patch("/:id/status", authenticateToken, requireRole("RECEPTIONIST", "DOCTOR"), updateVisitStatus);
+router.patch("/:id/patient-identity", authenticateToken, requireRole("RECEPTIONIST", "ADMIN"), updatePatientIdentity);
 
 export default router;

@@ -29,6 +29,8 @@ export default function CreatePatientVisitPage() {
     appointmentDate: "",
     appointmentTime: "",
     complaint: "",
+    uhid: "",
+    abha: "",
     vitals: {
       bloodPressure: "",
       pulse: "",
@@ -72,6 +74,8 @@ export default function CreatePatientVisitPage() {
         gender: full.gender || "MALE",
         email: full.email || "",
         bloodGroup: full.bloodGroup || "",
+        uhid: full.uhid || "",
+        abha: full.abha || "",
         vitals: {
            bloodPressure: lastVisit?.vitals?.bloodPressure || "",
            pulse: lastVisit?.vitals?.pulse || "",
@@ -242,17 +246,38 @@ export default function CreatePatientVisitPage() {
                            </SelectContent>
                         </Select>
                      </div>
-                     <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Email</Label>
-                        <Input 
-                           value={formData.email}
-                           onChange={e => setFormData({...formData, email: e.target.value})}
-                           placeholder="Optional"
-                           type="email"
-                           className="h-14 rounded-2xl border-gray-50 bg-gray-50/50 font-bold text-sm shadow-inner"
-                        />
-                     </div>
-                  </div>
+                      <div className="space-y-2">
+                         <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Email</Label>
+                         <Input 
+                            value={formData.email}
+                            onChange={e => setFormData({...formData, email: e.target.value})}
+                            placeholder="Optional"
+                            type="email"
+                            className="h-14 rounded-2xl border-gray-50 bg-gray-50/50 font-bold text-sm shadow-inner"
+                         />
+                      </div>
+                   </div>
+
+                   <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                         <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">UHID Number</Label>
+                         <Input 
+                            value={formData.uhid}
+                            onChange={e => setFormData({...formData, uhid: e.target.value})}
+                            placeholder="Enter UHID"
+                            className="h-14 rounded-2xl border-gray-50 bg-gray-50/50 font-bold text-sm shadow-inner"
+                         />
+                      </div>
+                      <div className="space-y-2">
+                         <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">ABHA ID</Label>
+                         <Input 
+                            value={formData.abha}
+                            onChange={e => setFormData({...formData, abha: e.target.value})}
+                            placeholder="Enter ABHA"
+                            className="h-14 rounded-2xl border-gray-50 bg-gray-50/50 font-bold text-sm shadow-inner"
+                         />
+                      </div>
+                   </div>
 
                   <div className="grid grid-cols-3 gap-6">
                      <div className="space-y-2">

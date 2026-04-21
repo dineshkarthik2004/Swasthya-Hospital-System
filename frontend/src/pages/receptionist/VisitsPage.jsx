@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
@@ -20,6 +21,12 @@ export default function DailyVisitsPage() {
    const [doctors, setDoctors] = useState([])
    const [loading, setLoading] = useState(true)
    const [search, setSearch] = useState("")
+   const [dateRange, setDateRange] = useState({ start: "", end: "" })
+   const [currentPage, setCurrentPage] = useState(1)
+   const [uhid, setUhid] = useState("")
+   const [abha, setAbha] = useState("")
+   const itemsPerPage = 10
+   const navigate = useNavigate()
    const { toast } = useToast()
 
    // Vitals State
@@ -91,9 +98,9 @@ export default function DailyVisitsPage() {
       }
    }
 
-   const loadData = async () => {
+   const loadData = async (silent = false) => {
       try {
-         console.log("[VisitsPage] Loading clinic data...")
+         if (!silent) setLoading(true)
          const [sRes, vRes, dRes] = await Promise.all([
             api.get("/api/visits/stats/receptionist"),
             api.get("/api/visits"),
@@ -102,12 +109,8 @@ export default function DailyVisitsPage() {
          setStats(sRes.data)
          setVisits(vRes.data || [])
          setDoctors(dRes.data || [])
-         console.log("[VisitsPage] VISITS:", vRes.data);
-         console.log("[VisitsPage] DOCTORS:", dRes.data);
-         console.log("[VisitsPage] Loaded:", (vRes.data || []).length, "visits,", (dRes.data || []).length, "doctors")
       } catch (err) {
-         console.error("[VisitsPage] Error loading data:", err)
-         toast({ title: "Error", description: "Failed to load clinic data. Check DB connection.", variant: "destructive" })
+         toast({ title: "Sync Error", description: "Could not refresh operational data.", variant: "destructive" })
       } finally {
          setLoading(false)
       }
@@ -179,28 +182,47 @@ export default function DailyVisitsPage() {
    }
 
    const handleCollectMoney = async (visitId) => {
-      console.log("[VisitsPage] Collecting money for visit:", visitId)
       try {
          await api.post(`/api/visits/${visitId}/collect-fee`)
-         toast({ title: "Payment Collected", description: "Fee collected. Visit moved to history." })
-         loadData()
+         toast({ title: "Payment Collected", description: "Operation successfully logged." })
+         loadData(true) // Silent reload for speed
       } catch (err) {
-         console.error("[VisitsPage] Error updating payment:", err)
-         toast({ title: "Action Failed", description: "Could not update payment status", variant: "destructive" })
+         toast({ title: "Action Failed", description: "Payment processing error.", variant: "destructive" })
       }
    }
 
    useEffect(() => { loadData() }, [])
+   useEffect(() => { setCurrentPage(1) }, [search, dateRange])
 
-   const filteredVisits = visits.filter(v => {
-      const roleMatches = ["WAITING", "VITALS_COMPLETED", "ASSIGNED_TO_DOCTOR", "PRESCRIPTION_COMPLETED"].includes(v.status);
-      const searchMatches = (
-         (v.patient?.name || "").toLowerCase().includes(search.toLowerCase()) ||
-         (v.notes || "").toLowerCase().includes(search.toLowerCase()) ||
-         (v.doctor?.name || "").toLowerCase().includes(search.toLowerCase())
-      );
-      return roleMatches && searchMatches;
-   })
+    const filteredVisits = visits.filter(v => {
+       const searchMatches = (
+          (v.patient?.name || "").toLowerCase().includes(search.toLowerCase()) ||
+          (v.patient?.phone || "").toLowerCase().includes(search.toLowerCase()) ||
+          (v.notes || "").toLowerCase().includes(search.toLowerCase()) ||
+          (v.doctor?.name || "").toLowerCase().includes(search.toLowerCase())
+       );
+       
+       let dateMatches = true;
+       if (dateRange.start && dateRange.end) {
+          const vDate = new Date(v.createdAt);
+          vDate.setHours(0,0,0,0);
+          const start = new Date(dateRange.start);
+          start.setHours(0,0,0,0);
+          const end = new Date(dateRange.end);
+          end.setHours(0,0,0,0);
+          dateMatches = (vDate >= start && vDate <= end);
+       } else if (dateRange.start || dateRange.end) {
+          // If only one is selected, match that day
+          const vDate = new Date(v.createdAt).toLocaleDateString();
+          const targetDate = new Date(dateRange.start || dateRange.end).toLocaleDateString();
+          dateMatches = vDate === targetDate;
+       }
+
+       return searchMatches && dateMatches;
+    })
+
+    const totalPages = Math.ceil(filteredVisits.length / itemsPerPage);
+    const paginatedVisits = filteredVisits.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
    if (loading) return (
       <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
@@ -250,16 +272,44 @@ export default function DailyVisitsPage() {
          </div>
 
          <div className="space-y-6">
-            <div className="flex items-center justify-between px-2">
-               <h2 className="text-xl font-black text-gray-900 tracking-tight">Active Visit Logs</h2>
-               <div className="relative w-64">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                     className="pl-9 rounded-full bg-white border-gray-200 h-10 text-xs font-bold"
-                     placeholder="Search visits..."
-                     value={search}
-                     onChange={e => setSearch(e.target.value)}
-                  />
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-2">
+               <h2 className="text-xl font-black text-gray-900 tracking-tight">Visit Management</h2>
+               
+               <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
+                    <Calendar className="w-4 h-4 text-blue-500" /> 
+                    <input 
+                      type="date" 
+                      className="bg-transparent border-none text-[11px] font-black text-gray-600 focus:outline-none" 
+                      value={dateRange.start}
+                      onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+                    />
+                    <span className="text-gray-300 mx-1 font-black">─</span>
+                    <input 
+                      type="date" 
+                      className="bg-transparent border-none text-[11px] font-black text-gray-600 focus:outline-none" 
+                      value={dateRange.end}
+                      onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+                    />
+                    {(dateRange.start || dateRange.end) && (
+                      <button 
+                        onClick={() => setDateRange({ start: "", end: "" })}
+                        className="ml-2 text-[10px] font-black text-red-500 uppercase hover:text-red-700 transition-colors"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="relative w-64">
+                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                     <input
+                        className="w-full pl-9 pr-4 rounded-2xl border border-gray-100 bg-white h-10 text-[11px] font-black shadow-sm focus:ring-1 focus:ring-blue-100 outline-none"
+                        placeholder="Search patient, phone or doctor..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                     />
+                  </div>
                </div>
             </div>
             <Card className="border border-gray-100 shadow-sm rounded-[2.5rem] p-0 overflow-hidden bg-white">
@@ -277,34 +327,47 @@ export default function DailyVisitsPage() {
                      </TableRow>
                   </TableHeader>
                   <TableBody>
-                     {(filteredVisits || []).map(v => (
-                        <TableRow
-                           key={v.id}
-                           className="cursor-pointer hover:bg-gray-50/50 transition-all border-gray-50 h-20 group"
-                           onClick={async () => {
-                              try {
-                                 console.log("CLICKED:", v.id);
-                                 setSelectedVisit(null); // reset first
-                                 const res = await api.get(`/api/visits/${v.id}`);
-                                 console.log("DATA:", res.data);
+                     {(paginatedVisits || []).map(v => (
+                         <TableRow
+                            key={v.id}
+                            className="cursor-pointer hover:bg-gray-50/50 transition-all border-gray-50 h-20 group"
+                            onClick={async () => {
+                               // If completed or payment collected, handle navigation
+                               if (v.status === 'PRESCRIPTION_COMPLETED' || v.status === 'PAYMENT_COLLECTED' || v.status === 'COMPLETED') {
+                                  if (v.paymentStatus === 'PAID') {
+                                     navigate(`/print/${v.id}`);
+                                  } else {
+                                     window.alert("Payment not done");
+                                  }
+                                  return;
+                               }
+                               
+                               // Otherwise open side panel for operative tasks
+                               try {
+                                  console.log("CLICKED:", v.id);
+                                  setSelectedVisit(null); // reset first
+                                  const res = await api.get(`/api/visits/${v.id}`);
+                                  console.log("DATA:", res.data);
 
-                                 if (!res.data) return;
-                                 const fullVisit = res.data;
-                                 setSelectedVisit(fullVisit);
-                                 setManualVitals({
-                                    bp: fullVisit.vitals?.bloodPressure || "",
-                                    pulse: fullVisit.vitals?.pulse || "",
-                                    temp: fullVisit.vitals?.temperature || "",
-                                    weight: fullVisit.vitals?.weight || "",
-                                    height: fullVisit.vitals?.height || ""
-                                 });
-                                 setSelectedDoctor(fullVisit.doctorId || "");
-                              } catch (err) {
-                                 console.error("FETCH ERROR:", err);
-                                 toast({ title: "Error", description: "Could not load full patient record." });
-                              }
-                           }}
-                        >
+                                  if (!res.data) return;
+                                  const fullVisit = res.data;
+                                  setSelectedVisit(fullVisit);
+                                  setUhid(fullVisit.patient?.uhid || "");
+                                  setAbha(fullVisit.patient?.abha || "");
+                                  setManualVitals({
+                                     bp: fullVisit.vitals?.bloodPressure || "",
+                                     pulse: fullVisit.vitals?.pulse || "",
+                                     temp: fullVisit.vitals?.temperature || "",
+                                     weight: fullVisit.vitals?.weight || "",
+                                     height: fullVisit.vitals?.height || ""
+                                  });
+                                  setSelectedDoctor(fullVisit.doctorId || "");
+                               } catch (err) {
+                                  console.error("FETCH ERROR:", err);
+                                  toast({ title: "Error", description: "Could not load full patient record." });
+                               }
+                            }}
+                         >
                            <TableCell className="font-black text-gray-300 text-[11px] pl-10"># {(v.id || "").slice(-8).toUpperCase()}</TableCell>
                            <TableCell>
                               <div className="flex flex-col leading-tight">
@@ -375,22 +438,38 @@ export default function DailyVisitsPage() {
                                        <Users className="w-5 h-5" /> Allocate Doctor
                                     </DropdownMenuItem>
 
-                                    {v.paymentStatus !== "PAID" && (
-                                       <DropdownMenuItem
-                                          className="rounded-2xl font-black text-[10px] uppercase tracking-widest gap-3 py-4 cursor-pointer focus:bg-green-50 focus:text-green-600 animate-in fade-in"
-                                          onSelect={(e) => {
-                                             e.preventDefault();
-                                             handleCollectMoney(v.id);
-                                          }}
-                                       >
-                                          <Wallet className="w-5 h-5" /> Collect Fee
-                                       </DropdownMenuItem>
-                                    )}
+                                     {v.paymentStatus !== "PAID" && (
+                                        <DropdownMenuItem
+                                           className="rounded-2xl font-black text-[10px] uppercase tracking-widest gap-3 py-4 cursor-pointer focus:bg-green-50 focus:text-green-600 animate-in fade-in"
+                                           onSelect={(e) => {
+                                              e.preventDefault();
+                                              handleCollectMoney(v.id);
+                                           }}
+                                        >
+                                           <Wallet className="w-5 h-5" /> Collect Fee
+                                        </DropdownMenuItem>
+                                     )}
 
-                                    <div className="h-px bg-gray-50 my-2 mx-2"></div>
-                                    <DropdownMenuItem className="rounded-2xl font-black text-[10px] uppercase tracking-widest gap-3 py-4 cursor-pointer text-red-500 hover:bg-red-50">
-                                       Cancel Visit
-                                    </DropdownMenuItem>
+                                     {(v.status === 'PRESCRIPTION_COMPLETED' || v.status === 'PAYMENT_COLLECTED' || v.status === 'COMPLETED') && (
+                                        <DropdownMenuItem
+                                           className="rounded-2xl font-black text-[10px] uppercase tracking-widest gap-3 py-4 cursor-pointer focus:bg-blue-50 focus:text-blue-600"
+                                           onSelect={(e) => {
+                                              e.preventDefault();
+                                              if (v.paymentStatus === 'PAID') {
+                                                 navigate(`/print/${v.id}`);
+                                              } else {
+                                                 toast({ title: "Payment Not Done", description: "Please collect the fee to view and print the prescription.", variant: "destructive" });
+                                              }
+                                           }}
+                                        >
+                                           <ClipboardList className="w-5 h-5" /> View Prescription
+                                        </DropdownMenuItem>
+                                     )}
+
+                                     <div className="h-px bg-gray-50 my-2 mx-2"></div>
+                                     <DropdownMenuItem className="rounded-2xl font-black text-[10px] uppercase tracking-widest gap-3 py-4 cursor-pointer text-red-500 hover:bg-red-50">
+                                        Cancel Visit
+                                     </DropdownMenuItem>
                                  </DropdownMenuContent>
                               </DropdownMenu>
                            </TableCell>
@@ -404,6 +483,31 @@ export default function DailyVisitsPage() {
                      )}
                   </TableBody>
                </Table>
+
+                {/* Pagination UI */}
+                <div className="border-t border-gray-50 p-6 flex justify-between items-center bg-gray-50/10">
+                   <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="font-black text-[10px] uppercase tracking-widest gap-2 hover:bg-white border border-transparent disabled:opacity-30"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                   >
+                      Previous
+                   </Button>
+                   <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      Page {currentPage} of {totalPages || 1}
+                   </div>
+                   <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="font-black text-[10px] uppercase tracking-widest gap-2 hover:bg-white border border-transparent disabled:opacity-30"
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages || totalPages === 0}
+                   >
+                      Next
+                   </Button>
+                </div>
             </Card>
          </div>
 
@@ -520,11 +624,34 @@ export default function DailyVisitsPage() {
                      {selectedVisit?.appointmentTime && `Slot: ${new Date(selectedVisit.appointmentTime).toLocaleString()}`}
                   </p>
 
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                     <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest mb-2">Symptoms</h3>
-                     <p className="text-sm font-bold text-gray-700">{selectedVisit?.notes || "-"}</p>
-                  </div>
-               </div>
+                   <div className="mt-4 pt-4 border-t border-gray-100">
+                      <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest mb-2">Patient Identity</h3>
+                      <div className="space-y-4">
+                         <div className="space-y-1">
+                            <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">UHID Number</Label>
+                            <Input placeholder="Enter UHID..." value={uhid} onChange={(e) => setUhid(e.target.value)} className="h-10 text-xs font-bold bg-gray-50 border-gray-100 w-full rounded-xl" />
+                         </div>
+                         <div className="space-y-1">
+                            <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">ABHA ID</Label>
+                            <Input placeholder="Enter ABHA..." value={abha} onChange={(e) => setAbha(e.target.value)} className="h-10 text-xs font-bold bg-gray-50 border-gray-100 w-full rounded-xl" />
+                         </div>
+                         <Button onClick={async () => {
+                            try {
+                               await api.patch(`/api/visits/${selectedVisit.id}/patient-identity`, { uhid, abha });
+                               toast({ title: "Identity Updated", description: "UHID and ABHA successfully saved." });
+                               loadData(true);
+                            } catch (err) {
+                               toast({ title: "Sync Failed", variant: "destructive" });
+                            }
+                         }} size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700 h-10 text-[9px] font-black uppercase tracking-widest rounded-xl">Save Identity</Button>
+                      </div>
+                   </div>
+
+                   <div className="mt-4 pt-4 border-t border-gray-100">
+                      <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest mb-2">Symptoms</h3>
+                      <p className="text-sm font-bold text-gray-700">{selectedVisit?.notes || "-"}</p>
+                   </div>
+                </div>
 
 
 

@@ -67,7 +67,6 @@ export default function AppLayout({ allowedRoles }) {
       return [
         { name: "Dashboard", path: "/receptionist/dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
         { name: "Daily Visits", path: "/receptionist/visits", icon: <ClipboardList className="w-5 h-5" /> },
-        { name: "Visit History", path: "/receptionist/visit-history", icon: <History className="w-5 h-5" /> },
         { name: "Staff Management", path: "/receptionist/staff", icon: <UserSquare className="w-5 h-5" /> },
         { name: "Patients", path: "/receptionist/patients", icon: <Users className="w-5 h-5" /> }
       ]

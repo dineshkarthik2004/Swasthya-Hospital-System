@@ -23,8 +23,8 @@ export default function ConsultationPage() {
    const [visit, setVisit] = useState(null)
 
    const [diagnosis, setDiagnosis] = useState("")
-   const [remarks, setRemarks] = useState("")
-   const [adviceInstructions, setAdviceInstructions] = useState("")
+   const [remarks, setRemarks] = useState("nil")
+   const [adviceInstructions, setAdviceInstructions] = useState("Drink plenty of water")
    const [followUpDate, setFollowUpDate] = useState("")
    const [labPending, setLabPending] = useState(false)
    const [clinicalNotes, setClinicalNotes] = useState("")
@@ -34,18 +34,26 @@ export default function ConsultationPage() {
    const [medicineSuggestions, setMedicineSuggestions] = useState([]);
    const [activeSearchIndex, setActiveSearchIndex] = useState(null);
 
+   // Composition search state
+   const [compositionSuggestions, setCompositionSuggestions] = useState([]);
+   const [activeCompositionIndex, setActiveCompositionIndex] = useState(null);
+
    // Voice candidates dropdown — shows when voice-match returns multiple options
    const [voiceCandidates, setVoiceCandidates] = useState({});
 
    // Debounce and Request cancellation refs
    const searchTimeoutRef = React.useRef(null);
    const abortControllerRef = React.useRef(null);
+   const compositionTimeoutRef = React.useRef(null);
+   const compositionAbortRef = React.useRef(null);
 
    // Cleanup timeouts and requests on unmount
    useEffect(() => {
       return () => {
          if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
          if (abortControllerRef.current) abortControllerRef.current.abort();
+         if (compositionTimeoutRef.current) clearTimeout(compositionTimeoutRef.current);
+         if (compositionAbortRef.current) compositionAbortRef.current.abort();
       };
    }, []);
 
@@ -170,6 +178,50 @@ export default function ConsultationPage() {
       setActiveSearchIndex(null);
    };
 
+   // ─── Composition search (same pattern as medicine name search) ────────
+   const fetchCompositionSuggestions = (index, query) => {
+      if (compositionTimeoutRef.current) {
+         clearTimeout(compositionTimeoutRef.current);
+         compositionTimeoutRef.current = null;
+      }
+      if (!query || query.trim().length < 3) {
+         setCompositionSuggestions([]);
+         setActiveCompositionIndex(null);
+         if (compositionAbortRef.current) {
+            compositionAbortRef.current.abort();
+            compositionAbortRef.current = null;
+         }
+         return;
+      }
+      compositionTimeoutRef.current = setTimeout(async () => {
+         if (compositionAbortRef.current) compositionAbortRef.current.abort();
+         compositionAbortRef.current = new AbortController();
+         try {
+            const res = await api.get(`/api/medicines/search?q=${encodeURIComponent(query)}&field=composition`, {
+               signal: compositionAbortRef.current.signal
+            });
+            setCompositionSuggestions(res.data || []);
+            setActiveCompositionIndex(index);
+         } catch (err) {
+            if (err.name !== 'CanceledError' && err.name !== 'AbortError') {
+               console.error("Composition search error:", err);
+            }
+         }
+      }, 450);
+   };
+
+   const handleSelectComposition = (index, suggestion) => {
+      const newMeds = [...medicines];
+      newMeds[index] = {
+         ...newMeds[index],
+         name: suggestion.name,
+         composition: suggestion.composition || ""
+      };
+      setMedicines(newMeds);
+      setCompositionSuggestions([]);
+      setActiveCompositionIndex(null);
+   };
+
    // Handle selecting a voice candidate from dropdown
    const handleSelectVoiceCandidate = (index, candidate) => {
       const newMeds = [...medicines];
@@ -188,18 +240,31 @@ export default function ConsultationPage() {
    };
 
    // Finalize
+   // Helper: append new text with comma separator (preserves old text)
+   const appendText = (oldVal, newText) => {
+      if (!newText || newText.trim() === "") return oldVal;
+      const trimmedOld = (oldVal || "").trim();
+      // If old value is empty or just the default placeholder, replace entirely
+      if (!trimmedOld || trimmedOld.toLowerCase() === "nil") return newText.trim();
+      return trimmedOld + ", " + newText.trim();
+   };
+
    const applyExtractedData = (data, type) => {
       if (type === "diagnosis" || type === "diseases_only") {
-         setDiagnosis(data.diseases || data.diagnosis || "");
+         const newVal = data.diseases || data.diagnosis || "";
+         setDiagnosis(prev => appendText(prev, newVal));
       }
       if (type === "notes") {
-         setClinicalNotes(data.notes || "");
+         const newVal = data.notes || "";
+         setClinicalNotes(prev => appendText(prev, newVal));
       }
       if (type === "remarks") {
-         setRemarks(data.notes || data.remarks || "");
+         const newVal = data.notes || data.remarks || "";
+         setRemarks(prev => appendText(prev, newVal));
       }
       if (type === "advice") {
-         setAdviceInstructions(data.notes || data.advice || "");
+         const newVal = data.notes || data.advice || "";
+         setAdviceInstructions(prev => appendText(prev, newVal));
       }
    };
 
@@ -311,10 +376,10 @@ export default function ConsultationPage() {
    };
 
    const handleVoiceResult = async (text, type) => {
-      // Direct transcription for remarks/advice as requested
+      // Direct transcription for remarks/advice — APPEND with comma
       if (type === "remarks" || type === "advice") {
-         if (type === "remarks") setRemarks(text);
-         if (type === "advice") setAdviceInstructions(text);
+         if (type === "remarks") setRemarks(prev => appendText(prev, text));
+         if (type === "advice") setAdviceInstructions(prev => appendText(prev, text));
          return;
       }
 
@@ -417,6 +482,8 @@ export default function ConsultationPage() {
                <h2 className="text-xl font-bold text-gray-900 leading-none mb-2">{visit.patient?.name || "Patient"}</h2>
                <p className="text-xs font-medium text-gray-500 mb-1">{visit.patient?.gender || "MALE"}, {new Date().getFullYear() - (new Date(visit.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} Years</p>
                <p className="text-xs font-bold text-gray-600">ID: p-{(visit.patient?.id || "").slice(-8).toUpperCase()}</p>
+               {visit.patient?.uhid && <p className="text-[11px] font-black text-blue-600 mt-1 uppercase tracking-tight">UHID: {visit.patient.uhid}</p>}
+               {visit.patient?.abha && <p className="text-[11px] font-black text-emerald-600 mt-0.5 uppercase tracking-tight">ABHA: {visit.patient.abha}</p>}
                {visit.patient?.bloodGroup && <p className="text-xs font-bold text-red-500 mt-1">Blood: {visit.patient.bloodGroup}</p>}
             </Card>
 
@@ -583,8 +650,49 @@ export default function ConsultationPage() {
                                   )}
                                </div>
                             </TableCell>
-                           <TableCell className="p-2">
-                              <Input placeholder="Paracetamol" value={med.composition} onChange={(e) => updateMedicine(index, 'composition', e.target.value)} className="h-9 text-sm font-medium border-none bg-gray-50/50 rounded-full px-4 shadow-none text-gray-400 focus-visible:ring-1 w-full" />
+                           <TableCell className="p-2 relative z-[90]">
+                              <div className="relative">
+                                 <Input 
+                                    placeholder="Search composition..." 
+                                    value={med.composition} 
+                                    onChange={(e) => {
+                                       const val = e.target.value;
+                                       updateMedicine(index, 'composition', val);
+                                       fetchCompositionSuggestions(index, val);
+                                    }}
+                                    onFocus={() => {
+                                       if ((med.composition || "").length >= 3) fetchCompositionSuggestions(index, med.composition);
+                                    }}
+                                    onBlur={() => {
+                                       setTimeout(() => {
+                                          if (activeCompositionIndex === index) {
+                                             setActiveCompositionIndex(null);
+                                             setCompositionSuggestions([]);
+                                          }
+                                       }, 200);
+                                    }}
+                                    className="h-9 text-sm font-medium border-none bg-gray-50/50 rounded-full px-4 shadow-none text-gray-400 focus-visible:ring-1 w-full" 
+                                 />
+                                 {activeCompositionIndex === index && compositionSuggestions.length > 0 && (
+                                    <div className="absolute top-full left-0 mt-1.5 bg-white border border-gray-200 shadow-2xl rounded-xl overflow-hidden z-[501] max-h-72 overflow-y-auto py-1 animate-in fade-in zoom-in-95 duration-100 w-[650px]">
+                                       {compositionSuggestions.map((s, i) => (
+                                          <div 
+                                             key={i} 
+                                             onMouseDown={(e) => {
+                                                e.preventDefault();
+                                                handleSelectComposition(index, s);
+                                             }}
+                                             className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer group transition-colors border-b border-gray-50/50 last:border-none"
+                                          >
+                                             <div className="text-[11px] text-gray-500 font-medium truncate">
+                                                {s.composition || 'NA'}
+                                             </div>
+                                             <div className="text-[13px] font-semibold text-gray-800 group-hover:text-blue-600 mt-0.5">{s.name}</div>
+                                          </div>
+                                       ))}
+                                    </div>
+                                 )}
+                              </div>
                            </TableCell>
                            <TableCell className="p-2 text-center">
                               <div className="flex items-center justify-center gap-1">
@@ -660,13 +768,13 @@ export default function ConsultationPage() {
 
                <Card className="rounded-3xl border border-gray-100 shadow-sm bg-white overflow-hidden flex flex-col pt-2 min-h-[160px]">
                   <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-                     <h3 className="text-sm font-bold text-gray-900">Remarks</h3>
+                     <h3 className="text-sm font-bold text-gray-900">Investigation</h3>
                      <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "remarks")} small />
                   </div>
                   <Textarea
                      value={remarks}
                      onChange={(e) => setRemarks(e.target.value)}
-                     placeholder="General remarks..."
+                     placeholder="Investigation..."
                      className="flex-1 border-0 rounded-none resize-none focus-visible:ring-0 px-6 py-5 min-h-[120px] shadow-none font-medium text-gray-800 text-sm bg-transparent leading-relaxed"
                   />
                </Card>

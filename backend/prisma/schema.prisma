@@ -78,6 +78,8 @@ model Patient {
   gender       Gender?
   bloodGroup   String?
   address      String?
+  uhid         String?
+  abha         String?
   registeredBy   User?   @relation("RegisteredBy", fields: [registeredById], references: [id])
   registeredById String?
   createdAt    DateTime  @default(now())

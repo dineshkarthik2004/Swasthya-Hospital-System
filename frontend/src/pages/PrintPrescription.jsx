@@ -94,13 +94,13 @@ export default function PrintPrescription() {
                   <div>
                      <h1 className="text-3xl font-bold tracking-tighter uppercase leading-none mb-1">{visit.doctor?.clinicName || "Hospital"}</h1>
                      {visit.doctor?.doorNo || visit.doctor?.street || visit.doctor?.area || visit.doctor?.city ? (
-                         <div className="text-[10px] text-gray-500 mt-1 uppercase font-bold">
-                             <p>{visit.doctor?.doorNo ? `No: ${visit.doctor.doorNo}, ` : ""}{visit.doctor?.street ? `${visit.doctor.street},` : ""}</p>
-                             <p>{visit.doctor?.area ? `${visit.doctor.area}, ` : ""}{visit.doctor?.city || ""} {visit.doctor?.pincode ? `- ${visit.doctor.pincode}` : ""}</p>
-                             {visit.doctor?.state && <p>{visit.doctor.state}</p>}
-                         </div>
+                        <div className="text-[10px] text-gray-500 mt-1 uppercase font-bold">
+                           <p>{visit.doctor?.doorNo ? `No: ${visit.doctor.doorNo}, ` : ""}{visit.doctor?.street ? `${visit.doctor.street},` : ""}</p>
+                           <p>{visit.doctor?.area ? `${visit.doctor.area}, ` : ""}{visit.doctor?.city || ""} {visit.doctor?.pincode ? `- ${visit.doctor.pincode}` : ""}</p>
+                           {visit.doctor?.state && <p>{visit.doctor.state}</p>}
+                        </div>
                      ) : (
-                         <div className="text-[10px] text-gray-400 mt-1"></div>
+                        <div className="text-[10px] text-gray-400 mt-1"></div>
                      )}
                   </div>
                </div>
@@ -132,7 +132,8 @@ export default function PrintPrescription() {
                      </div>
                      <div className="flex items-center gap-4 mt-1">
                         <p className="text-sm"><span className="text-gray-500 uppercase text-[10px] mr-2">Phone:</span> <span className="font-medium">{patient.phone || "N/A"}</span></p>
-                        <p className="text-sm border-l border-gray-300 pl-4"><span className="text-gray-500 uppercase text-[10px] mr-2">ABHA:</span> <span className="font-medium">{patient.abhaNumber || patient.abha || "xx-xxxx-xxxx-xxxx"}</span></p>
+                        <p className="text-sm border-l border-gray-300 pl-4"><span className="text-gray-500 uppercase text-[10px] mr-2">UHID:</span> <span className="font-medium">{patient.uhid || "N/A"}</span></p>
+                        <p className="text-sm border-l border-gray-300 pl-4"><span className="text-gray-500 uppercase text-[10px] mr-2">ABHA:</span> <span className="font-medium">{patient.abha || "N/A"}</span></p>
                      </div>
                   </div>
                   <div className="text-right space-y-1">
@@ -145,9 +146,9 @@ export default function PrintPrescription() {
                {/* Vitals & Diagnosis Row */}
                <div className="flex gap-6">
                   <div className="flex-1">
-                     <h4 className="text-[10px] font-bold uppercase border-b border-black mb-2 opacity-30">Diagnosis & Observation</h4>
+                     <h4 className="text-[10px] font-bold uppercase border-b border-black mb-2 opacity-30">Patient Complaints & Diagnosis</h4>
                      <div className="space-y-1 p-1">
-                        <p className="text-xs text-gray-500 italic leading-snug">Observation: <span className="text-black not-italic font-medium">{visit.notes || ""}</span></p>
+                        <p className="text-xs text-gray-500 italic leading-snug">Patient Complaints: <span className="text-black not-italic font-medium">{visit.notes || ""}</span></p>
                         <p className="text-sm font-bold text-black italic">Diagnosis: {consultation?.diagnosis || ""}</p>
                      </div>
                   </div>
@@ -215,7 +216,7 @@ export default function PrintPrescription() {
                   {/* Instructions: Rides immediately below the table */}
                   <div className="space-y-2 border-t-2 border-slate-900/10 pt-4 max-w-[70%]">
                      <div className="flex gap-4">
-                        <span className="text-[9px] font-black uppercase text-slate-400 min-w-16 pt-0.5">Remarks:</span>
+                        <span className="text-[9px] font-black uppercase text-slate-400 min-w-16 pt-0.5">Investigation:</span>
                         <span className="text-xs italic text-slate-700 border-l-2 border-slate-100 pl-3 leading-relaxed">{consultation?.consultationNotes?.split('\nRemarks:')[1]?.trim() || "-"}</span>
                      </div>
                      <div className="flex gap-4">
