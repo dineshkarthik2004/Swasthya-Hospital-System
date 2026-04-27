@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react"
 import { Building2, Stethoscope, Users, CreditCard, Activity, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react"
-import axios from "axios"
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
+import api from "@/services/api"
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -16,29 +14,29 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem("token")
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         const isHospitalAdmin = !!userData.hospitalId;
 
         if (isHospitalAdmin) {
-          const res = await axios.get(`${API_URL}/api/admin/stats`, { headers: { Authorization: `Bearer ${token}` } });
+          const res = await api.get("/api/admin/stats");
+          const data = res.data?.data || res.data;
           setStats({
-            hospitals: res.data.todayVisits, // We'll repurpose this key for the card mapping or adjust card mapping
-            doctors: res.data.totalPatients, // Repurposing
-            patients: res.data.pendingPayments, // Repurposing
-            revenue: res.data.revenue,
+            hospitals: data.todayVisits || 0, 
+            doctors: data.totalPatients || 0, 
+            patients: data.pendingPayments || 0, 
+            revenue: data.revenue || 0,
             isHospital: true
           });
         } else {
           const [hRes, dRes, pRes] = await Promise.all([
-            axios.get(`${API_URL}/api/admin/hospitals`, { headers: { Authorization: `Bearer ${token}` } }),
-            axios.get(`${API_URL}/api/admin/doctors`, { headers: { Authorization: `Bearer ${token}` } }),
-            axios.get(`${API_URL}/api/admin/patients`, { headers: { Authorization: `Bearer ${token}` } })
+            api.get("/api/admin/hospitals"),
+            api.get("/api/admin/doctors"),
+            api.get("/api/admin/patients")
           ])
           setStats({
-            hospitals: hRes.data.length,
-            doctors: dRes.data.length,
-            patients: pRes.data.length,
+            hospitals: (hRes.data?.data || hRes.data || []).length,
+            doctors: (dRes.data?.data || dRes.data || []).length,
+            patients: (pRes.data?.data || pRes.data || []).length,
             revenue: 12500,
             isHospital: false
           })

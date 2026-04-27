@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react"
 import { Settings2, Brain, Mic, Shield, Save, RefreshCcw, Power } from "lucide-react"
-import axios from "axios"
+import api from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState([])
@@ -13,10 +11,7 @@ export default function AdminSettings() {
 
   const fetchSettings = async () => {
     try {
-      const token = localStorage.getItem("token")
-      const res = await axios.get(`${API_URL}/api/admin/settings`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      const res = await api.get("/api/admin/settings")
       setSettings(res.data)
     } catch (error) {
       console.error("Error fetching settings:", error)
@@ -32,10 +27,7 @@ export default function AdminSettings() {
   const updateSetting = async (key, value) => {
     try {
       setSaving(true)
-      const token = localStorage.getItem("token")
-      await axios.post(`${API_URL}/api/admin/settings`, { key, value: String(value) }, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      await api.post("/api/admin/settings", { key, value: String(value) })
       fetchSettings()
     } catch (error) {
       console.error("Error updating setting:", error)

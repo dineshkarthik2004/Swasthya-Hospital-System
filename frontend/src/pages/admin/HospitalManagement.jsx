@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react"
 import { Building2, Plus, Edit2, Trash2, Search, X, Check, Globe, Shield, Phone, Mail } from "lucide-react"
-import axios from "axios"
+import api from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
 
 export default function HospitalManagement() {
   const [hospitals, setHospitals] = useState([])
@@ -22,10 +20,7 @@ export default function HospitalManagement() {
 
   const fetchHospitals = async () => {
     try {
-      const token = localStorage.getItem("token")
-      const res = await axios.get(`${API_URL}/api/admin/hospitals`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      const res = await api.get("/api/admin/hospitals")
       setHospitals(res.data)
     } catch (error) {
       console.error("Error fetching hospitals:", error)
@@ -41,15 +36,10 @@ export default function HospitalManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const token = localStorage.getItem("token")
       if (editingHospital) {
-        await axios.put(`${API_URL}/api/admin/hospitals/${editingHospital.id}`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        await api.put(`/api/admin/hospitals/${editingHospital.id}`, formData)
       } else {
-        await axios.post(`${API_URL}/api/admin/hospitals`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        await api.post("/api/admin/hospitals", formData)
       }
       setIsModalOpen(false)
       setEditingHospital(null)
@@ -63,10 +53,7 @@ export default function HospitalManagement() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this hospital?")) return
     try {
-      const token = localStorage.getItem("token")
-      await axios.delete(`${API_URL}/api/admin/hospitals/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      await api.delete(`/api/admin/hospitals/${id}`)
       fetchHospitals()
     } catch (error) {
       console.error("Error deleting hospital:", error)

@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react"
 import { Stethoscope, Search, Filter, Shield, MoreHorizontal, UserCheck, UserX, Building2, Mail, Phone, MapPin } from "lucide-react"
-import axios from "axios"
+import api from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
 
 export default function DoctorManagement() {
   const [doctors, setDoctors] = useState([])
@@ -14,10 +12,7 @@ export default function DoctorManagement() {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const token = localStorage.getItem("token")
-        const res = await axios.get(`${API_URL}/api/admin/doctors`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        const res = await api.get("/api/admin/doctors")
         setDoctors(res.data)
       } catch (error) {
         console.error("Error fetching doctors:", error)

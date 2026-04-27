@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react"
 import { CreditCard, Search, CheckCircle2, Clock, AlertCircle, Building2, Calendar, Download } from "lucide-react"
-import axios from "axios"
+import api from "@/services/api"
 import { Button } from "@/components/ui/button"
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
 
 export default function PaymentManagement() {
   const [payments, setPayments] = useState([])
@@ -12,10 +10,7 @@ export default function PaymentManagement() {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const token = localStorage.getItem("token")
-        const res = await axios.get(`${API_URL}/api/admin/payments`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        const res = await api.get("/api/admin/payments")
         setPayments(res.data)
       } catch (error) {
         console.error("Error fetching payments:", error)
