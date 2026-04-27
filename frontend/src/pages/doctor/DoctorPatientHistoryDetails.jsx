@@ -66,6 +66,8 @@ export default function DoctorPatientHistoryDetails() {
   const gender = (patient.gender || "Male").charAt(0).toUpperCase() + (patient.gender || "Male").slice(1).toLowerCase();
   const prescriptionItems = selectedVisit.consultation?.prescription?.items || [];
 
+  const backPath = user?.role === "ADMIN" ? "/admin/consultations" : "/doctor/history";
+
   return (
     <div className="max-w-[1000px] mx-auto py-8 px-4">
       {/* Header - No Print */}
@@ -74,7 +76,7 @@ export default function DoctorPatientHistoryDetails() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/doctor/history")}
+            onClick={() => navigate(backPath)}
             className="rounded-full hover:bg-gray-100"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />

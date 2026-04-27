@@ -7,6 +7,7 @@ export async function listStaff(req, res) {
     console.log("[StaffController] Listing all staff members");
     const staff = await prisma.user.findMany({
       where: {
+        hospitalId: req.user.hospitalId,
         role: {
           in: ["DOCTOR", "RECEPTIONIST", "LAB_TECH"]
         }
@@ -46,7 +47,11 @@ export async function listDoctors(req, res) {
   try {
     console.log("[StaffController] Listing active doctors");
     const doctors = await prisma.user.findMany({
-      where: { role: "DOCTOR", isActive: true },
+      where: { 
+        role: "DOCTOR", 
+        isActive: true,
+        hospitalId: req.user.hospitalId 
+      },
       select: {
         id: true,
         name: true,
@@ -109,7 +114,8 @@ export async function createStaff(req, res) {
         city: city || null,
         state: state || null,
         pincode: pincode || null,
-        isActive: true
+        isActive: true,
+        hospitalId: req.user.hospitalId
       },
       select: {
         id: true,
@@ -169,7 +175,10 @@ export async function updateStaff(req, res) {
     if (pincode !== undefined) data.pincode = pincode;
 
     const updated = await prisma.user.update({
-      where: { id },
+      where: { 
+        id,
+        hospitalId: req.user.hospitalId
+      },
       data,
       select: {
         id: true,
@@ -207,7 +216,10 @@ export async function toggleStaffStatus(req, res) {
     console.log("[StaffController] Toggling staff status:", id, "-> isActive:", isActive);
 
     const updated = await prisma.user.update({
-      where: { id },
+      where: { 
+        id,
+        hospitalId: req.user.hospitalId
+      },
       data: { isActive: isActive },
       select: {
         id: true,

@@ -1,194 +1,248 @@
-generator client {
-  provider        = "prisma-client-js"
-}
+  generator client {
+    provider        = "prisma-client-js"
+  }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+  datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+  }
 
-// ─── Enums ────────────────────────────────────────────────────────────────────
+  // ─── Enums ────────────────────────────────────────────────────────────────────
 
-enum Role {
-  PATIENT
-  RECEPTIONIST
-  DOCTOR
-  LAB_TECH
-}
+  enum Role {
+    PATIENT
+    RECEPTIONIST
+    DOCTOR
+    LAB_TECH
+    ADMIN
+  }
 
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-}
+  enum Gender {
+    MALE
+    FEMALE
+    OTHER
+  }
 
-enum VisitStatus {
-  WAITING
-  VITALS_COMPLETED
-  ASSIGNED_TO_DOCTOR
-  CONSULTED
-  PRESCRIPTION_COMPLETED
-  PAYMENT_COLLECTED
-}
+  enum VisitStatus {
+    WAITING
+    VITALS_COMPLETED
+    ASSIGNED_TO_DOCTOR
+    CONSULTED
+    PRESCRIPTION_COMPLETED
+    PAYMENT_COLLECTED
+  }
 
-enum PaymentStatus {
-  UNPAID
-  PAID
-  WAIVED
-}
+  enum PaymentStatus {
+    UNPAID
+    PAID
+    WAIVED
+  }
 
-// ─── Models ──────────────────────────────────────────────────────────────────
+  // ─── Models ──────────────────────────────────────────────────────────────────
 
-model User {
-  id             String    @id @default(cuid())
-  name           String
-  email          String    @unique
-  password       String
-  phone          String?
-  role           Role      @default(RECEPTIONIST)
-  specialization String?   // for DOCTOR
-  licenseNumber  String?   // for DOCTOR
-  qualification  String?
-  clinicName     String?
-  doorNo         String?
-  street         String?
-  area           String?
-  city           String?
-  state          String?
-  pincode        String?
-  isActive       Boolean   @default(true)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  model User {
+    id             String    @id @default(cuid())
+    name           String
+    email          String    @unique
+    password       String
+    phone          String?
+    role           Role      @default(RECEPTIONIST)
+    specialization String?   // for DOCTOR
+    licenseNumber  String?   // for DOCTOR
+    qualification  String?
+    clinicName     String?
+    doorNo         String?
+    street         String?
+    area           String?
+    city           String?
+    state          String?
+    pincode        String?
+    isActive       Boolean   @default(true)
+    createdAt      DateTime  @default(now())
+    updatedAt      DateTime  @updatedAt
 
-  // Relations
-  sessions            Session[]
-  patientsRegistered  Patient[]       @relation("RegisteredBy")
-  visitsAsReceptionist Visit[]        @relation("ReceptionistVisits")
-  visitsAsDoctor       Visit[]        @relation("DoctorVisits")
-  visitsBooked         Visit[]        @relation("BookedVisits")
-  consultations        Consultation[] @relation("DoctorConsultations")
-}
+    // Relations
+    sessions            Session[]
+    patientsRegistered  Patient[]       @relation("RegisteredBy")
+    visitsAsReceptionist Visit[]        @relation("ReceptionistVisits")
+    visitsAsDoctor       Visit[]        @relation("DoctorVisits")
+    visitsBooked         Visit[]        @relation("BookedVisits")
+    consultations        Consultation[] @relation("DoctorConsultations")
 
-model Patient {
-  id           String    @id @default(cuid())
-  name         String
-  phone        String    @unique
-  email        String?
-  dateOfBirth  DateTime?
-  gender       Gender?
-  bloodGroup   String?
-  address      String?
-  uhid         String?
-  abha         String?
-  registeredBy   User?   @relation("RegisteredBy", fields: [registeredById], references: [id])
-  registeredById String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+    hospitalId          String?
+    hospital            Hospital?       @relation("HospitalUsers", fields: [hospitalId], references: [id])
+  }
 
-  visits       Visit[]
-  // If patient has an app account:
-  userId       String?   @unique
-}
+  model Patient {
+    id           String    @id @default(cuid())
+    name         String
+    phone        String    @unique
+    email        String?
+    dateOfBirth  DateTime?
+    gender       Gender?
+    bloodGroup   String?
+    address      String?
+    uhid         String?
+    abha         String?
+    registeredBy   User?   @relation("RegisteredBy", fields: [registeredById], references: [id])
+    registeredById String?
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
 
-model Visit {
-  id              String      @id @default(cuid())
-  status          VisitStatus @default(WAITING)
-  feeType         String?     // "Type A", "Type B" etc.
-  paymentStatus   PaymentStatus @default(UNPAID)
-  notes           String?     // initial notes from receptionist
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+    visits       Visit[]
+    // If patient has an app account:
+    userId       String?   @unique
 
-  // Relations
-  patient         Patient     @relation(fields: [patientId], references: [id])
-  patientId       String
+    hospitalId     String?
+    hospital       Hospital? @relation("HospitalPatients", fields: [hospitalId], references: [id])
+  }
 
-  receptionist    User?        @relation("ReceptionistVisits", fields: [receptionistId], references: [id])
-  receptionistId  String?
+  model Visit {
+    id              String      @id @default(cuid())
+    status          VisitStatus @default(WAITING)
+    feeType         String?     // "Type A", "Type B" etc.
+    paymentStatus   PaymentStatus @default(UNPAID)
+    notes           String?     // initial notes from receptionist
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 
-  doctor          User?       @relation("DoctorVisits", fields: [doctorId], references: [id])
-  doctorId        String?
+    // Relations
+    patient         Patient     @relation(fields: [patientId], references: [id])
+    patientId       String
 
-  bookedBy        User?       @relation("BookedVisits", fields: [bookedById], references: [id])
-  bookedById      String?
-  relation        String?     // "SELF", "SON", "FATHER" etc.
+    receptionist    User?        @relation("ReceptionistVisits", fields: [receptionistId], references: [id])
+    receptionistId  String?
 
-  vitals          Vitals?
-  consultation    Consultation?
-  appointmentTime DateTime?
-}
+    doctor          User?       @relation("DoctorVisits", fields: [doctorId], references: [id])
+    doctorId        String?
 
-model Vitals {
-  id              String    @id @default(cuid())
-  bloodPressure   String?   // "120/80"
-  pulse           String?   // "72 bpm"
-  temperature     String?   // "98.2 °F"
-  weight          String?   // "70 kg"
-  height          String?   // "175 cm"
-  oxygenSat       String?   // "98%"
-  symptoms        String[]  // array of symptom strings
-  notes           String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+    bookedBy        User?       @relation("BookedVisits", fields: [bookedById], references: [id])
+    bookedById      String?
+    relation        String?     // "SELF", "SON", "FATHER" etc.
 
-  visit           Visit     @relation(fields: [visitId], references: [id])
-  visitId         String    @unique
-}
+    vitals          Vitals?
+    consultation    Consultation?
+    appointmentTime DateTime?
 
-model Consultation {
-  id                String    @id @default(cuid())
-  diagnosis         String?
-  consultationNotes String?
-  adviceInstructions String?
-  followUpDate      DateTime?
-  labPending        Boolean   @default(false)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+    hospitalId     String?
+    hospital       Hospital? @relation("HospitalVisits", fields: [hospitalId], references: [id])
+  }
 
-  visit             Visit     @relation(fields: [visitId], references: [id])
-  visitId           String    @unique
+  model Vitals {
+    id              String    @id @default(cuid())
+    bloodPressure   String?   // "120/80"
+    pulse           String?   // "72 bpm"
+    temperature     String?   // "98.2 °F"
+    weight          String?   // "70 kg"
+    height          String?   // "175 cm"
+    oxygenSat       String?   // "98%"
+    symptoms        String[]  // array of symptom strings
+    notes           String?
+    createdAt       DateTime  @default(now())
+    updatedAt       DateTime  @updatedAt
 
-  doctor            User      @relation("DoctorConsultations", fields: [doctorId], references: [id])
-  doctorId          String
+    visit           Visit     @relation(fields: [visitId], references: [id])
+    visitId         String    @unique
+  }
 
-  prescription      Prescription?
-}
+  model Consultation {
+    id                String    @id @default(cuid())
+    diagnosis         String?
+    consultationNotes String?
+    adviceInstructions String?
+    followUpDate      DateTime?
+    labPending        Boolean   @default(false)
+    createdAt         DateTime  @default(now())
+    updatedAt         DateTime  @updatedAt
 
-model Prescription {
-  id             String             @id @default(cuid())
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
+    visit             Visit     @relation(fields: [visitId], references: [id])
+    visitId           String    @unique
 
-  consultation   Consultation       @relation(fields: [consultationId], references: [id])
-  consultationId String             @unique
+    doctor            User      @relation("DoctorConsultations", fields: [doctorId], references: [id])
+    doctorId          String
 
-  items          PrescriptionItem[]
-}
+    prescription      Prescription?
 
-model PrescriptionItem {
-  id             String   @id @default(cuid())
-  medicineName   String
-  composition    String?  // Salt/composition like "Paracetamol"
-  dosageMorning  Float?   // 1, 0.5, 0
-  dosageAfternoon Float?
-  dosageNight    Float?
-  frequency      String?  // "Twice a day"
-  days           Int?
-  instructions   String?  // "After food"
+    hospitalId     String?
+    hospital       Hospital? @relation("HospitalConsultations", fields: [hospitalId], references: [id])
+  }
 
-  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
-  prescriptionId String
-}
+  model Prescription {
+    id             String             @id @default(cuid())
+    createdAt      DateTime           @default(now())
+    updatedAt      DateTime           @updatedAt
 
-model Session {
-  id          String    @id @default(cuid())
-  token       String    @unique
-  userId      String
-  expiresAt   DateTime
-  isValid     Boolean   @default(true)
-  ipAddress   String?
-  userAgent   String?
-  createdAt   DateTime  @default(now())
+    consultation   Consultation       @relation(fields: [consultationId], references: [id])
+    consultationId String             @unique
 
-  user        User      @relation(fields: [userId], references: [id])
-}
+    items          PrescriptionItem[]
+  }
+
+  model PrescriptionItem {
+    id             String   @id @default(cuid())
+    medicineName   String
+    composition    String?  // Salt/composition like "Paracetamol"
+    dosageMorning  Float?   // 1, 0.5, 0
+    dosageAfternoon Float?
+    dosageNight    Float?
+    frequency      String?  // "Twice a day"
+    days           Int?
+    instructions   String?  // "After food"
+
+    prescription   Prescription @relation(fields: [prescriptionId], references: [id])
+    prescriptionId String
+  }
+
+  model Session {
+    id          String    @id @default(cuid())
+    token       String    @unique
+    userId      String
+    expiresAt   DateTime
+    isValid     Boolean   @default(true)
+    ipAddress   String?
+    userAgent   String?
+    createdAt   DateTime  @default(now())
+
+    user        User      @relation(fields: [userId], references: [id])
+  }
+
+  // ─── Admin Panel Models ────────────────────────────────────────────────────────
+
+  model Hospital {
+    id                 String    @id @default(cuid())
+    name               String
+    email              String?
+    phone              String?
+    address            String?
+    subscriptionStatus String    @default("ACTIVE")
+    serviceFee         Float     @default(0.0)
+    featuresEnabled    String?   // JSON array of strings
+    createdAt          DateTime  @default(now())
+    updatedAt          DateTime  @updatedAt
+
+    users              User[]    @relation("HospitalUsers")
+    patients           Patient[] @relation("HospitalPatients")
+    visits             Visit[]   @relation("HospitalVisits")
+    consultations      Consultation[] @relation("HospitalConsultations")
+    payments           HospitalPayment[]
+  }
+
+  model HospitalPayment {
+    id             String    @id @default(cuid())
+    hospitalId     String
+    hospital       Hospital  @relation(fields: [hospitalId], references: [id])
+    amount         Float
+    status         String    @default("PENDING")
+    paymentDate    DateTime?
+    notes          String?
+    createdAt      DateTime  @default(now())
+    updatedAt      DateTime  @updatedAt
+  }
+
+  model SystemSettings {
+    id             String   @id @default(cuid())
+    key            String   @unique
+    value          String
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+  }

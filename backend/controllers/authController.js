@@ -29,9 +29,10 @@ export async function register(req, res) {
           password: hashedPassword,
           role: userRole,
           specialization: specialization || null,
-          licenseNumber: licenseNumber || null
+          licenseNumber: licenseNumber || null,
+          hospitalId: data.hospitalId || null
         },
-        select: { id: true, name: true, email: true, role: true }
+        select: { id: true, name: true, email: true, role: true, hospitalId: true }
       });
 
       // If PATIENT, create Patient profile
@@ -49,7 +50,8 @@ export async function register(req, res) {
              email: email || null,
              userId: user.id,
              gender: gender ? gender.toUpperCase() : null,
-             dateOfBirth
+             dateOfBirth,
+             hospitalId: data.hospitalId || null
           }
         });
       }
@@ -87,7 +89,7 @@ export async function login(req, res) {
     }
 
     const token = jwt.sign(
-      { userId: user.id, email: user.email, role: user.role }, 
+      { userId: user.id, email: user.email, role: user.role, hospitalId: user.hospitalId }, 
       JWT_SECRET, 
       { expiresIn: "7d" }
     );
@@ -110,10 +112,30 @@ export async function login(req, res) {
     
     console.log("[AuthController] Session record created in DB:", session.id);
 
+    const userWithHospital = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: { hospital: true }
+    });
+
     return res.status(200).json({
       message: "Login successful",
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      user: { 
+        id: user.id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role, 
+        hospitalId: user.hospitalId,
+        hospitalName: userWithHospital?.hospital?.name || null,
+        hospitalAddress: userWithHospital?.hospital ? {
+          doorNo: userWithHospital.hospital.doorNo,
+          street: userWithHospital.hospital.street,
+          area: userWithHospital.hospital.area,
+          city: userWithHospital.hospital.city,
+          state: userWithHospital.hospital.state,
+          pincode: userWithHospital.hospital.pincode
+        } : null
+      },
     });
   } catch (error) {
     console.error("[AuthController] Login FATAL Error:", error);

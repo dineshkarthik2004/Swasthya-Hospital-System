@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider } from "./context/AuthContext"
 import AppLayout from "./layouts/AppLayout"
 import LoginPage from "./pages/LoginPage"
+import AdminLayout from "./layouts/AdminLayout"
+
 
 // Receptionist Pages
 import ReceptionistDashboard from "./pages/receptionist/ReceptionistDashboard"
@@ -22,6 +24,15 @@ import DoctorPatientHistoryDetails from "./pages/doctor/DoctorPatientHistoryDeta
 import PatientRecordsPage from "./pages/patient/PatientRecordsPage"
 import CreateVisitPage from "./pages/patient/CreateVisitPage"
 
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard"
+import HospitalManagement from "./pages/admin/HospitalManagement"
+import DoctorManagement from "./pages/admin/DoctorManagement"
+import PatientManagement from "./pages/admin/PatientManagement"
+import PaymentManagement from "./pages/admin/PaymentManagement"
+import AdminSettings from "./pages/admin/AdminSettings"
+
+
 // Auth
 import PatientRegisterPage from "./pages/patient/PatientRegisterPage"
 
@@ -38,7 +49,7 @@ function App() {
         <Route path="/register" element={<PatientRegisterPage />} />
         
         {/* Receptionist Routes */}
-        <Route path="/receptionist" element={<AppLayout allowedRoles={["RECEPTIONIST", "ADMIN"]} />}>
+        <Route path="/receptionist" element={<AppLayout allowedRoles={["RECEPTIONIST"]} />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<ReceptionistDashboard />} />
           <Route path="visit-history" element={<VisitHistoryPage />} />
@@ -50,13 +61,29 @@ function App() {
         </Route>
 
         {/* Doctor Routes */}
-        <Route path="/doctor" element={<AppLayout allowedRoles={["DOCTOR"]} />}>
+        <Route path="/doctor" element={<AppLayout allowedRoles={["DOCTOR", "ADMIN"]} />}>
           <Route path="dashboard" element={<DoctorDashboard />} />
           <Route path="consultation" element={<div className="p-10 text-gray-400">Select a patient from dashboard</div>} />
           <Route path="consultation/:id" element={<ConsultationPage />} />
           <Route path="history" element={<MyPatientsHistory />} />
           <Route path="history/:visitId" element={<DoctorPatientHistoryDetails />} />
         </Route>
+
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="hospitals" element={<HospitalManagement />} />
+          <Route path="doctors" element={<DoctorManagement />} />
+          <Route path="patients" element={<PatientManagement />} />
+          <Route path="staff" element={<StaffManagementPage />} />
+          <Route path="staff/register" element={<StaffRegistrationPage />} />
+          <Route path="visits" element={<VisitsPage />} />
+          <Route path="consultations" element={<MyPatientsHistory />} />
+          <Route path="payments" element={<PaymentManagement />} />
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
+
 
         {/* Patient Routes */}
         <Route path="/patient" element={<AppLayout allowedRoles={["PATIENT"]} />}>

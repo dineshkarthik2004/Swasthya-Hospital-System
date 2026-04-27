@@ -197,6 +197,8 @@ import consultationsRouter from "./routes/consultations.js";
 import staffRouter from "./routes/staff.js";
 import symptomsRouter from "./routes/symptoms.js";
 import medicineRouter from "./routes/medicineRoutes.js";
+import adminRouter from "./routes/adminRoutes.js";
+
 
 import aiRouter from "./routes/ai.js";
 import voiceRouter from "./routes/voice.js";
@@ -224,6 +226,8 @@ const prepareOrigins = () => {
   const defaults = [
     "http://localhost:5173",
     "http://localhost:3001",
+    "http://localhost:5000",
+    "http://localhost:4000",
     "http://localhost:3000",
     "https://app.samjnaanalytics.ai"
   ];
@@ -343,6 +347,8 @@ app.use("/api/symptoms", symptomsRouter);
 app.use("/api/ai", aiRouter);
 app.use("/api/voice", voiceRouter);
 app.use("/api/medicines", medicineRouter);
+app.use("/api/admin", adminRouter);
+
 
 // ─── Direct Aliases / Extra Endpoints ─────────────────────────────────────────
 
@@ -392,9 +398,9 @@ app.use((err, req, res, next) => {
 });
 
 // ─── Start Server ──────────────────────────────────────────────────────────────
-const server = app.listen(PORT, "0.0.0.0", () => {
+const server = app.listen(PORT, () => {
   console.log(`PORT is ${PORT}`);
-  console.log(`Server running on http://0.0.0.0:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
 
 server.on("error", (err) => {

@@ -24,9 +24,15 @@ export default function MyPatientsHistory() {
           v.status === "COMPLETED" || 
           v.status === "CONSULTED" || 
           v.status === "PRESCRIPTION_COMPLETED" ||
-          v.status === "PAYMENT_COLLECTED"
+          v.status === "PAYMENT_COLLECTED" ||
+          v.status === "CONSULTATION_COMPLETED"
         );
-        const filtered = completed.filter(v => v.doctorId === user?.id);
+        
+        // If doctor, only see own. If admin, see all in hospital.
+        const filtered = user?.role === "ADMIN" 
+          ? completed 
+          : completed.filter(v => v.doctorId === user?.id);
+          
         filtered.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
         setHistory(filtered);
       } catch (e) {

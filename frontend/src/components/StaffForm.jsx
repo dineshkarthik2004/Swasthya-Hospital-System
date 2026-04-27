@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,12 +26,28 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
     pincode: initialData.pincode || ""
   });
 
+  const { user } = useAuth();
+  const isHospitalAdmin = !!user?.hospitalId;
+
   useEffect(() => {
     // Only update if we actually switch "id" to avoid infinite loops with inline {} 
     if (initialData && Object.keys(initialData).length > 0) {
        setFormData(prev => ({ ...prev, ...initialData }));
+    } else if (isHospitalAdmin && !isEdit) {
+       // Auto-fill hospital info for new staff if admin
+       const addr = user.hospitalAddress || {};
+       setFormData(prev => ({ 
+          ...prev, 
+          clinicName: user.hospitalName || "",
+          doorNo: addr.doorNo || "",
+          street: addr.street || "",
+          area: addr.area || "",
+          city: addr.city || "",
+          state: addr.state || "",
+          pincode: addr.pincode || ""
+       }));
     }
-  }, [initialData.id]);
+  }, [initialData.id, user?.hospitalName, user?.hospitalAddress]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,7 +133,12 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
           <div className="grid grid-cols-2 gap-5">
             <div className="space-y-1.5">
               <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Clinic Name</Label>
-              <Input name="clinicName" value={formData.clinicName || ""} onChange={handleChange} className="h-12 rounded-2xl bg-gray-50/50" />
+              <Input 
+                name="clinicName" 
+                value={formData.clinicName || ""} 
+                onChange={handleChange} 
+                className="h-12 rounded-2xl bg-gray-50/50"
+              />
             </div>
             <div className="space-y-1.5">
               <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Phone</Label>

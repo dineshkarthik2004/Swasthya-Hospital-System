@@ -29,6 +29,9 @@ export default function StaffRegistrationPage() {
     licenseNumber: ""
   })
 
+  const isAdmin = location.pathname.startsWith("/admin")
+  const backPath = isAdmin ? "/admin/staff" : "/receptionist/staff"
+
   const handleSubmit = async (formData) => {
     try {
       setLoading(true)
@@ -39,7 +42,7 @@ export default function StaffRegistrationPage() {
         await api.post("/api/staff/create", formData)
         toast({ title: "Account Created", description: `Staff record for ${formData.name} is now active.` })
       }
-      navigate("/receptionist/staff")
+      navigate(backPath)
     } catch (err) {
       toast({ title: isEdit ? "Update Failed" : "Registration Failed", description: err.response?.data?.error || "Error processing request", variant: "destructive" })
     } finally {
@@ -53,7 +56,7 @@ export default function StaffRegistrationPage() {
       <Button
         type="button"
         variant="ghost"
-        onClick={() => navigate("/receptionist/staff")}
+        onClick={() => navigate(backPath)}
         className="gap-2 text-gray-500 hover:text-gray-900 font-black text-[10px] uppercase tracking-widest rounded-2xl px-6 h-12 bg-white shadow-sm border border-gray-100"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Staff Management
@@ -63,7 +66,7 @@ export default function StaffRegistrationPage() {
          <div className="p-10 border-b border-gray-50 flex items-center justify-between">
             <div>
                <h1 className="text-3xl font-black tracking-tight text-gray-900 leading-none">{isEdit ? "Edit Staff Profile" : "Staff Registration"}</h1>
-               <p className="text-gray-400 text-sm font-medium mt-3 opacity-80">{isEdit ? "Update existing team member details." : "Verify email before profile creation."}</p>
+               <p className="text-gray-400 text-sm font-medium mt-3 opacity-80">{isEdit ? "Update existing team member details." : "Register new medical personnel."}</p>
             </div>
             <div className="w-16 h-16 bg-blue-50 rounded-3xl flex items-center justify-center text-blue-600 shadow-inner">
                <UserPlus className="w-8 h-8" />

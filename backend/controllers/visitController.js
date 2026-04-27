@@ -122,7 +122,8 @@ export async function createVisit(req, res) {
         notes,
         status: "WAITING",
         paymentStatus: "UNPAID",
-        appointmentTime: parsedAppointmentTime
+        appointmentTime: parsedAppointmentTime,
+        hospitalId: req.user.hospitalId
       },
       include: {
         patient: true
@@ -163,6 +164,10 @@ export async function listVisits(req, res) {
     if (status) {
       where.status = status;
     }
+    
+    if (req.user.hospitalId) {
+       where.hospitalId = req.user.hospitalId;
+    }
 
     const userRole = (req.user.role || "").toUpperCase();
     if (userRole === "PATIENT") {
@@ -200,8 +205,11 @@ export async function listVisits(req, res) {
 export async function getVisitDetails(req, res) {
   const { id } = req.params;
 
-  const fetchVisit = () => prisma.visit.findUnique({
-    where: { id },
+  const fetchVisit = () => prisma.visit.findFirst({
+    where: { 
+      id,
+      hospitalId: req.user.hospitalId
+    },
     include: {
       patient: true,
       vitals: true,
@@ -252,7 +260,10 @@ export async function assignDoctor(req, res) {
     if (!doctorId) return res.status(400).json({ error: "Doctor ID is required" });
 
     const visit = await prisma.visit.update({
-      where: { id },
+      where: { 
+        id,
+        hospitalId: req.user.hospitalId
+      },
       data: { 
         doctorId, 
         status: "ASSIGNED_TO_DOCTOR" 
@@ -281,7 +292,10 @@ export async function updateVisitStatus(req, res) {
     if (paymentStatus) data.paymentStatus = paymentStatus;
 
     const visit = await prisma.visit.update({
-      where: { id },
+      where: { 
+        id,
+        hospitalId: req.user.hospitalId
+      },
       data
     });
 
@@ -299,7 +313,10 @@ export async function collectFee(req, res) {
     const { id } = req.params;
 
     const visit = await prisma.visit.update({
-      where: { id },
+      where: { 
+        id,
+        hospitalId: req.user.hospitalId
+      },
       data: {
         paymentStatus: "PAID",
         status: "PAYMENT_COLLECTED"
@@ -326,16 +343,21 @@ export async function getReceptionistStats(req, res) {
 
     const [totalPatients, pendingVisits, unpaidVisits] = await Promise.all([
       prisma.visit.count({
-        where: { createdAt: { gte: today, lt: tomorrow } }
+        where: { 
+          hospitalId: req.user.hospitalId,
+          createdAt: { gte: today, lt: tomorrow } 
+        }
       }),
       prisma.visit.count({
         where: { 
+           hospitalId: req.user.hospitalId,
            createdAt: { gte: today, lt: tomorrow },
            status: { in: ["WAITING", "VITALS_COMPLETED", "ASSIGNED_TO_DOCTOR"] } 
         }
       }),
       prisma.visit.count({
         where: { 
+           hospitalId: req.user.hospitalId,
            createdAt: { gte: today, lt: tomorrow },
            paymentStatus: "UNPAID" 
         }
@@ -430,7 +452,8 @@ export async function receptionCreateVisit(req, res) {
         status: doctorId ? "ASSIGNED_TO_DOCTOR" : "WAITING",
         paymentStatus: "UNPAID",
         feeType: "Receptionist Booking",
-        appointmentTime: parsedAppointmentTime
+        appointmentTime: parsedAppointmentTime,
+        hospitalId: req.user.hospitalId
       }
     }));
 

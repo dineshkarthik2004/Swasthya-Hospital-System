@@ -87,6 +87,9 @@ export default function StaffManagementPage() {
     </div>
   )
 
+  const isAdminPath = location.pathname.startsWith("/admin");
+  const registerPath = isAdminPath ? "/admin/staff/register" : "/receptionist/staff/register";
+
   return (
     <div className="space-y-10 max-w-7xl mx-auto px-6 py-8 pb-32">
       <div className="flex justify-between items-end">
@@ -98,7 +101,7 @@ export default function StaffManagementPage() {
         <Button
           type="button"
           onClick={() => {
-            navigate("/receptionist/staff/register");
+            navigate(registerPath);
           }}
           className="bg-blue-600 hover:bg-blue-700 rounded-2xl font-black uppercase tracking-widest text-[11px] px-10 h-14 flex gap-3 shadow-xl shadow-blue-100 transition-all hover:scale-105 active:scale-95"
         >
@@ -215,7 +218,7 @@ export default function StaffManagementPage() {
 
                       <DropdownMenuItem
                         className="rounded-2xl font-black text-[11px] uppercase tracking-widest gap-4 py-4 hover:bg-blue-50 text-blue-600 cursor-pointer transition-colors"
-                        onSelect={() => navigate("/receptionist/staff/register", { state: { editData: s } })}
+                        onSelect={() => navigate(registerPath, { state: { editData: s } })}
                       >
                         <PenSquare className="w-4 h-4" /> Edit Profile
                       </DropdownMenuItem>

@@ -36,7 +36,10 @@ export default function LoginPage() {
       toast({ title: "Login Successful", description: `Signed in as ${role}.` });
 
       // Based on user role mapping:
-      if (role === "RECEPTIONIST" || role === "ADMIN") {
+      if (role === "ADMIN") {
+         console.log("[LoginPage] Navigating to Admin Dashboard...");
+         navigate("/admin/dashboard")
+      } else if (role === "RECEPTIONIST") {
          console.log("[LoginPage] Navigating to Receptionist Dashboard...");
          navigate("/receptionist/dashboard")
       } else if (role === "DOCTOR") {

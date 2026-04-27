@@ -6,10 +6,19 @@ export async function listPatients(req, res) {
     const { search } = req.query;
     
     const where = {};
+    if (req.user.hospitalId) {
+      where.hospitalId = req.user.hospitalId;
+    }
+    
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { phone: { contains: search } }
+      where.AND = [
+        { hospitalId: req.user.hospitalId || undefined },
+        {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { phone: { contains: search } }
+          ]
+        }
       ];
     }
 
@@ -45,7 +54,8 @@ export async function createPatient(req, res) {
         gender,
         bloodGroup,
         address,
-        registeredById: req.user.userId
+        registeredById: req.user.userId,
+        hospitalId: req.user.hospitalId
       }
     });
 
@@ -63,8 +73,11 @@ export async function createPatient(req, res) {
 export async function getPatient(req, res) {
   try {
     const { id } = req.params;
-    const patient = await prisma.patient.findUnique({
-      where: { id },
+    const patient = await prisma.patient.findFirst({
+      where: { 
+        id,
+        hospitalId: req.user.hospitalId
+      },
       include: {
         visits: {
           orderBy: { createdAt: "desc" },

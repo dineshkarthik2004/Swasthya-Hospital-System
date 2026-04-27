@@ -9,6 +9,7 @@ export async function getAssignedPatients(req, res) {
     const visits = await prisma.visit.findMany({
       where: {
         doctorId,
+        hospitalId: req.user.hospitalId,
         status: {
           in: ["ASSIGNED_TO_DOCTOR", "WAITING", "VITALS_COMPLETED"]
         }
@@ -68,7 +69,10 @@ export async function finalizeConsultation(req, res) {
     const followUp = (followUpDate && !isNaN(new Date(followUpDate).getTime())) ? new Date(followUpDate) : null;
 
     await prisma.visit.update({
-      where: { id: visitId },
+      where: { 
+        id: visitId,
+        hospitalId: req.user.hospitalId
+      },
       data: {
         status: "PRESCRIPTION_COMPLETED",
         feeType: feeType || undefined, // Save fee type to visit
@@ -153,7 +157,10 @@ export async function saveConsultation(req, res) {
 
     // Update visit status
     await prisma.visit.update({
-      where: { id },
+      where: { 
+        id,
+        hospitalId: req.user.hospitalId
+      },
       data: { status: "CONSULTED" }
     });
 
@@ -170,7 +177,10 @@ export async function completeConsultation(req, res) {
     const { id } = req.params;
 
     const visit = await prisma.visit.update({
-      where: { id },
+      where: { 
+        id,
+        hospitalId: req.user.hospitalId
+      },
       data: { status: "PRESCRIPTION_COMPLETED" }
     });
 
@@ -189,14 +199,23 @@ export async function savePrescription(req, res) {
     const { items } = req.body; // array of items
 
     // Find the consultation for this visit
-    let consultation = await prisma.consultation.findUnique({ where: { visitId: id } });
+    let consultation = await prisma.consultation.findFirst({ 
+      where: { 
+        visitId: id,
+        hospitalId: req.user.hospitalId
+      } 
+    });
     if (!consultation) {
       if (req.user.role !== "DOCTOR") {
           return res.status(403).json({ error: "Consultation not created yet" });
       }
       // Create empty consultation to attach prescription
       consultation = await prisma.consultation.create({
-          data: { visitId: id, doctorId: req.user.userId }
+          data: { 
+            visitId: id, 
+            doctorId: req.user.userId,
+            hospitalId: req.user.hospitalId
+          }
       });
     }
 
@@ -230,7 +249,10 @@ export async function savePrescription(req, res) {
 
     // Update visit status
     await prisma.visit.update({
-      where: { id },
+      where: { 
+        id,
+        hospitalId: req.user.hospitalId
+      },
       data: { status: "PRESCRIPTION_COMPLETED" }
     });
 
