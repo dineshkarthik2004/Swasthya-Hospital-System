@@ -31,6 +31,8 @@ import DoctorManagement from "./pages/admin/DoctorManagement"
 import PatientManagement from "./pages/admin/PatientManagement"
 import PaymentManagement from "./pages/admin/PaymentManagement"
 import AdminSettings from "./pages/admin/AdminSettings"
+import ChangeBranchPage from "./pages/admin/ChangeBranchPage"
+import MedicineManagement from "./pages/admin/MedicineManagement"
 
 
 // Auth
@@ -56,6 +58,7 @@ function App() {
           <Route path="visits" element={<VisitsPage />} />
           <Route path="staff" element={<StaffManagementPage />} />
           <Route path="staff/register" element={<StaffRegistrationPage />} />
+          <Route path="staff/change-branch/:id" element={<ChangeBranchPage />} />
           <Route path="patients" element={<PatientDirectoryPage />} />
           <Route path="create-visit" element={<CreatePatientVisitPage />} />
         </Route>
@@ -78,10 +81,12 @@ function App() {
           <Route path="patients" element={<PatientManagement />} />
           <Route path="staff" element={<StaffManagementPage />} />
           <Route path="staff/register" element={<StaffRegistrationPage />} />
+          <Route path="staff/change-branch/:id" element={<ChangeBranchPage />} />
           <Route path="visits" element={<VisitsPage />} />
           <Route path="consultations" element={<MyPatientsHistory />} />
           <Route path="payments" element={<PaymentManagement />} />
           <Route path="settings" element={<AdminSettings />} />
+          <Route path="medicines" element={<MedicineManagement />} />
         </Route>
 
 

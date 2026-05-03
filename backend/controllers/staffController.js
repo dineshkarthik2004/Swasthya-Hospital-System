@@ -5,13 +5,17 @@ import bcrypt from "bcryptjs";
 export async function listStaff(req, res) {
   try {
     console.log("[StaffController] Listing all staff members");
+    const whereClause = {
+      role: {
+        in: ["DOCTOR", "RECEPTIONIST", "LAB_TECH"]
+      }
+    };
+    if (req.user.hospitalId) {
+      whereClause.hospitalId = req.user.hospitalId;
+    }
+
     const staff = await prisma.user.findMany({
-      where: {
-        hospitalId: req.user.hospitalId,
-        role: {
-          in: ["DOCTOR", "RECEPTIONIST", "LAB_TECH"]
-        }
-      },
+      where: whereClause,
       select: {
         id: true,
         name: true,
@@ -28,6 +32,7 @@ export async function listStaff(req, res) {
         city: true,
         state: true,
         pincode: true,
+        branchName: true,
         isActive: true,
         createdAt: true
       },
@@ -46,12 +51,13 @@ export async function listStaff(req, res) {
 export async function listDoctors(req, res) {
   try {
     console.log("[StaffController] Listing active doctors");
+    const whereClause = { role: "DOCTOR", isActive: true };
+    if (req.user.hospitalId) {
+      whereClause.hospitalId = req.user.hospitalId;
+    }
+
     const doctors = await prisma.user.findMany({
-      where: { 
-        role: "DOCTOR", 
-        isActive: true,
-        hospitalId: req.user.hospitalId 
-      },
+      where: whereClause,
       select: {
         id: true,
         name: true,
@@ -64,6 +70,7 @@ export async function listDoctors(req, res) {
         city: true,
         state: true,
         pincode: true,
+        branchName: true,
         phone: true
       },
       orderBy: { name: "asc" }
@@ -82,7 +89,7 @@ export async function createStaff(req, res) {
   try {
     const data = req.body;
     if (!data || typeof data !== "object") return res.status(400).json({ error: "Invalid input" });
-    const { name, email, password, role, specialization, licenseNumber, phone, qualification, clinicName, doorNo, street, area, city, state, pincode } = data;
+    const { name, email, password, role, specialization, licenseNumber, phone, qualification, clinicName, doorNo, street, area, city, state, pincode, branchName } = data;
     console.log("[StaffController] Creating new staff:", { name, email, role });
 
     if (!name || !email || !password || !role) {
@@ -114,6 +121,7 @@ export async function createStaff(req, res) {
         city: city || null,
         state: state || null,
         pincode: pincode || null,
+        branchName: branchName || null,
         isActive: true,
         hospitalId: req.user.hospitalId
       },
@@ -133,6 +141,7 @@ export async function createStaff(req, res) {
         city: true,
         state: true,
         pincode: true,
+        branchName: true,
         isActive: true,
         createdAt: true
       }
@@ -155,7 +164,7 @@ export async function updateStaff(req, res) {
     const { id } = req.params;
     const reqData = req.body;
     if (!reqData || typeof reqData !== "object") return res.status(400).json({ error: "Invalid input" });
-    const { name, email, specialization, licenseNumber, role, phone, qualification, clinicName, doorNo, street, area, city, state, pincode } = reqData;
+    const { name, email, specialization, licenseNumber, role, phone, qualification, clinicName, doorNo, street, area, city, state, pincode, branchName } = reqData;
     console.log("[StaffController] Updating staff:", id);
 
     const data = {};
@@ -173,6 +182,7 @@ export async function updateStaff(req, res) {
     if (city !== undefined) data.city = city;
     if (state !== undefined) data.state = state;
     if (pincode !== undefined) data.pincode = pincode;
+    if (branchName !== undefined) data.branchName = branchName;
 
     const updated = await prisma.user.update({
       where: { 
@@ -195,6 +205,7 @@ export async function updateStaff(req, res) {
         city: true,
         state: true,
         pincode: true,
+        branchName: true,
         isActive: true,
         createdAt: true
       }

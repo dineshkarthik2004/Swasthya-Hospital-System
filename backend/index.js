@@ -349,6 +349,38 @@ app.use("/api/voice", voiceRouter);
 app.use("/api/medicines", medicineRouter);
 app.use("/api/admin", adminRouter);
 
+// ─── Public Settings Read (any authenticated user) ────────────────────────────
+// Doctors, receptionists etc. need to read settings like doctor_voice_enabled
+// Scoped to the user's own hospital so Hospital A settings don't affect Hospital B
+app.get("/api/settings/public", authenticateToken, async (req, res) => {
+  try {
+    // Always fetch hospitalId FRESH from DB — JWT may be stale (old login sessions)
+    // where hospitalId was null at the time the token was issued
+    const dbUser = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { hospitalId: true }
+    });
+    const hospitalId = dbUser?.hospitalId || req.user.hospitalId || null;
+
+    const all = await prisma.systemSettings.findMany();
+
+    if (hospitalId) {
+      // Return only this hospital's settings, with prefix stripped
+      const prefix = `${hospitalId}_`;
+      const scoped = all
+        .filter(s => s.key.startsWith(prefix))
+        .map(s => ({ ...s, key: s.key.slice(prefix.length) }));
+      return res.json(scoped);
+    }
+
+    // No hospitalId — return all (super admin or unassigned user)
+    res.json(all);
+  } catch (err) {
+    console.error("[Settings Public] Error:", err);
+    res.status(500).json([]);
+  }
+});
+
 
 // ─── Direct Aliases / Extra Endpoints ─────────────────────────────────────────
 

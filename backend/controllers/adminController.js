@@ -117,6 +117,24 @@ export async function updatePaymentStatus(req, res) {
 // --- System Settings ---
 export async function getSettings(req, res) {
   try {
+    // Always fetch hospitalId fresh from DB — JWT may be stale
+    const dbUser = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { hospitalId: true }
+    });
+    const hospitalId = dbUser?.hospitalId || req.user.hospitalId || null;
+
+    if (hospitalId) {
+      // Hospital admin: return only this hospital's settings, with prefix stripped
+      const prefix = `${hospitalId}_`;
+      const all = await prisma.systemSettings.findMany();
+      const scoped = all
+        .filter(s => s.key.startsWith(prefix))
+        .map(s => ({ ...s, key: s.key.slice(prefix.length) }));
+      return res.json(scoped);
+    }
+
+    // Super admin: return all settings as-is
     const settings = await prisma.systemSettings.findMany();
     res.json(settings);
   } catch (error) {
@@ -127,12 +145,24 @@ export async function getSettings(req, res) {
 export async function updateSetting(req, res) {
   try {
     const { key, value } = req.body;
-    const setting = await prisma.systemSettings.upsert({
-      where: { key },
-      update: { value },
-      create: { key, value }
+
+    // Always fetch hospitalId fresh from DB — JWT may be stale
+    const dbUser = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { hospitalId: true }
     });
-    res.json(setting);
+    const hospitalId = dbUser?.hospitalId || req.user.hospitalId || null;
+
+    // Hospital admin: scope the key to their hospital
+    const scopedKey = hospitalId ? `${hospitalId}_${key}` : key;
+
+    const setting = await prisma.systemSettings.upsert({
+      where: { key: scopedKey },
+      update: { value },
+      create: { key: scopedKey, value }
+    });
+    // Return with unscoped key so frontend works with short keys
+    res.json({ ...setting, key });
   } catch (error) {
     res.status(500).json({ error: "Failed to update setting" });
   }
@@ -174,8 +204,8 @@ export async function getHospitalDashboardStats(req, res) {
       })
     ]);
 
-    // Mock revenue calculation for now: $50 per paid visit
-    const estimatedRevenue = (revenue._count || 0) * 50;
+    // Mock revenue calculation: set to 0 as consultation fees are not allocated yet.
+    const estimatedRevenue = 0;
 
     res.json({
       totalPatients: patientCount,

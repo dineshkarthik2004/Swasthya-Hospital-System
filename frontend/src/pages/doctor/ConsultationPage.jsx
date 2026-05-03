@@ -21,6 +21,7 @@ export default function ConsultationPage() {
    const [loading, setLoading] = useState(true)
    const [submitting, setSubmitting] = useState(false)
    const [visit, setVisit] = useState(null)
+   const [voiceEnabled, setVoiceEnabled] = useState(false) // fetched fresh from admin settings
 
    const [diagnosis, setDiagnosis] = useState("")
    const [remarks, setRemarks] = useState("nil")
@@ -56,6 +57,18 @@ export default function ConsultationPage() {
          if (compositionAbortRef.current) compositionAbortRef.current.abort();
       };
    }, []);
+
+   // Fetch voice setting fresh — uses public endpoint (accessible by doctors, not just admins)
+   useEffect(() => {
+      api.get("/api/settings/public")
+         .then(res => {
+            const settings = res.data || []
+            const s = settings.find(item => item.key === "doctor_voice_enabled")
+            // Default true if setting not yet saved by admin
+            setVoiceEnabled(s ? s.value === 'true' : true)
+         })
+         .catch(() => setVoiceEnabled(true)) // allow voice if API fails
+   }, [])
 
    // Edit Vitals state
    const [editingVitals, setEditingVitals] = useState(false)
@@ -557,7 +570,7 @@ export default function ConsultationPage() {
                <div className="px-6 py-5 border-b border-gray-50 flex items-center justify-between bg-white">
                   <h2 className="text-base font-bold text-gray-900 tracking-tight">Prescription</h2>
                   <div className="flex gap-2">
-                     <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "prescription")} />
+                     <VoiceMicButton onExtractionSuccess={(text) => handleVoiceResult(text, "prescription")} voiceEnabled={voiceEnabled} />
                      <button onClick={handleAddMedicine} className="rounded-full h-8 px-4 bg-gray-50 text-blue-600 border border-gray-100 hover:bg-blue-50 font-bold text-xs flex items-center gap-2 transition-colors">
                         <Plus className="w-3.5 h-3.5" /> Add Medicine
                      </button>
@@ -756,7 +769,7 @@ export default function ConsultationPage() {
                <Card className="rounded-3xl border border-gray-100 shadow-sm bg-white overflow-hidden flex flex-col pt-2 min-h-[160px]">
                   <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
                      <h3 className="text-sm font-bold text-gray-900">Clinical Diagnosis</h3>
-                     <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "diagnosis")} small />
+                     <VoiceMicButton onExtractionSuccess={(text) => handleVoiceResult(text, "diagnosis")} small voiceEnabled={voiceEnabled} />
                   </div>
                   <Textarea
                      value={diagnosis}
@@ -769,7 +782,7 @@ export default function ConsultationPage() {
                <Card className="rounded-3xl border border-gray-100 shadow-sm bg-white overflow-hidden flex flex-col pt-2 min-h-[160px]">
                   <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
                      <h3 className="text-sm font-bold text-gray-900">Investigation</h3>
-                     <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "remarks")} small />
+                     <VoiceMicButton onExtractionSuccess={(text) => handleVoiceResult(text, "remarks")} small voiceEnabled={voiceEnabled} />
                   </div>
                   <Textarea
                      value={remarks}
@@ -784,7 +797,7 @@ export default function ConsultationPage() {
             <Card className="rounded-3xl border border-gray-100 shadow-sm bg-white overflow-hidden flex flex-col pt-2">
                <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
                   <h3 className="text-sm font-bold text-gray-900">Clinical Notes <span className="text-gray-400 font-normal">(Visible only to doctors)</span></h3>
-                  <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "notes")} small />
+                  <VoiceMicButton onExtractionSuccess={(text) => handleVoiceResult(text, "notes")} small voiceEnabled={voiceEnabled} />
                </div>
                <Textarea
                   value={clinicalNotes}

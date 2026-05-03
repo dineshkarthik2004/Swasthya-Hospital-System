@@ -36,23 +36,23 @@ export default function PaymentManagement() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Outstanding Balance</span>
-            <h3 className="text-3xl font-black text-gray-900 tracking-tighter mt-2">$4,250.00</h3>
-            <div className="mt-4 flex items-center gap-2 text-red-500 font-bold text-xs bg-red-50 w-fit px-3 py-1.5 rounded-full">
-               <AlertCircle className="w-3.5 h-3.5" /> 12 Pending Invoices
+            <h3 className="text-3xl font-black text-gray-900 tracking-tighter mt-2">$0.00</h3>
+            <div className="mt-4 flex items-center gap-2 text-gray-500 font-bold text-xs bg-gray-50 w-fit px-3 py-1.5 rounded-full">
+               <AlertCircle className="w-3.5 h-3.5" /> 0 Pending Invoices
             </div>
          </div>
          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Recovered This Month</span>
-            <h3 className="text-3xl font-black text-emerald-600 tracking-tighter mt-2">$18,400.00</h3>
+            <h3 className="text-3xl font-black text-emerald-600 tracking-tighter mt-2">$0.00</h3>
             <div className="mt-4 flex items-center gap-2 text-emerald-600 font-bold text-xs bg-emerald-50 w-fit px-3 py-1.5 rounded-full">
-               <CheckCircle2 className="w-3.5 h-3.5" /> +24% from last month
+               <CheckCircle2 className="w-3.5 h-3.5" /> 0% from last month
             </div>
          </div>
          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Average Settlement</span>
-            <h3 className="text-3xl font-black text-indigo-600 tracking-tighter mt-2">4.2 Days</h3>
+            <h3 className="text-3xl font-black text-indigo-600 tracking-tighter mt-2">0 Days</h3>
             <div className="mt-4 flex items-center gap-2 text-indigo-600 font-bold text-xs bg-indigo-50 w-fit px-3 py-1.5 rounded-full">
-               <Clock className="w-3.5 h-3.5" /> Optimized Flow
+               <Clock className="w-3.5 h-3.5" /> Awaiting Data
             </div>
          </div>
       </div>

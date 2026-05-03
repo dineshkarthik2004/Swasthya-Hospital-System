@@ -205,11 +205,13 @@ export async function listVisits(req, res) {
 export async function getVisitDetails(req, res) {
   const { id } = req.params;
 
+  const whereClause = { id };
+  if (req.user.hospitalId) {
+    whereClause.hospitalId = req.user.hospitalId;
+  }
+
   const fetchVisit = () => prisma.visit.findFirst({
-    where: { 
-      id,
-      hospitalId: req.user.hospitalId
-    },
+    where: whereClause,
     include: {
       patient: true,
       vitals: true,
@@ -259,20 +261,38 @@ export async function assignDoctor(req, res) {
 
     if (!doctorId) return res.status(400).json({ error: "Doctor ID is required" });
 
+    const whereClause = { id };
+    if (req.user.hospitalId) {
+      whereClause.hospitalId = req.user.hospitalId;
+    }
+
+    // Fetch doctor's hospitalId to ensure visit is scoped correctly
+    const doctor = await prisma.user.findUnique({
+      where: { id: doctorId },
+      select: { hospitalId: true }
+    });
+
     const visit = await prisma.visit.update({
-      where: { 
-        id,
-        hospitalId: req.user.hospitalId
-      },
+      where: whereClause,
       data: { 
         doctorId, 
-        status: "ASSIGNED_TO_DOCTOR" 
+        status: "ASSIGNED_TO_DOCTOR",
+        // If visit has no hospitalId, assign the doctor's hospital
+        hospitalId: (req.user.hospitalId || doctor?.hospitalId || undefined)
       },
       include: {
         patient: true,
         doctor: { select: { name: true } }
       }
     });
+
+    // Also update patient's hospitalId if missing
+    if (visit.patient && !visit.patient.hospitalId && (req.user.hospitalId || doctor?.hospitalId)) {
+       await prisma.patient.update({
+          where: { id: visit.patientId },
+          data: { hospitalId: req.user.hospitalId || doctor.hospitalId }
+       });
+    }
 
     return res.status(200).json(visit);
   } catch (error) {
@@ -291,11 +311,13 @@ export async function updateVisitStatus(req, res) {
     if (status) data.status = status;
     if (paymentStatus) data.paymentStatus = paymentStatus;
 
+    const whereClause = { id };
+    if (req.user.hospitalId) {
+      whereClause.hospitalId = req.user.hospitalId;
+    }
+
     const visit = await prisma.visit.update({
-      where: { 
-        id,
-        hospitalId: req.user.hospitalId
-      },
+      where: whereClause,
       data
     });
 
@@ -312,11 +334,13 @@ export async function collectFee(req, res) {
   try {
     const { id } = req.params;
 
+    const whereClause = { id };
+    if (req.user.hospitalId) {
+      whereClause.hospitalId = req.user.hospitalId;
+    }
+
     const visit = await prisma.visit.update({
-      where: { 
-        id,
-        hospitalId: req.user.hospitalId
-      },
+      where: whereClause,
       data: {
         paymentStatus: "PAID",
         status: "PAYMENT_COLLECTED"
@@ -341,24 +365,24 @@ export async function getReceptionistStats(req, res) {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
+    const baseWhere = { createdAt: { gte: today, lt: tomorrow } };
+    if (req.user.hospitalId) {
+      baseWhere.hospitalId = req.user.hospitalId;
+    }
+
     const [totalPatients, pendingVisits, unpaidVisits] = await Promise.all([
       prisma.visit.count({
-        where: { 
-          hospitalId: req.user.hospitalId,
-          createdAt: { gte: today, lt: tomorrow } 
-        }
+        where: baseWhere
       }),
       prisma.visit.count({
         where: { 
-           hospitalId: req.user.hospitalId,
-           createdAt: { gte: today, lt: tomorrow },
+           ...baseWhere,
            status: { in: ["WAITING", "VITALS_COMPLETED", "ASSIGNED_TO_DOCTOR"] } 
         }
       }),
       prisma.visit.count({
         where: { 
-           hospitalId: req.user.hospitalId,
-           createdAt: { gte: today, lt: tomorrow },
+           ...baseWhere,
            paymentStatus: "UNPAID" 
         }
       })
@@ -393,6 +417,16 @@ export async function receptionCreateVisit(req, res) {
 
     if (!name || !phone || !age || !gender) {
       return res.status(400).json({ error: "Missing required patient fields" });
+    }
+
+    // Determine the target hospital for this visit
+    let targetHospitalId = req.user.hospitalId;
+    if (!targetHospitalId && doctorId) {
+       const doctor = await prisma.user.findUnique({ 
+         where: { id: doctorId },
+         select: { hospitalId: true }
+       });
+       if (doctor) targetHospitalId = doctor.hospitalId;
     }
 
     // 1. Find or create patient
@@ -432,9 +466,18 @@ export async function receptionCreateVisit(req, res) {
           registeredById: req.user.userId,
           bloodGroup: bloodGroup || null,
           uhid: uhid || null,
-          abha: abha || null
+          abha: abha || null,
+          hospitalId: targetHospitalId
         }
       });
+    }
+
+    // If existing patient has no hospitalId, assign the current one
+    if (patient && !patient.hospitalId && targetHospitalId) {
+       patient = await prisma.patient.update({
+         where: { id: patient.id },
+         data: { hospitalId: targetHospitalId }
+       });
     }
 
     let parsedAppointmentTime = null;
@@ -442,19 +485,23 @@ export async function receptionCreateVisit(req, res) {
        parsedAppointmentTime = new Date(`${appointmentDate}T${appointmentTime}:00`);
     }
 
+    const data = {
+      patientId: patient.id,
+      doctorId: doctorId || null,
+      receptionistId: req.user.userId,
+      notes: complaint,
+      status: doctorId ? "ASSIGNED_TO_DOCTOR" : "WAITING",
+      paymentStatus: "UNPAID",
+      feeType: "Receptionist Booking",
+      appointmentTime: parsedAppointmentTime,
+    };
+    if (targetHospitalId) {
+      data.hospitalId = targetHospitalId;
+    }
+
     // 2. Create Visit
     const visit = await safeQuery(() => prisma.visit.create({
-      data: {
-        patientId: patient.id,
-        doctorId: doctorId || null,
-        receptionistId: req.user.userId,
-        notes: complaint,
-        status: doctorId ? "ASSIGNED_TO_DOCTOR" : "WAITING",
-        paymentStatus: "UNPAID",
-        feeType: "Receptionist Booking",
-        appointmentTime: parsedAppointmentTime,
-        hospitalId: req.user.hospitalId
-      }
+      data
     }));
 
     // 3. Create Vitals if provided

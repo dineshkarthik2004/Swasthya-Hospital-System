@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, Plus, Search, UserSquare, Users, ShieldCheck, Award, MoreHorizontal, Copy, PenSquare, Trash2, X, Calendar, CheckCircle2, XCircle } from "lucide-react"
+import { Loader2, Plus, Search, UserSquare, Users, ShieldCheck, Award, MoreHorizontal, Copy, PenSquare, Trash2, X, Calendar, CheckCircle2, XCircle, Building2 } from "lucide-react"
 import api from "@/services/api"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -164,6 +164,7 @@ export default function StaffManagementPage() {
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Qualification</TableHead>
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Email ID</TableHead>
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Role</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Branch</TableHead>
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Specialization</TableHead>
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Status</TableHead>
               <TableHead className="w-[80px] text-right pr-12"></TableHead>
@@ -189,6 +190,7 @@ export default function StaffManagementPage() {
                     'bg-orange-100 text-orange-700'
                   }`}>{s.role || ""}</Badge>
                 </TableCell>
+                <TableCell className="text-[12px] font-bold text-gray-500">{s.branchName || "--"}</TableCell>
                 <TableCell className="text-[12px] font-bold text-gray-400">{s.specialization || "--"}</TableCell>
                 <TableCell>
                   <Badge className={`rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border-none ${
@@ -223,6 +225,19 @@ export default function StaffManagementPage() {
                         <PenSquare className="w-4 h-4" /> Edit Profile
                       </DropdownMenuItem>
 
+                      {s.role === 'DOCTOR' && (
+                        <DropdownMenuItem
+                          className="rounded-2xl font-black text-[11px] uppercase tracking-widest gap-4 py-4 hover:bg-orange-50 text-orange-600 cursor-pointer transition-colors"
+                          onSelect={(e) => {
+                            e.preventDefault();
+                            const basePath = isAdminPath ? "/admin" : "/receptionist";
+                            navigate(`${basePath}/staff/change-branch/${s.id}`);
+                          }}
+                        >
+                          <Building2 className="w-4 h-4" /> Change Branch
+                        </DropdownMenuItem>
+                      )}
+
                       <DropdownMenuSeparator className="bg-gray-50 mx-2 my-2" />
 
                       {s.isActive ? (
@@ -252,11 +267,12 @@ export default function StaffManagementPage() {
               </TableRow>
             ))}
             {filteredStaff.length === 0 && (
-              <TableRow><TableCell colSpan={6} className="text-center py-32 text-gray-300 font-black uppercase tracking-[0.3em] text-[10px] opacity-20">No matching staff records found</TableCell></TableRow>
+              <TableRow><TableCell colSpan={7} className="text-center py-32 text-gray-300 font-black uppercase tracking-[0.3em] text-[10px] opacity-20">No matching staff records found</TableCell></TableRow>
             )}
           </TableBody>
         </Table>
       </Card>
+
 
     </div>
   )

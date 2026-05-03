@@ -1,6 +1,8 @@
 import xlsx from 'xlsx';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { prisma } from '../config/db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +15,20 @@ const loadMedicines = () => {
         const filePath = path.join(__dirname, '..', 'Medicine_List.xlsb');
         const workbook = xlsx.readFile(filePath);
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const data = xlsx.utils.sheet_to_json(sheet);
+        const excelData = xlsx.utils.sheet_to_json(sheet);
+
+        // Load custom hospital medicines from local JSON
+        let customData = [];
+        const customPath = path.join(__dirname, '..', 'Hospital_Medicines.json');
+        if (fs.existsSync(customPath)) {
+            try {
+                customData = JSON.parse(fs.readFileSync(customPath, 'utf8'));
+            } catch (e) {
+                console.error("[loadMedicines] Error reading custom medicines:", e);
+            }
+        }
+
+        const data = [...excelData, ...customData];
 
         // Map to a cleaner structure — PRESERVE original product name for search
         medicineCache = data.map(item => {
@@ -48,7 +63,8 @@ const loadMedicines = () => {
                 nameLower: productName.toLowerCase(), // Pre-computed lowercase for fast search
                 generic: generics.join(' + '),
                 dosage: dosages.join(' / '),
-                type
+                type,
+                hospitalName: item["Hospital Name"] || ""
             };
         });
 
@@ -64,7 +80,7 @@ const loadMedicines = () => {
 // Used by BOTH manual search and voice matching for consistent behavior.
 // Returns ALL matches, sorted: startsWith first, then contains.
 // No result limit.
-const rankMedicines = (query, allMedicines, searchField = 'name') => {
+const rankMedicines = (query, allMedicines, searchField = 'name', userHospitalName = "") => {
     if (!query) return [];
 
     const q = query.toLowerCase().trim();
@@ -74,6 +90,12 @@ const rankMedicines = (query, allMedicines, searchField = 'name') => {
     const containsMatches = [];
 
     for (const med of allMedicines) {
+        // Filter by hospital: If med has a hospitalName, it MUST match the user's hospitalName.
+        // Otherwise, it's a global medicine visible to all.
+        if (med.hospitalName && med.hospitalName !== userHospitalName) {
+            continue;
+        }
+
         let fieldToSearch = med.nameLower; // default to name search
         // Check if searching by composition
         if (searchField === 'composition') {
@@ -104,8 +126,14 @@ export const searchMedicines = async (req, res) => {
     // Minimum 3 characters to avoid excessive load
     if (query.length < 3) return res.json([]);
 
+    let userHospitalName = "";
+    if (req.user?.hospitalId) {
+        const hospital = await prisma.hospital.findUnique({ where: { id: req.user.hospitalId } });
+        if (hospital) userHospitalName = hospital.name;
+    }
+
     const medicines = loadMedicines();
-    const results = rankMedicines(query, medicines, field);
+    const results = rankMedicines(query, medicines, field, userHospitalName);
 
     // Return ALL matches — no .slice() cap
     // Map to return format (exclude internal nameLower field)
@@ -135,13 +163,13 @@ const extractDosageNumber = (dosageStr) => {
 // Step 1: Strict full-name ranking
 // Step 2: Fallback to prefix if Step 1 finds nothing
 // Returns { bestMatch, candidates, matchType }
-const findBestMatch = (spokenName, spokenDosage, allMedicines) => {
+const findBestMatch = (spokenName, spokenDosage, allMedicines, userHospitalName = "") => {
     if (!spokenName) return { bestMatch: null, candidates: [], matchType: "none" };
 
     const query = spokenName.toLowerCase().trim();
 
     // ── STEP 1: Use the same rankMedicines function ───────────────────────
-    let results = rankMedicines(query, allMedicines);
+    let results = rankMedicines(query, allMedicines, 'name', userHospitalName);
     let matchType = "full_name";
 
     // ── STEP 2: Fallback — use first 4 letters (or 3 if name is short) ────
@@ -151,7 +179,7 @@ const findBestMatch = (spokenName, spokenDosage, allMedicines) => {
 
         console.log(`[voice-match] Step 1 failed for "${query}", falling back to prefix "${prefix}"`);
 
-        results = rankMedicines(prefix, allMedicines);
+        results = rankMedicines(prefix, allMedicines, 'name', userHospitalName);
         matchType = "prefix_fallback";
     }
 
@@ -191,6 +219,12 @@ export const voiceMatchMedicines = async (req, res) => {
 
         console.log("[voice-match] Received", spokenMedicines.length, "medicines to match");
 
+        let userHospitalName = "";
+        if (req.user?.hospitalId) {
+            const hospital = await prisma.hospital.findUnique({ where: { id: req.user.hospitalId } });
+            if (hospital) userHospitalName = hospital.name;
+        }
+
         const allMedicines = loadMedicines();
         const results = [];
 
@@ -200,7 +234,7 @@ export const voiceMatchMedicines = async (req, res) => {
 
             console.log(`[voice-match] Matching: "${spokenName}" dosage: "${spokenDosage}"`);
 
-            const { bestMatch, candidates, matchType } = findBestMatch(spokenName, spokenDosage, allMedicines);
+            const { bestMatch, candidates, matchType } = findBestMatch(spokenName, spokenDosage, allMedicines, userHospitalName);
 
             if (bestMatch) {
                 console.log(`[voice-match] ✅ Matched "${spokenName}" → "${bestMatch.name}" via ${matchType}`);
@@ -258,5 +292,60 @@ export const voiceMatchMedicines = async (req, res) => {
             error: "Voice medicine matching failed",
             details: err.message
         });
+    }
+};
+
+// ─── Add medicine to JSON storage ──────────────────────────────────────────
+export const addMedicine = async (req, res) => {
+    try {
+        const { productName, composition, productForm } = req.body;
+        if (!productName) {
+            return res.status(400).json({ success: false, error: "Product Name is required" });
+        }
+
+        let hospitalName = "";
+        const hospitalId = req.user?.hospitalId;
+        
+        if (hospitalId) {
+            const hospital = await prisma.hospital.findUnique({ where: { id: hospitalId }});
+            if (hospital) hospitalName = hospital.name;
+        }
+
+        const customPath = path.join(__dirname, '..', 'Hospital_Medicines.json');
+        let customData = [];
+        if (fs.existsSync(customPath)) {
+            try {
+                customData = JSON.parse(fs.readFileSync(customPath, 'utf8'));
+            } catch (e) {}
+        }
+
+        // Add new entry
+        customData.push({
+            "Product Name": productName,
+            "Composition": composition || "",
+            "Product Form": productForm || "",
+            "Hospital Name": hospitalName,
+            "Hospital ID": hospitalId || "",
+            "Created At": new Date().toISOString()
+        });
+
+        // Save back to JSON (fast)
+        fs.writeFileSync(customPath, JSON.stringify(customData, null, 2));
+        
+        // Invalidate cache so it reloads on next search
+        medicineCache = null;
+        
+        console.log("--------------------------------------------------");
+        console.log(`[MEDICINE_ADD_SUCCESS]`);
+        console.log(`Product: ${productName}`);
+        console.log(`Hospital: ${hospitalName || 'Global'}`);
+        console.log(`Hospital ID: ${hospitalId || 'N/A'}`);
+        console.log(`Time: ${new Date().toISOString()}`);
+        console.log("--------------------------------------------------");
+        
+        res.json({ success: true, message: "Medicine added successfully" });
+    } catch (err) {
+        console.error("Error adding medicine:", err);
+        res.status(500).json({ success: false, error: "Failed to add medicine" });
     }
 };

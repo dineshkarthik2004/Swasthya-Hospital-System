@@ -37,7 +37,7 @@ export default function AdminDashboard() {
             hospitals: (hRes.data?.data || hRes.data || []).length,
             doctors: (dRes.data?.data || dRes.data || []).length,
             patients: (pRes.data?.data || pRes.data || []).length,
-            revenue: 12500,
+            revenue: 0,
             isHospital: false
           })
         }
@@ -114,25 +114,7 @@ export default function AdminDashboard() {
            </div>
         </div>
 
-        <div className="bg-white rounded-[3rem] border border-gray-100 p-8 shadow-sm">
-           <h3 className="text-xl font-black text-gray-900 tracking-tight mb-8">System Health</h3>
-           <div className="space-y-6">
-              {[
-                { name: "API Server", status: "Operational", color: "bg-emerald-500" },
-                { name: "Database Cluster", status: "Operational", color: "bg-emerald-500" },
-                { name: "ML Processing", status: "Active", color: "bg-blue-500" },
-                { name: "Voice Engine", status: "Optimizing", color: "bg-amber-500" },
-              ].map((service, i) => (
-                <div key={i} className="flex justify-between items-center p-5 bg-gray-50 rounded-3xl border border-gray-100">
-                   <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{service.name}</span>
-                      <span className="text-sm font-black text-gray-900 tracking-tight mt-1">{service.status}</span>
-                   </div>
-                   <div className={`w-3 h-3 ${service.color} rounded-full ring-4 ring-white shadow-sm`}></div>
-                </div>
-              ))}
-           </div>
-        </div>
+        <div></div>
       </div>
     </div>
   )

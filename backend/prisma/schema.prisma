@@ -57,6 +57,7 @@
     city           String?
     state          String?
     pincode        String?
+    branchName     String?
     isActive       Boolean   @default(true)
     createdAt      DateTime  @default(now())
     updatedAt      DateTime  @updatedAt

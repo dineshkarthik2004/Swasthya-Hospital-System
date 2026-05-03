@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Eye, EyeOff } from "lucide-react";
+import api from "@/services/api";
 
 export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, onCancel, isEdit = false }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,17 +24,52 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
     area: initialData.area || "",
     city: initialData.city || "",
     state: initialData.state || "",
-    pincode: initialData.pincode || ""
+    pincode: initialData.pincode || "",
+    branchName: initialData.branchName || ""
   });
 
   const { user } = useAuth();
-  const isHospitalAdmin = !!user?.hospitalId;
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
+  const [canAddDoctors, setCanAddDoctors] = useState(true) // default allow until setting loads
+  const [isSettingsLoading, setIsSettingsLoading] = useState(!isAdmin)
+
+  // Fetch admin setting — receptionist_add_doctors
+  useEffect(() => {
+    const fetchSetting = async () => {
+      try {
+        const res = await api.get("/api/settings/public")
+        const settings = res.data || []
+        // We look for "receptionist_add_doctors" which will be properly stripped of the hospitalId prefix by the public endpoint
+        const s = settings.find(item => item.key === "receptionist_add_doctors")
+        const allowed = s ? s.value === 'true' : true
+        setCanAddDoctors(allowed)
+        // If doctor role is not allowed and default role is DOCTOR, change to RECEPTIONIST
+        if (!allowed) {
+          setFormData(prev => ({ ...prev, role: prev.role === 'DOCTOR' ? 'RECEPTIONIST' : prev.role }))
+        }
+      } catch (err) {
+        console.error("Failed to fetch settings in StaffForm:", err)
+        setCanAddDoctors(true) // if API fails, allow by default
+      } finally {
+        setIsSettingsLoading(false)
+      }
+    }
+    // Only check for non-admin users (admins can always add doctors)
+    if (!isAdmin) {
+      console.log("Fetching public settings for receptionist...");
+      fetchSetting()
+    } else {
+      console.log("User is Admin, skipping settings fetch.");
+      setIsSettingsLoading(false)
+    }
+  }, [isAdmin])
 
   useEffect(() => {
+    console.log("StaffForm render state:", { isAdmin, canAddDoctors, role: formData.role });
     // Only update if we actually switch "id" to avoid infinite loops with inline {} 
     if (initialData && Object.keys(initialData).length > 0) {
        setFormData(prev => ({ ...prev, ...initialData }));
-    } else if (isHospitalAdmin && !isEdit) {
+    } else if (user?.hospitalId && !isEdit) {
        // Auto-fill hospital info for new staff if admin
        const addr = user.hospitalAddress || {};
        setFormData(prev => ({ 
@@ -54,10 +90,18 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     onSubmit(formData);
   };
+
+  if (isSettingsLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -80,7 +124,9 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="DOCTOR">Doctor</SelectItem>
+              {(isAdmin || canAddDoctors) && (
+                <SelectItem value="DOCTOR">Doctor</SelectItem>
+              )}
               <SelectItem value="RECEPTIONIST">Receptionist</SelectItem>
               <SelectItem value="LAB_TECH">Lab Tech</SelectItem>
             </SelectContent>
@@ -130,12 +176,21 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-3 gap-5">
             <div className="space-y-1.5">
               <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Clinic Name</Label>
               <Input 
                 name="clinicName" 
                 value={formData.clinicName || ""} 
+                onChange={handleChange} 
+                className="h-12 rounded-2xl bg-gray-50/50"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Branch Name</Label>
+              <Input 
+                name="branchName" 
+                value={formData.branchName || ""} 
                 onChange={handleChange} 
                 className="h-12 rounded-2xl bg-gray-50/50"
               />

@@ -5,15 +5,19 @@ export async function getAssignedPatients(req, res) {
   try {
     const doctorId = req.user.userId;
 
+    const whereClause = {
+      doctorId,
+      status: {
+        in: ["ASSIGNED_TO_DOCTOR", "WAITING", "VITALS_COMPLETED"]
+      }
+    };
+    if (req.user.hospitalId) {
+      whereClause.hospitalId = req.user.hospitalId;
+    }
+
     // Get visits assigned to this doctor that are not fully completed
     const visits = await prisma.visit.findMany({
-      where: {
-        doctorId,
-        hospitalId: req.user.hospitalId,
-        status: {
-          in: ["ASSIGNED_TO_DOCTOR", "WAITING", "VITALS_COMPLETED"]
-        }
-      },
+      where: whereClause,
       include: {
         patient: true,
         vitals: true,
@@ -68,11 +72,13 @@ export async function finalizeConsultation(req, res) {
 
     const followUp = (followUpDate && !isNaN(new Date(followUpDate).getTime())) ? new Date(followUpDate) : null;
 
+    const whereClause = { id: visitId };
+    if (req.user.hospitalId) {
+      whereClause.hospitalId = req.user.hospitalId;
+    }
+
     await prisma.visit.update({
-      where: { 
-        id: visitId,
-        hospitalId: req.user.hospitalId
-      },
+      where: whereClause,
       data: {
         status: "PRESCRIPTION_COMPLETED",
         feeType: feeType || undefined, // Save fee type to visit
@@ -155,12 +161,14 @@ export async function saveConsultation(req, res) {
       }
     });
 
+    const whereClause = { id };
+    if (req.user.hospitalId) {
+      whereClause.hospitalId = req.user.hospitalId;
+    }
+
     // Update visit status
     await prisma.visit.update({
-      where: { 
-        id,
-        hospitalId: req.user.hospitalId
-      },
+      where: whereClause,
       data: { status: "CONSULTED" }
     });
 
@@ -176,11 +184,13 @@ export async function completeConsultation(req, res) {
   try {
     const { id } = req.params;
 
+    const whereClause = { id };
+    if (req.user.hospitalId) {
+      whereClause.hospitalId = req.user.hospitalId;
+    }
+
     const visit = await prisma.visit.update({
-      where: { 
-        id,
-        hospitalId: req.user.hospitalId
-      },
+      where: whereClause,
       data: { status: "PRESCRIPTION_COMPLETED" }
     });
 
@@ -198,12 +208,14 @@ export async function savePrescription(req, res) {
     const { id } = req.params; // visitId
     const { items } = req.body; // array of items
 
+    const consultWhere = { visitId: id };
+    if (req.user.hospitalId) {
+      consultWhere.hospitalId = req.user.hospitalId;
+    }
+
     // Find the consultation for this visit
     let consultation = await prisma.consultation.findFirst({ 
-      where: { 
-        visitId: id,
-        hospitalId: req.user.hospitalId
-      } 
+      where: consultWhere 
     });
     if (!consultation) {
       if (req.user.role !== "DOCTOR") {
@@ -247,12 +259,14 @@ export async function savePrescription(req, res) {
       await prisma.prescriptionItem.createMany({ data: itemsData });
     }
 
+    const visitWhere = { id };
+    if (req.user.hospitalId) {
+      visitWhere.hospitalId = req.user.hospitalId;
+    }
+
     // Update visit status
     await prisma.visit.update({
-      where: { 
-        id,
-        hospitalId: req.user.hospitalId
-      },
+      where: visitWhere,
       data: { status: "PRESCRIPTION_COMPLETED" }
     });
 

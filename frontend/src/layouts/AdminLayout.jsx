@@ -1,6 +1,6 @@
 import { Outlet, Navigate, useLocation, Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
-import { Users, ClipboardList, LogOut, LayoutDashboard, ShieldCheck, HeartPulse, Menu, Bell, ChevronDown, Loader2, Building2, Stethoscope, CreditCard, Settings2 } from "lucide-react"
+import { Users, ClipboardList, LogOut, LayoutDashboard, ShieldCheck, HeartPulse, Menu, Bell, ChevronDown, Loader2, Building2, Stethoscope, CreditCard, Settings2, Pill } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -65,6 +65,7 @@ export default function AdminLayout() {
         { name: "Doctor Network", path: "/admin/doctors", icon: <Stethoscope className="w-5 h-5" /> },
         { name: "Patients", path: "/admin/patients", icon: <Users className="w-5 h-5" /> },
         { name: "Finance", path: "/admin/payments", icon: <CreditCard className="w-5 h-5" /> },
+        { name: "Medicines", path: "/admin/medicines", icon: <Pill className="w-5 h-5" /> },
         { name: "System Settings", path: "/admin/settings", icon: <Settings2 className="w-5 h-5" /> },
       ]
     : [
@@ -75,6 +76,7 @@ export default function AdminLayout() {
         { name: "Visits Queue", path: "/admin/visits", icon: <ClipboardList className="w-5 h-5" /> },
         { name: "Consultations", path: "/admin/consultations", icon: <HeartPulse className="w-5 h-5" /> },
         { name: "Revenue", path: "/admin/payments", icon: <CreditCard className="w-5 h-5" /> },
+        { name: "Medicines", path: "/admin/medicines", icon: <Pill className="w-5 h-5" /> },
         { name: "Hospital Settings", path: "/admin/settings", icon: <Settings2 className="w-5 h-5" /> },
       ];
 

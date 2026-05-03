@@ -11,14 +11,9 @@ export async function listPatients(req, res) {
     }
     
     if (search) {
-      where.AND = [
-        { hospitalId: req.user.hospitalId || undefined },
-        {
-          OR: [
-            { name: { contains: search, mode: "insensitive" } },
-            { phone: { contains: search } }
-          ]
-        }
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { phone: { contains: search } }
       ];
     }
 
@@ -73,11 +68,14 @@ export async function createPatient(req, res) {
 export async function getPatient(req, res) {
   try {
     const { id } = req.params;
+    
+    const where = { id };
+    if (req.user.hospitalId) {
+      where.hospitalId = req.user.hospitalId;
+    }
+
     const patient = await prisma.patient.findFirst({
-      where: { 
-        id,
-        hospitalId: req.user.hospitalId
-      },
+      where,
       include: {
         visits: {
           orderBy: { createdAt: "desc" },

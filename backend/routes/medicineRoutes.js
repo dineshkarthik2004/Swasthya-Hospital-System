@@ -1,12 +1,11 @@
 import express from 'express';
-import { searchMedicines, voiceMatchMedicines } from '../controllers/medicineController.js';
+import { searchMedicines, voiceMatchMedicines, addMedicine } from '../controllers/medicineController.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Existing manual search route (unchanged)
-router.get('/search', searchMedicines);
-
-// NEW: Voice medicine matching route
-router.post('/voice-match', voiceMatchMedicines);
+router.get('/search', authenticateToken, searchMedicines);
+router.post('/voice-match', authenticateToken, voiceMatchMedicines);
+router.post('/add', authenticateToken, addMedicine);
 
 export default router;

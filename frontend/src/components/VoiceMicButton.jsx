@@ -70,11 +70,22 @@ export const stopRecording = async (callback) => {
   })
 }
 
+/**
+ * VoiceMicButton
+ * 
+ * Props:
+ *  - onExtractionSuccess: callback(text) called when voice is processed
+ *  - buttonText: label for the large button variant
+ *  - small: if true, renders a small icon-only button
+ *  - voiceEnabled: boolean — if false, renders nothing. 
+ *      The parent (ConsultationPage) fetches this from admin settings 
+ *      and passes it down. This avoids stale module-level caches.
+ */
 export function VoiceMicButton({ 
-  endpoint, 
   onExtractionSuccess, 
   buttonText = "Dictate",
-  small = false
+  small = false,
+  voiceEnabled = true   // controlled by parent — no internal fetching
 }) {
   const [myId] = useState(() => Math.random().toString(36).substr(2, 9))
   const [activeMicId, setActiveMicId] = useState(globalActiveMicId)
@@ -89,7 +100,6 @@ export function VoiceMicButton({
 
   const handleVoice = async () => {
     if (processing) return
-    
     if (globalActiveMicId !== myId) {
       await startRecording(myId)
     } else {
@@ -98,6 +108,9 @@ export function VoiceMicButton({
       setProcessing(false)
     }
   }
+
+  // If voice is disabled by admin — render nothing at all
+  if (!voiceEnabled) return null
 
   if (small) {
     return (
