@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Pill, Plus, Loader2, CheckCircle2, History, Clock } from "lucide-react";
+import { Pill, Plus, Loader2, CheckCircle2, History, Clock, Upload, FileSpreadsheet, FileText, FileImage, File } from "lucide-react";
 import api from "@/services/api";
 
 export default function MedicineManagement() {
@@ -17,6 +17,8 @@ export default function MedicineManagement() {
         composition: "",
         productForm: "Tablet"
     });
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [uploading, setUploading] = useState(false);
 
     // Load initial logs/history if needed, or just track session adds
     const handleChange = (e) => {
@@ -26,6 +28,55 @@ export default function MedicineManagement() {
 
     const handleSelectChange = (value) => {
         setFormData(prev => ({ ...prev, productForm: value }));
+    };
+
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedFile(e.target.files[0]);
+        }
+    };
+
+    const handleFileUpload = async () => {
+        if (!selectedFile) {
+            toast({ title: "Error", description: "Please select a file first", variant: "destructive" });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        try {
+            setUploading(true);
+            const res = await api.post("/api/medicines/upload", formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            
+            if (res.data.success) {
+                toast({ title: "Success", description: "File uploaded and processed successfully." });
+                
+                const newLog = {
+                    id: Date.now(),
+                    name: `File: ${selectedFile.name}`,
+                    form: "Bulk Upload",
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    status: 'Success'
+                };
+                setLogs(prev => [newLog, ...prev]);
+                setSelectedFile(null);
+                // Reset file input
+                const fileInput = document.getElementById('medicine-file-upload');
+                if (fileInput) fileInput.value = "";
+            }
+        } catch (err) {
+            console.error("Error uploading file:", err);
+            toast({ 
+                title: "Error", 
+                description: err.response?.data?.error || "Failed to upload file", 
+                variant: "destructive" 
+            });
+        } finally {
+            setUploading(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -79,7 +130,7 @@ export default function MedicineManagement() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 <div className="lg:col-span-2 space-y-10">
-                    <Card className="rounded-[2.5rem] border border-gray-100 shadow-2xl p-0 overflow-hidden bg-white">
+                    <Card className="rounded-[2.5rem] border border-gray-100 shadow-2xl p-0 overflow-hidden bg-white mb-10">
                         <div className="p-10 border-b border-gray-50 bg-gray-50/30">
                             <h2 className="text-lg font-black text-gray-800 flex items-center gap-2">
                                 <Plus className="w-5 h-5 text-emerald-500" />
@@ -144,6 +195,74 @@ export default function MedicineManagement() {
                                 </Button>
                             </div>
                         </form>
+                    </Card>
+
+                    {/* BULK UPLOAD SECTION */}
+                    <Card className="rounded-[2.5rem] border border-gray-100 shadow-2xl p-0 overflow-hidden bg-white">
+                        <div className="p-10 border-b border-gray-50 bg-gray-50/30">
+                            <h2 className="text-lg font-black text-gray-800 flex items-center gap-2">
+                                <Upload className="w-5 h-5 text-indigo-500" />
+                                Bulk Upload Medicines
+                            </h2>
+                            <p className="text-gray-400 text-xs font-medium mt-1">Upload Excel, PDF, or JPG files containing medicine lists.</p>
+                        </div>
+
+                        <div className="p-10 space-y-8">
+                            <div className="relative group">
+                                <input 
+                                    type="file" 
+                                    id="medicine-file-upload"
+                                    onChange={handleFileChange}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    accept=".xlsx,.xls,.xlsb,.csv,.pdf,.jpg,.jpeg,.png"
+                                />
+                                <div className={`border-2 border-dashed rounded-[2rem] p-12 flex flex-col items-center justify-center text-center transition-all duration-300 ${selectedFile ? 'border-indigo-400 bg-indigo-50/30' : 'border-gray-100 group-hover:border-indigo-200 group-hover:bg-gray-50/50'}`}>
+                                    {selectedFile ? (
+                                        <>
+                                            <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-indigo-500 shadow-md mb-4">
+                                                {selectedFile.name.match(/\.(xlsx|xls|xlsb|csv)$/i) ? <FileSpreadsheet className="w-8 h-8" /> : 
+                                                 selectedFile.name.match(/\.(pdf)$/i) ? <FileText className="w-8 h-8" /> :
+                                                 selectedFile.name.match(/\.(jpg|jpeg|png)$/i) ? <FileImage className="w-8 h-8" /> :
+                                                 <File className="w-8 h-8" />}
+                                            </div>
+                                            <p className="text-lg font-black text-gray-800 truncate max-w-xs">{selectedFile.name}</p>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">{(selectedFile.size / 1024).toFixed(1)} KB</p>
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); setSelectedFile(null); document.getElementById('medicine-file-upload').value = ""; }}
+                                                className="mt-4 text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline cursor-pointer relative z-20"
+                                            >
+                                                Remove File
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="w-16 h-16 bg-gray-50 rounded-3xl flex items-center justify-center text-gray-300 mb-4 group-hover:scale-110 transition-transform">
+                                                <Upload className="w-8 h-8" />
+                                            </div>
+                                            <p className="text-lg font-black text-gray-400">Click to select or drag & drop</p>
+                                            <p className="text-xs font-bold text-gray-300 uppercase tracking-widest mt-2">Excel, CSV, PDF, or Images</p>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="pt-2">
+                                <Button 
+                                    onClick={handleFileUpload}
+                                    disabled={!selectedFile || uploading}
+                                    className={`w-full h-16 rounded-2xl text-lg font-black shadow-lg transition-all active:scale-[0.98] ${selectedFile ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'}`}
+                                >
+                                    {uploading ? (
+                                        <Loader2 className="w-6 h-6 animate-spin" />
+                                    ) : (
+                                        <>
+                                            <Upload className="w-5 h-5 mr-2" />
+                                            Upload and Process List
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </div>
                     </Card>
                 </div>
 

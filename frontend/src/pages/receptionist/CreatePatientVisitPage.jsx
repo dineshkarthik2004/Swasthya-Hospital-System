@@ -40,6 +40,7 @@ export default function CreatePatientVisitPage() {
     },
     doctorId: ""
   })
+  const [voiceEnabled, setVoiceEnabled] = useState(true)
 
   useEffect(() => {
     async function fetchData() {
@@ -59,6 +60,16 @@ export default function CreatePatientVisitPage() {
       }
     }
     fetchData();
+  }, [])
+
+  useEffect(() => {
+    api.get("/api/settings/public")
+       .then(res => {
+          const settings = res.data || []
+          const s = settings.find(item => item.key === "receptionist_voice_enabled")
+          setVoiceEnabled(s ? s.value === 'true' : true)
+       })
+       .catch(() => setVoiceEnabled(true))
   }, [])
 
   const handleSelectPatient = async (p) => {
@@ -323,7 +334,7 @@ export default function CreatePatientVisitPage() {
                         <div className="w-10 h-10 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center font-black"><Activity className="w-5 h-5"/></div>
                         <h3 className="text-lg font-black text-gray-900 tracking-tight">Diseases / Symptoms</h3>
                      </div>
-                     <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "diseases_only")} small />
+                     <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "diseases_only")} small voiceEnabled={voiceEnabled} />
                   </div>
                   
                   <div className="space-y-2">
@@ -345,7 +356,7 @@ export default function CreatePatientVisitPage() {
                <section className="space-y-8">
                   <div className="flex items-center justify-between">
                      <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Clinical Vitals</h3>
-                     <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "vitals")} small />
+                     <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "vitals")} small voiceEnabled={voiceEnabled} />
                   </div>
 
                   <div className="space-y-6">

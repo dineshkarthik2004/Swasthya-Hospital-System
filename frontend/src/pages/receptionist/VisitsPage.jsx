@@ -41,6 +41,7 @@ export default function DailyVisitsPage() {
 
    // Side Panel State
    const [selectedVisit, setSelectedVisit] = useState(null)
+   const [voiceEnabled, setVoiceEnabled] = useState(true)
 
    useEffect(() => {
       console.log("SELECTED VISIT:", selectedVisit)
@@ -61,6 +62,16 @@ export default function DailyVisitsPage() {
             .finally(() => setLoadingDoctors(false))
       }
    }, [selectedVisit])
+
+   useEffect(() => {
+      api.get("/api/settings/public")
+         .then(res => {
+            const settings = res.data || []
+            const s = settings.find(item => item.key === "receptionist_voice_enabled")
+            setVoiceEnabled(s ? s.value === 'true' : true)
+         })
+         .catch(() => setVoiceEnabled(true))
+   }, [])
 
    useEffect(() => {
       console.log("DOCTORS STATE:", doctors)
@@ -527,6 +538,7 @@ export default function DailyVisitsPage() {
                            visitId={activeVisit?.id}
                            endpoint="/vitals"
                            onExtractionSuccess={(v) => { setManualVitals({ bp: v.bp, pulse: v.pulse, temp: v.temperature, weight: v.weight, height: v.height }); }}
+                           voiceEnabled={voiceEnabled}
                         />
                         <p className="text-[11px] text-gray-400 font-bold italic text-center px-4 leading-relaxed">"BP 120 over 80, pulse 75, temperature 98.6"</p>
                      </div>
@@ -571,6 +583,7 @@ export default function DailyVisitsPage() {
                         <VoiceMicButton
                            endpoint="/staff/doctors"
                            onExtractionSuccess={(d) => { if (d.id) setSelectedDoctor(d.id); else if (d.name) { const found = doctors.find(doc => (doc.name || "").toLowerCase().includes(d.name.toLowerCase())); if (found) setSelectedDoctor(found.id); } }}
+                           voiceEnabled={voiceEnabled}
                         />
                         <p className="text-[11px] text-gray-400 font-bold italic text-center px-4 leading-relaxed">"Assign to Doctor Sharma"</p>
                      </div>
@@ -662,35 +675,35 @@ export default function DailyVisitsPage() {
                         <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Blood Pressure</Label>
                         <div className="flex gap-2">
                            <Input placeholder="120/80" value={manualVitals.bp} onChange={(e) => setManualVitals({ ...manualVitals, bp: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
-                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_bp")} />
+                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_bp")} voiceEnabled={voiceEnabled} />
                         </div>
                      </div>
                      <div className="space-y-1">
                         <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Pulse</Label>
                         <div className="flex gap-2">
                            <Input placeholder="72" value={manualVitals.pulse} onChange={(e) => setManualVitals({ ...manualVitals, pulse: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
-                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_pulse")} />
+                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_pulse")} voiceEnabled={voiceEnabled} />
                         </div>
                      </div>
                      <div className="space-y-1">
                         <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Temperature</Label>
                         <div className="flex gap-2">
                            <Input placeholder="98.6" value={manualVitals.temp} onChange={(e) => setManualVitals({ ...manualVitals, temp: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
-                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_temperature")} />
+                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_temperature")} voiceEnabled={voiceEnabled} />
                         </div>
                      </div>
                      <div className="space-y-1">
                         <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Weight</Label>
                         <div className="flex gap-2">
                            <Input placeholder="70" value={manualVitals.weight} onChange={(e) => setManualVitals({ ...manualVitals, weight: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
-                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_weight")} />
+                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_weight")} voiceEnabled={voiceEnabled} />
                         </div>
                      </div>
                      <div className="space-y-1">
                         <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Height (cm)</Label>
                         <div className="flex gap-2">
                            <Input placeholder="175" value={manualVitals.height} onChange={(e) => setManualVitals({ ...manualVitals, height: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
-                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_height")} />
+                           <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_height")} voiceEnabled={voiceEnabled} />
                         </div>
                      </div>
                   </div>

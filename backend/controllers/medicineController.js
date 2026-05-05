@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { prisma } from '../config/db.js';
+import multer from 'multer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -86,35 +87,43 @@ const rankMedicines = (query, allMedicines, searchField = 'name', userHospitalNa
     const q = query.toLowerCase().trim();
     if (q.length === 0) return [];
 
-    const startsWithMatches = [];
-    const containsMatches = [];
+    // Separate global and hospital-specific medicines
+    const globalMedicines = allMedicines.filter(m => !m.hospitalName);
+    const hospitalMedicines = allMedicines.filter(m => m.hospitalName === userHospitalName);
 
-    for (const med of allMedicines) {
-        // Filter by hospital: If med has a hospitalName, it MUST match the user's hospitalName.
-        // Otherwise, it's a global medicine visible to all.
-        if (med.hospitalName && med.hospitalName !== userHospitalName) {
-            continue;
+    const searchInList = (list) => {
+        const startsWithMatches = [];
+        const containsMatches = [];
+
+        for (const med of list) {
+            let fieldToSearch = med.nameLower;
+            if (searchField === 'composition') {
+                fieldToSearch = (med.generic || "").toLowerCase();
+            }
+
+            if (fieldToSearch.startsWith(q)) {
+                startsWithMatches.push(med);
+            } else if (fieldToSearch.includes(q)) {
+                containsMatches.push(med);
+            }
         }
 
-        let fieldToSearch = med.nameLower; // default to name search
-        // Check if searching by composition
-        if (searchField === 'composition') {
-             fieldToSearch = (med.generic || "").toLowerCase();
-        }
+        startsWithMatches.sort((a, b) => a.nameLower.localeCompare(b.nameLower));
+        containsMatches.sort((a, b) => a.nameLower.localeCompare(b.nameLower));
 
-        if (fieldToSearch.startsWith(q)) {
-            startsWithMatches.push(med);
-        } else if (fieldToSearch.includes(q)) {
-            containsMatches.push(med);
-        }
+        return [...startsWithMatches, ...containsMatches];
+    };
+
+    // First search in global medicines
+    let results = searchInList(globalMedicines);
+
+    // If no results found in global, search in hospital-specific medicines
+    if (results.length === 0 && userHospitalName) {
+        console.log(`[Search] No global matches for "${query}", checking hospital medicines for "${userHospitalName}"`);
+        results = searchInList(hospitalMedicines);
     }
 
-    // Sort each group alphabetically by name for consistent ordering
-    startsWithMatches.sort((a, b) => a.nameLower.localeCompare(b.nameLower));
-    containsMatches.sort((a, b) => a.nameLower.localeCompare(b.nameLower));
-
-    // Priority 1 first, then Priority 2
-    return [...startsWithMatches, ...containsMatches];
+    return results;
 };
 
 // ─── Manual search endpoint ──────────────────────────────────────────────────
@@ -347,5 +356,99 @@ export const addMedicine = async (req, res) => {
     } catch (err) {
         console.error("Error adding medicine:", err);
         res.status(500).json({ success: false, error: "Failed to add medicine" });
+    }
+};
+
+// ─── Multer Config for Bulk Upload ──────────────────────────────────────────
+const storage = multer.diskStorage({
+    destination: async (req, file, cb) => {
+        try {
+            let hospitalName = "Global";
+            if (req.user?.hospitalId) {
+                const hospital = await prisma.hospital.findUnique({ where: { id: req.user.hospitalId } });
+                if (hospital) hospitalName = hospital.name.replace(/[^a-z0-9]/gi, '_');
+            }
+            const uploadPath = path.join(__dirname, '..', 'uploads', 'medicines', hospitalName);
+            if (!fs.existsSync(uploadPath)) {
+                fs.mkdirSync(uploadPath, { recursive: true });
+            }
+            cb(null, uploadPath);
+        } catch (err) {
+            cb(err);
+        }
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
+    }
+});
+
+export const upload = multer({ storage });
+
+// ─── Bulk Upload Medicines Controller ────────────────────────────────────────
+export const uploadMedicines = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, error: "No file uploaded" });
+        }
+
+        const filePath = req.file.path;
+        const fileExt = path.extname(req.file.originalname).toLowerCase();
+        
+        let hospitalName = "";
+        let hospitalId = req.user?.hospitalId;
+        
+        if (hospitalId) {
+            const hospital = await prisma.hospital.findUnique({ where: { id: hospitalId }});
+            if (hospital) hospitalName = hospital.name;
+        }
+
+        // If it's an Excel file, parse and add to Hospital_Medicines.json
+        if (['.xlsx', '.xls', '.xlsb', '.csv'].includes(fileExt)) {
+            console.log(`[Upload] Parsing Excel/CSV file: ${req.file.originalname}`);
+            const workbook = xlsx.readFile(filePath);
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const excelData = xlsx.utils.sheet_to_json(sheet);
+
+            if (excelData.length > 0) {
+                const customPath = path.join(__dirname, '..', 'Hospital_Medicines.json');
+                let customData = [];
+                if (fs.existsSync(customPath)) {
+                    try {
+                        customData = JSON.parse(fs.readFileSync(customPath, 'utf8'));
+                    } catch (e) {}
+                }
+
+                const newMedicines = excelData.map(item => ({
+                    "Product Name": item["Product Name"] || item["name"] || item["Product"] || "",
+                    "Composition": item["Composition"] || item["generic"] || item["content"] || "",
+                    "Product Form": item["Product Form"] || item["type"] || item["form"] || "Tablet",
+                    "Hospital Name": hospitalName,
+                    "Hospital ID": hospitalId || "",
+                    "Source File": req.file.originalname,
+                    "Created At": new Date().toISOString()
+                })).filter(m => m["Product Name"]);
+
+                customData.push(...newMedicines);
+                fs.writeFileSync(customPath, JSON.stringify(customData, null, 2));
+                
+                // Invalidate cache
+                medicineCache = null;
+                
+                console.log(`[Upload] Added ${newMedicines.length} medicines from ${req.file.originalname}`);
+            }
+        } else {
+            console.log(`[Upload] Non-Excel file saved: ${req.file.originalname}. (Not parsed for search)`);
+        }
+
+        res.json({ 
+            success: true, 
+            message: "File uploaded successfully", 
+            filename: req.file.originalname,
+            path: req.file.path 
+        });
+    } catch (err) {
+        console.error("Error uploading medicines:", err);
+        res.status(500).json({ success: false, error: "Failed to upload file" });
     }
 };

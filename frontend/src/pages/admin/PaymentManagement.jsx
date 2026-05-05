@@ -36,14 +36,14 @@ export default function PaymentManagement() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Outstanding Balance</span>
-            <h3 className="text-3xl font-black text-gray-900 tracking-tighter mt-2">$0.00</h3>
+            <h3 className="text-3xl font-black text-gray-900 tracking-tighter mt-2">₹0.00</h3>
             <div className="mt-4 flex items-center gap-2 text-gray-500 font-bold text-xs bg-gray-50 w-fit px-3 py-1.5 rounded-full">
                <AlertCircle className="w-3.5 h-3.5" /> 0 Pending Invoices
             </div>
          </div>
          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Recovered This Month</span>
-            <h3 className="text-3xl font-black text-emerald-600 tracking-tighter mt-2">$0.00</h3>
+            <h3 className="text-3xl font-black text-emerald-600 tracking-tighter mt-2">₹0.00</h3>
             <div className="mt-4 flex items-center gap-2 text-emerald-600 font-bold text-xs bg-emerald-50 w-fit px-3 py-1.5 rounded-full">
                <CheckCircle2 className="w-3.5 h-3.5" /> 0% from last month
             </div>
@@ -88,7 +88,7 @@ export default function PaymentManagement() {
                           <span className="font-bold text-gray-900 tracking-tight">{p.hospital?.name}</span>
                        </div>
                     </td>
-                    <td className="px-8 py-6 font-black text-gray-900 tracking-tighter">${p.amount.toFixed(2)}</td>
+                    <td className="px-8 py-6 font-black text-gray-900 tracking-tighter">₹{p.amount.toFixed(2)}</td>
                     <td className="px-8 py-6">
                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${p.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
                           {p.status}

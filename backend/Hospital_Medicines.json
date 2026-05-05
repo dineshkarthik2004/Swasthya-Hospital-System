@@ -22,5 +22,41 @@
     "Hospital Name": "BUDDHI CLINIC",
     "Hospital ID": "cmocta4tw0000zbzsa9tt3sn4",
     "Created At": "2026-05-03T12:56:33.509Z"
+  },
+  {
+    "Product Name": "Lisinopril 10mg",
+    "Composition": "",
+    "Product Form": "Tablet",
+    "Hospital Name": "JOTHAM HEALTH CARE",
+    "Hospital ID": "cmocta8gp0002zbzsa788p693",
+    "Source File": "PNRao_Healthcare_Medications_Master.xlsx",
+    "Created At": "2026-05-05T21:22:28.353Z"
+  },
+  {
+    "Product Name": "Metformin 500mg",
+    "Composition": "",
+    "Product Form": "Tablet",
+    "Hospital Name": "JOTHAM HEALTH CARE",
+    "Hospital ID": "cmocta8gp0002zbzsa788p693",
+    "Source File": "PNRao_Healthcare_Medications_Master.xlsx",
+    "Created At": "2026-05-05T21:22:28.353Z"
+  },
+  {
+    "Product Name": "Amoxicillin 250mg",
+    "Composition": "",
+    "Product Form": "Tablet",
+    "Hospital Name": "JOTHAM HEALTH CARE",
+    "Hospital ID": "cmocta8gp0002zbzsa788p693",
+    "Source File": "PNRao_Healthcare_Medications_Master.xlsx",
+    "Created At": "2026-05-05T21:22:28.353Z"
+  },
+  {
+    "Product Name": "Ibuprofen 200mg",
+    "Composition": "",
+    "Product Form": "Tablet",
+    "Hospital Name": "JOTHAM HEALTH CARE",
+    "Hospital ID": "cmocta8gp0002zbzsa788p693",
+    "Source File": "PNRao_Healthcare_Medications_Master.xlsx",
+    "Created At": "2026-05-05T21:22:28.353Z"
   }
 ]

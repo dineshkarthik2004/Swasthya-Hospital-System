@@ -28,6 +28,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
     },
     doctorId: ""
   })
+  const [voiceEnabled, setVoiceEnabled] = useState(true)
 
   useEffect(() => {
     async function fetchDoctors() {
@@ -39,6 +40,18 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
       }
     }
     if (open) fetchDoctors()
+  }, [open])
+
+  useEffect(() => {
+    if (open) {
+      api.get("/api/settings/public")
+        .then(res => {
+          const settings = res.data || []
+          const s = settings.find(item => item.key === "receptionist_voice_enabled")
+          setVoiceEnabled(s ? s.value === 'true' : true)
+        })
+        .catch(() => setVoiceEnabled(true))
+    }
   }, [open])
 
   const handleSubmit = async (e) => {
@@ -165,7 +178,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1 border-l-2 border-blue-600 ml-1">Symptoms & Complaint</h4>
-                   <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "notes")} small />
+                   <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "notes")} small voiceEnabled={voiceEnabled} />
                 </div>
                 <Input 
                   placeholder="Patient describes symptoms here..." 
@@ -179,7 +192,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1 border-l-2 border-blue-600 ml-1">Vitals (Optional)</h4>
-                   <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "vitals")} small />
+                   <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "vitals")} small voiceEnabled={voiceEnabled} />
                 </div>
                 <div className="grid grid-cols-4 gap-4">
                    <div className="space-y-1">

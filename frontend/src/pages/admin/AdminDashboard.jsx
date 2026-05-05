@@ -55,13 +55,13 @@ export default function AdminDashboard() {
         { name: "Today's Visits", value: stats.hospitals, icon: <Activity className="w-6 h-6" />, color: "bg-blue-500", trend: "Live", trendUp: true },
         { name: "Total Patients", value: stats.doctors, icon: <Users className="w-6 h-6" />, color: "bg-indigo-500", trend: "+12", trendUp: true },
         { name: "Unpaid Visits", value: stats.patients, icon: <CreditCard className="w-6 h-6" />, color: "bg-emerald-500", trend: "Review", trendUp: false },
-        { name: "Estimated Revenue", value: `$${stats.revenue}`, icon: <TrendingUp className="w-6 h-6" />, color: "bg-violet-500", trend: "+$200", trendUp: true },
+        { name: "Estimated Revenue", value: `₹${stats.revenue}`, icon: <TrendingUp className="w-6 h-6" />, color: "bg-violet-500", trend: "+₹200", trendUp: true },
       ]
     : [
         { name: "Total Hospitals", value: stats.hospitals, icon: <Building2 className="w-6 h-6" />, color: "bg-blue-500", trend: "+12%", trendUp: true },
         { name: "Active Doctors", value: stats.doctors, icon: <Stethoscope className="w-6 h-6" />, color: "bg-indigo-500", trend: "+5%", trendUp: true },
         { name: "Total Patients", value: stats.patients, icon: <Users className="w-6 h-6" />, color: "bg-emerald-500", trend: "+18%", trendUp: true },
-        { name: "System Revenue", value: `$${stats.revenue}`, icon: <CreditCard className="w-6 h-6" />, color: "bg-violet-500", trend: "-2%", trendUp: false },
+        { name: "System Revenue", value: `₹${stats.revenue}`, icon: <CreditCard className="w-6 h-6" />, color: "bg-violet-500", trend: "-2%", trendUp: false },
       ]
 
   return (

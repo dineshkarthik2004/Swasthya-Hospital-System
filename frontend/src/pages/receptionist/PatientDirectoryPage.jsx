@@ -19,6 +19,7 @@ export default function PatientDirectoryPage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const { toast } = useToast()
+  const [voiceEnabled, setVoiceEnabled] = useState(true)
 
   const loadData = async () => {
     try {
@@ -38,6 +39,16 @@ export default function PatientDirectoryPage() {
   )
 
   useEffect(() => { loadData() }, [])
+
+  useEffect(() => {
+    api.get("/api/settings/public")
+       .then(res => {
+          const settings = res.data || []
+          const s = settings.find(item => item.key === "receptionist_voice_enabled")
+          setVoiceEnabled(s ? s.value === 'true' : true)
+       })
+       .catch(() => setVoiceEnabled(true))
+  }, [])
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text)
@@ -102,7 +113,7 @@ export default function PatientDirectoryPage() {
                     onChange={e=>setSearchQuery(e.target.value)}
                   />
                </div>
-               <VoiceMicButton endpoint="/vitals" onExtractionSuccess={(d) => setSearchQuery(d.name || d.patientName || "")} small />
+               <VoiceMicButton endpoint="/vitals" onExtractionSuccess={(d) => setSearchQuery(d.name || d.patientName || "")} small voiceEnabled={voiceEnabled} />
             </div>
             <div className="flex items-center gap-4">
                <div className="flex items-center gap-2 bg-gray-50 px-5 py-2.5 rounded-2xl border border-gray-100 font-black text-[10px] uppercase tracking-widest text-gray-500 hover:bg-white cursor-pointer transition-all shadow-inner">

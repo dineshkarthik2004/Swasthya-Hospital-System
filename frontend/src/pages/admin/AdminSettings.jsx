@@ -18,6 +18,17 @@ const SETTINGS = [
     defaultVal: true
   },
   {
+    key: "receptionist_voice_enabled",
+    label: "Receptionist Voice Input",
+    desc: "When ON, receptionists can use the voice microphone button in the Reception panel to dictate patient vitals and symptoms. When OFF, only manual typing is allowed — the mic buttons are hidden completely.",
+    icon: Mic,
+    iconBg: "bg-emerald-50",
+    iconColor: "text-emerald-600",
+    enabledText: "Voice + Manual typing available for receptionists",
+    disabledText: "Manual typing only — mic buttons hidden",
+    defaultVal: true
+  },
+  {
     key: "receptionist_add_doctors",
     label: "Receptionist Can Add Doctors",
     desc: "When ON, receptionists can register new Doctor accounts from the Staff Management panel. When OFF, the Doctor option is hidden from the role selector — receptionists can only add Receptionists and Lab Techs.",
