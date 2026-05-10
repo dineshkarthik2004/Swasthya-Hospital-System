@@ -32,18 +32,18 @@ export default function PatientManagement() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Patient Population</h1>
-          <p className="text-gray-500 font-medium">Global database of registered patients across the network.</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Patient Population</h1>
+          <p className="text-black font-black uppercase tracking-widest text-[11px]">Global database of registered patients across the network.</p>
         </div>
       </div>
 
       <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
         <div className="p-8 border-b border-gray-50 flex flex-col md:flex-row gap-4 items-center justify-between">
            <div className="relative w-full md:w-96">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
               <Input 
                  placeholder="Search by name, UHID or phone..." 
-                 className="pl-12 h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-bold"
+                 className="pl-12 h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
                  value={searchTerm}
                  onChange={e => setSearchTerm(e.target.value)}
               />
@@ -54,21 +54,21 @@ export default function PatientManagement() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Patient</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Contact</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Registration</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Identities</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Actions</th>
+                <th className="px-8 py-6 text-[10px] font-black text-black uppercase tracking-[0.2em]">Patient</th>
+                <th className="px-8 py-6 text-[10px] font-black text-black uppercase tracking-[0.2em]">Contact</th>
+                <th className="px-8 py-6 text-[10px] font-black text-black uppercase tracking-[0.2em]">Registration</th>
+                <th className="px-8 py-6 text-[10px] font-black text-black uppercase tracking-[0.2em]">Identities</th>
+                <th className="px-8 py-6 text-[10px] font-black text-black uppercase tracking-[0.2em]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {loading ? (
                 <tr>
-                   <td colSpan="5" className="px-8 py-12 text-center text-gray-400 font-bold">Scanning database...</td>
+                   <td colSpan="5" className="px-8 py-12 text-center text-black font-black uppercase tracking-widest text-[11px]">Scanning database...</td>
                 </tr>
               ) : filteredPatients.length === 0 ? (
                 <tr>
-                   <td colSpan="5" className="px-8 py-12 text-center text-gray-400 font-bold">No patients found.</td>
+                   <td colSpan="5" className="px-8 py-12 text-center text-black font-black uppercase tracking-widest text-[11px]">No patients found.</td>
                 </tr>
               ) : (
                 filteredPatients.map((p) => (
@@ -80,23 +80,23 @@ export default function PatientManagement() {
                           </div>
                           <div className="flex flex-col">
                              <span className="font-black text-gray-900 tracking-tight">{p.name}</span>
-                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{p.gender || "UNSPECIFIED"} • {p.bloodGroup || "N/A"}</span>
+                             <span className="text-[10px] font-black text-black opacity-40 uppercase tracking-widest mt-0.5">{p.gender || "UNSPECIFIED"} • {p.bloodGroup || "N/A"}</span>
                           </div>
                        </div>
                     </td>
                     <td className="px-8 py-6">
                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500">
+                          <div className="flex items-center gap-2 text-[11px] font-black text-black">
                              <Phone className="w-3 h-3" /> {p.phone}
                           </div>
-                          <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500">
+                          <div className="flex items-center gap-2 text-[11px] font-black text-black">
                              <Mail className="w-3 h-3" /> {p.email || "N/A"}
                           </div>
                        </div>
                     </td>
                     <td className="px-8 py-6">
-                       <div className="flex items-center gap-2 text-gray-600 font-bold text-sm">
-                          <Calendar className="w-4 h-4 text-gray-300" />
+                       <div className="flex items-center gap-2 text-black font-black text-sm">
+                          <Calendar className="w-4 h-4 text-black opacity-30" />
                           {new Date(p.createdAt).toLocaleDateString()}
                        </div>
                     </td>
@@ -108,10 +108,10 @@ export default function PatientManagement() {
                     </td>
                     <td className="px-8 py-6">
                        <div className="flex gap-2">
-                          <button className="p-2.5 hover:bg-white hover:shadow-md rounded-xl transition-all text-gray-400 hover:text-indigo-600 border border-transparent hover:border-gray-100">
+                          <button className="p-2.5 hover:bg-white hover:shadow-md rounded-xl transition-all text-black hover:text-indigo-600 border border-transparent hover:border-gray-100">
                              <Eye className="w-4 h-4" />
                           </button>
-                          <button className="p-2.5 hover:bg-white hover:shadow-md rounded-xl transition-all text-gray-400 hover:text-red-600 border border-transparent hover:border-gray-100">
+                          <button className="p-2.5 hover:bg-white hover:shadow-md rounded-xl transition-all text-black hover:text-red-600 border border-transparent hover:border-gray-100">
                              <Trash2 className="w-4 h-4" />
                           </button>
                        </div>

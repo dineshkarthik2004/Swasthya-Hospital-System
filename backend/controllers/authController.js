@@ -142,3 +142,40 @@ export async function login(req, res) {
     return res.status(500).json({ error: "Login failed", details: error.message });
   }
 }
+
+export async function changePassword(req, res) {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.userId;
+    console.log(`[AuthController] Change password request for user: ${userId}`);
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: "Current and new passwords are required." });
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: "Incorrect current password." });
+    }
+
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ error: "New password must be different from current password." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword }
+    });
+
+    return res.status(200).json({ message: "Password updated successfully." });
+  } catch (error) {
+    console.error("[AuthController] Change Password Error:", error);
+    return res.status(500).json({ error: "Failed to update password." });
+  }
+}

@@ -66,12 +66,12 @@ export default function MyPatientsHistory() {
   return (
     <div className="max-w-[1200px] mx-auto pt-8 px-4 pb-20">
       <div className="space-y-1 mb-8">
-        <h1 className="text-3xl font-bold flex items-center gap-3 text-gray-900 tracking-tight">
+        <h1 className="text-3xl font-black flex items-center gap-3 text-gray-900 tracking-tight text-black">
           <History className="w-8 h-8 text-blue-600" />
           Visit History
         </h1>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ml-11">
-          <p className="text-gray-500 font-medium">All your completed consultations in one place.</p>
+          <p className="text-black font-black uppercase tracking-widest text-[11px] opacity-40">All your completed consultations in one place.</p>
           <div className="bg-blue-50 px-4 py-1.5 rounded-full text-xs font-black text-blue-600 border border-blue-100 uppercase tracking-widest shadow-sm">
             {history.length} total visits
           </div>
@@ -87,29 +87,29 @@ export default function MyPatientsHistory() {
                 <Calendar className="w-5 h-5 text-blue-600" />
                 <input 
                   type="date"
-                  className="bg-transparent border-none focus:ring-0 text-sm font-bold text-gray-900 placeholder:text-gray-300 w-36 cursor-pointer"
+                  className="bg-transparent border-none focus:ring-0 text-sm font-black text-black placeholder:text-black w-36 cursor-pointer"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
               </div>
-              <span className="text-gray-200 font-black">—</span>
+              <span className="text-black font-black opacity-20">—</span>
               <div className="flex items-center gap-3">
                 <input 
                   type="date"
-                  className="bg-transparent border-none focus:ring-0 text-sm font-bold text-gray-900 placeholder:text-gray-300 w-36 cursor-pointer"
+                  className="bg-transparent border-none focus:ring-0 text-sm font-black text-black placeholder:text-black w-36 cursor-pointer"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                 />
-                <Calendar className="w-4 h-4 text-gray-400" />
+                <Calendar className="w-4 h-4 text-black opacity-30" />
               </div>
             </div>
 
             {/* Search Bar */}
             <div className="relative flex-1 max-w-md group">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors" />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-black w-4 h-4 opacity-30 group-focus-within:text-blue-500 group-focus-within:opacity-100 transition-all" />
               <Input 
                 placeholder="Patient Search..." 
-                className="pl-12 bg-white border-gray-100 rounded-2xl h-[52px] text-sm font-bold shadow-sm transition-all focus-visible:ring-2 focus-visible:ring-blue-100 hover:border-gray-200"
+                className="pl-12 bg-white border-gray-100 rounded-2xl h-[52px] text-sm font-black text-black shadow-sm transition-all focus-visible:ring-2 focus-visible:ring-blue-100 hover:border-gray-200 placeholder:text-black"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -119,7 +119,7 @@ export default function MyPatientsHistory() {
             {(startDate || endDate || search) && (
               <button 
                 onClick={() => { setStartDate(""); setEndDate(""); setSearch(""); }}
-                className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-red-500 transition-colors"
+                className="text-xs font-black text-black uppercase tracking-widest hover:text-red-500 transition-colors opacity-40 hover:opacity-100"
               >
                 Clear Filters
               </button>
@@ -131,12 +131,12 @@ export default function MyPatientsHistory() {
           <Table>
             <TableHeader className="bg-white/50 h-16">
               <TableRow className="border-b border-gray-100 hover:bg-transparent">
-                <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-8 w-[140px]">Date</TableHead>
-                <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-4">Patient</TableHead>
-                <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-[120px]">Age</TableHead>
-                <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-[120px]">Gender</TableHead>
-                <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-[300px]">Diagnosis</TableHead>
-                <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-right pr-12">Medicines</TableHead>
+                <TableHead className="text-[10px] font-black text-black uppercase tracking-widest px-8 w-[140px]">Date</TableHead>
+                <TableHead className="text-[10px] font-black text-black uppercase tracking-widest pl-4">Patient</TableHead>
+                <TableHead className="text-[10px] font-black text-black uppercase tracking-widest w-[120px]">Age</TableHead>
+                <TableHead className="text-[10px] font-black text-black uppercase tracking-widest w-[120px]">Gender</TableHead>
+                <TableHead className="text-[10px] font-black text-black uppercase tracking-widest w-[300px]">Diagnosis</TableHead>
+                <TableHead className="text-[10px] font-black text-black uppercase tracking-widest text-right pr-12">Medicines</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -157,25 +157,25 @@ export default function MyPatientsHistory() {
                   >
                     <TableCell className="px-8">
                       <div className="flex flex-col">
-                        <span className="text-gray-900 font-bold text-sm tracking-tight">{dateStr.split(' ')[1]} {dateStr.split(' ')[0]}</span>
-                        <span className="text-gray-400 text-[10px] uppercase font-black tracking-widest">{dateStr.split(' ')[2]}</span>
+                        <span className="text-black font-black text-sm tracking-tight">{dateStr.split(' ')[1]} {dateStr.split(' ')[0]}</span>
+                        <span className="text-black text-[10px] uppercase font-black tracking-widest opacity-40">{dateStr.split(' ')[2]}</span>
                       </div>
                     </TableCell>
                     <TableCell className="pl-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-black text-lg uppercase transition-transform group-hover:scale-110 shadow-sm border border-blue-200/50">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-lg uppercase transition-transform group-hover:scale-110 shadow-sm border border-white">
                           {(visit.patient?.name || "P").charAt(0)}
                         </div>
                         <div className="flex flex-col">
-                          <span className="font-bold text-gray-900 text-[15px] group-hover:text-blue-600 transition-colors tracking-tight">{visit.patient?.name || "Unknown"}</span>
-                          <span className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] opacity-80">ID: {visit.patient?.id?.slice(-8) || "N/A"}</span>
+                          <span className="font-black text-black text-[15px] group-hover:text-blue-600 transition-colors tracking-tight">{visit.patient?.name || "Unknown"}</span>
+                          <span className="text-[10px] text-black font-black uppercase tracking-[0.2em] opacity-40 mt-0.5">ID: {visit.patient?.id?.slice(-8).toUpperCase() || "N/A"}</span>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-bold text-gray-600 text-sm tracking-tight">{age} YRS</TableCell>
-                    <TableCell className="font-bold text-gray-600 text-sm tracking-tight">{gender}</TableCell>
+                    <TableCell className="font-black text-black text-sm tracking-tight">{age} YRS</TableCell>
+                    <TableCell className="font-black text-black text-sm tracking-tight">{gender}</TableCell>
                     <TableCell className="text-sm">
-                      <div className="bg-gray-50 group-hover:bg-white px-4 py-2 rounded-2xl border border-transparent group-hover:border-blue-100 text-gray-700 font-bold truncate max-w-[280px] transition-all shadow-sm group-hover:shadow-md">
+                      <div className="bg-gray-50 group-hover:bg-white px-4 py-2 rounded-2xl border border-transparent group-hover:border-blue-100 text-black font-black uppercase tracking-tight text-[11px] truncate max-w-[280px] transition-all shadow-sm group-hover:shadow-md opacity-60 group-hover:opacity-100">
                         {visit.consultation?.diagnosis || "No diagnosis logged"}
                       </div>
                     </TableCell>
@@ -190,13 +190,15 @@ export default function MyPatientsHistory() {
               {filteredHistory.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="h-48 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-2 opacity-40">
-                      <Search className="w-8 h-8 text-gray-400" />
-                      <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">No matches found for your search.</p>
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center border border-dashed border-gray-200 mb-4">
+                         <Search className="w-6 h-6 text-black opacity-20" />
+                      </div>
+                      <p className="text-black font-black uppercase tracking-[0.2em] text-[10px]">No matches found for your search.</p>
                       {(startDate || endDate || search) && (
                         <button 
                           onClick={() => { setStartDate(""); setEndDate(""); setSearch(""); }}
-                          className="text-[11px] font-black text-blue-600 border-b border-blue-600 uppercase tracking-widest pt-2 hover:text-blue-700 hover:border-blue-700 transition-all"
+                          className="text-[11px] font-black text-blue-600 border-b border-blue-600 uppercase tracking-widest pt-2 hover:text-blue-700 hover:border-blue-700 transition-all mt-4"
                         >
                           Clear all filters
                         </button>

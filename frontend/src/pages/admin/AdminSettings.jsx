@@ -96,14 +96,14 @@ export default function AdminSettings() {
     <div className="p-8 max-w-4xl mx-auto space-y-8">
       <div className="flex justify-between items-start">
         <div className="space-y-2">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Hospital Settings</h1>
-          <p className="text-gray-500 font-medium">Control hospital-wide feature access and permissions.</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Hospital Settings</h1>
+          <p className="text-black font-black uppercase tracking-widest text-[11px]">Control hospital-wide feature access and permissions.</p>
         </div>
         <Button
           onClick={fetchSettings}
           variant="outline"
           disabled={loading}
-          className="h-12 px-6 rounded-2xl border-gray-100 font-black uppercase tracking-widest text-[10px] text-gray-500"
+          className="h-12 px-6 rounded-2xl border-gray-100 font-black uppercase tracking-widest text-[10px] text-black"
         >
           <RefreshCcw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh
@@ -113,7 +113,7 @@ export default function AdminSettings() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-32 gap-4">
           <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Loading Settings...</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-black">Loading Settings...</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -130,9 +130,9 @@ export default function AdminSettings() {
                   </div>
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between gap-4">
-                      <h3 className="text-lg font-black text-gray-900 tracking-tight">{setting.label}</h3>
+                      <h3 className="text-lg font-black text-gray-900 tracking-tight text-black">{setting.label}</h3>
                       <div className="flex items-center gap-3 flex-shrink-0">
-                        {isSaving && <Loader2 className="w-4 h-4 animate-spin text-gray-400" />}
+                        {isSaving && <Loader2 className="w-4 h-4 animate-spin text-black opacity-20" />}
                         <Switch
                           id={setting.key}
                           checked={isEnabled}
@@ -142,7 +142,7 @@ export default function AdminSettings() {
                         />
                       </div>
                     </div>
-                    <p className="text-sm font-medium text-gray-500 leading-relaxed">{setting.desc}</p>
+                    <p className="text-sm font-black text-black leading-relaxed opacity-60">{setting.desc}</p>
                   </div>
                 </div>
 

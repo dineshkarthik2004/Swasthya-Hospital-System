@@ -64,8 +64,8 @@ export default function HospitalManagement() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Hospital Network</h1>
-          <p className="text-gray-500 font-medium">Manage affiliated healthcare institutions and their access.</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Hospital Network</h1>
+          <p className="text-black font-black uppercase tracking-widest text-[11px]">Manage affiliated healthcare institutions and their access.</p>
         </div>
         <Button 
           onClick={() => { setEditingHospital(null); setFormData({ name: "", email: "", phone: "", address: "", serviceFee: 0, featuresEnabled: "[]" }); setIsModalOpen(true); }}
@@ -97,23 +97,23 @@ export default function HospitalManagement() {
                   <Building2 className="w-8 h-8" />
                </div>
 
-               <h3 className="text-xl font-black text-gray-900 tracking-tight mb-4">{hospital.name}</h3>
+               <h3 className="text-xl font-black text-gray-900 tracking-tight mb-4 text-black">{hospital.name}</h3>
                
                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3 text-gray-500 font-medium text-sm">
-                     <Mail className="w-4 h-4 text-gray-300" /> {hospital.email || "No email provided"}
+                  <div className="flex items-center gap-3 text-black font-black text-sm uppercase tracking-tight">
+                     <Mail className="w-4 h-4 text-black opacity-30" /> {hospital.email || "No email provided"}
                   </div>
-                  <div className="flex items-center gap-3 text-gray-500 font-medium text-sm">
-                     <Phone className="w-4 h-4 text-gray-300" /> {hospital.phone || "No phone provided"}
+                  <div className="flex items-center gap-3 text-black font-black text-sm uppercase tracking-tight">
+                     <Phone className="w-4 h-4 text-black opacity-30" /> {hospital.phone || "No phone provided"}
                   </div>
-                  <div className="flex items-center gap-3 text-gray-500 font-medium text-sm">
-                     <Globe className="w-4 h-4 text-gray-300" /> {hospital.address || "Address not set"}
+                  <div className="flex items-center gap-3 text-black font-black text-sm uppercase tracking-tight">
+                     <Globe className="w-4 h-4 text-black opacity-30" /> {hospital.address || "Address not set"}
                   </div>
                </div>
 
                <div className="pt-6 border-t border-gray-50 flex justify-between items-center">
                   <div className="flex flex-col">
-                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Service Fee</span>
+                     <span className="text-[10px] font-black text-black uppercase tracking-widest">Service Fee</span>
                      <span className="text-lg font-black text-indigo-600 tracking-tighter">{hospital.serviceFee}%</span>
                   </div>
                   <div className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${hospital.subscriptionStatus === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
@@ -129,65 +129,65 @@ export default function HospitalManagement() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
            <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
               <div className="p-10 border-b border-gray-50 flex justify-between items-center">
-                 <h2 className="text-2xl font-black text-gray-900 tracking-tight">{editingHospital ? "Modify Hospital" : "Enlist Institution"}</h2>
+                 <h2 className="text-2xl font-black text-gray-900 tracking-tight text-black">{editingHospital ? "Modify Hospital" : "Enlist Institution"}</h2>
                  <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-gray-50 rounded-2xl transition-colors">
-                    <X className="w-6 h-6 text-gray-400" />
+                    <X className="w-6 h-6 text-black opacity-40" />
                  </button>
               </div>
               <form onSubmit={handleSubmit} className="p-10 space-y-6">
                  <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Institution Name</label>
+                       <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1">Institution Name</label>
                        <Input 
                           value={formData.name} 
                           onChange={e => setFormData({...formData, name: e.target.value})} 
                           placeholder="e.g. City General Hospital"
-                          className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-bold"
+                          className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
                           required
                        />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Contact Email</label>
+                       <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1">Contact Email</label>
                        <Input 
                           type="email"
                           value={formData.email} 
                           onChange={e => setFormData({...formData, email: e.target.value})} 
                           placeholder="admin@hospital.com"
-                          className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-bold"
+                          className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
                        />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Phone Number</label>
+                       <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1">Phone Number</label>
                        <Input 
                           value={formData.phone} 
                           onChange={e => setFormData({...formData, phone: e.target.value})} 
                           placeholder="+1 (555) 000-0000"
-                          className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-bold"
+                          className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
                        />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Service Fee (%)</label>
+                       <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1">Service Fee (%)</label>
                        <Input 
                           type="number"
                           value={formData.serviceFee} 
                           onChange={e => setFormData({...formData, serviceFee: e.target.value})} 
                           placeholder="0.00"
-                          className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-bold"
+                          className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
                        />
                     </div>
                  </div>
                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Physical Address</label>
+                    <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1">Physical Address</label>
                     <Input 
                        value={formData.address} 
                        onChange={e => setFormData({...formData, address: e.target.value})} 
                        placeholder="123 Medical Plaza, Health City"
-                       className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-bold"
+                       className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
                     />
                  </div>
                  
                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Enabled Features</label>
+                    <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1">Enabled Features</label>
                     <div className="grid grid-cols-2 gap-4">
                        {[
                          { id: "ml_diagnosis", label: "ML Diagnosis" },
@@ -207,19 +207,19 @@ export default function HospitalManagement() {
                                  : [...currentFeatures, feature.id];
                                setFormData({...formData, featuresEnabled: JSON.stringify(nextFeatures)});
                              }}
-                             className={`flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${isChecked ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-gray-50 border-gray-100 text-gray-500'}`}
+                             className={`flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${isChecked ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-gray-50 border-gray-100 text-black opacity-60'}`}
                            >
                              <div className={`w-5 h-5 rounded-md flex items-center justify-center border ${isChecked ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-gray-200'}`}>
                                {isChecked && <Check className="w-3 h-3 text-white" />}
                              </div>
-                             <span className="text-xs font-bold">{feature.label}</span>
+                             <span className="text-xs font-black uppercase tracking-tight">{feature.label}</span>
                            </div>
                          )
                        })}
                     </div>
                  </div>
                  <div className="pt-6 flex gap-4">
-                    <Button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 h-14 rounded-2xl bg-gray-50 hover:bg-gray-100 text-gray-500 font-black uppercase tracking-widest text-[10px]">Cancel</Button>
+                    <Button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 h-14 rounded-2xl bg-gray-50 hover:bg-gray-100 text-black font-black uppercase tracking-widest text-[10px]">Cancel</Button>
                     <Button type="submit" className="flex-1 h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase tracking-widest text-[10px] shadow-lg shadow-indigo-100">
                        {editingHospital ? "Confirm Updates" : "Register Institution"}
                     </Button>

@@ -120,8 +120,8 @@ export default function MedicineManagement() {
         <div className="max-w-5xl mx-auto px-6 py-10 space-y-10">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight text-gray-900">Medicine Management</h1>
-                    <p className="text-gray-400 text-sm font-medium mt-2">Add new medicines to your hospital's private list.</p>
+                    <h1 className="text-3xl font-black tracking-tight text-gray-900 text-black">Medicine Management</h1>
+                    <p className="text-black text-sm font-black mt-2">Add new medicines to your hospital's private list.</p>
                 </div>
                 <div className="w-16 h-16 bg-emerald-50 rounded-3xl flex items-center justify-center text-emerald-600 shadow-inner">
                     <Pill className="w-8 h-8" />
@@ -132,7 +132,7 @@ export default function MedicineManagement() {
                 <div className="lg:col-span-2 space-y-10">
                     <Card className="rounded-[2.5rem] border border-gray-100 shadow-2xl p-0 overflow-hidden bg-white mb-10">
                         <div className="p-10 border-b border-gray-50 bg-gray-50/30">
-                            <h2 className="text-lg font-black text-gray-800 flex items-center gap-2">
+                            <h2 className="text-lg font-black text-black flex items-center gap-2">
                                 <Plus className="w-5 h-5 text-emerald-500" />
                                 Add New Medicine
                             </h2>
@@ -141,43 +141,43 @@ export default function MedicineManagement() {
                         <form onSubmit={handleSubmit} className="p-10 space-y-8">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Product Name</Label>
+                                    <Label className="text-[10px] uppercase font-black tracking-widest text-black ml-1">Product Name</Label>
                                     <Input 
                                         name="productName" 
                                         value={formData.productName} 
                                         onChange={handleChange} 
                                         placeholder="e.g. Paracetamol 500mg"
-                                        className="h-14 rounded-2xl bg-gray-50/50 border-gray-100 focus:bg-white transition-all text-lg font-medium" 
+                                        className="h-14 rounded-2xl bg-gray-50/50 border-gray-100 focus:bg-white transition-all text-lg font-black text-black placeholder:text-black" 
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Product Form</Label>
+                                    <Label className="text-[10px] uppercase font-black tracking-widest text-black ml-1">Product Form</Label>
                                     <Select value={formData.productForm} onValueChange={handleSelectChange}>
-                                        <SelectTrigger className="h-14 rounded-2xl bg-gray-50/50 border-gray-100 focus:bg-white transition-all text-lg font-medium">
+                                        <SelectTrigger className="h-14 rounded-2xl bg-gray-50/50 border-gray-100 focus:bg-white transition-all text-lg font-black text-black">
                                             <SelectValue placeholder="Select Form" />
                                         </SelectTrigger>
-                                        <SelectContent className="rounded-2xl border-gray-100 shadow-xl">
-                                            <SelectItem value="Tablet">Tablet</SelectItem>
-                                            <SelectItem value="Capsule">Capsule</SelectItem>
-                                            <SelectItem value="Syrup">Syrup</SelectItem>
-                                            <SelectItem value="Injection">Injection</SelectItem>
-                                            <SelectItem value="Ointment">Ointment</SelectItem>
-                                            <SelectItem value="Drops">Drops</SelectItem>
-                                            <SelectItem value="Inhaler">Inhaler</SelectItem>
+                                        <SelectContent className="rounded-2xl border-gray-100 shadow-xl bg-white">
+                                            <SelectItem value="Tablet" className="text-black font-black">Tablet</SelectItem>
+                                            <SelectItem value="Capsule" className="text-black font-black">Capsule</SelectItem>
+                                            <SelectItem value="Syrup" className="text-black font-black">Syrup</SelectItem>
+                                            <SelectItem value="Injection" className="text-black font-black">Injection</SelectItem>
+                                            <SelectItem value="Ointment" className="text-black font-black">Ointment</SelectItem>
+                                            <SelectItem value="Drops" className="text-black font-black">Drops</SelectItem>
+                                            <SelectItem value="Inhaler" className="text-black font-black">Inhaler</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Composition / Generic Name</Label>
+                                <Label className="text-[10px] uppercase font-black tracking-widest text-black ml-1">Composition / Generic Name</Label>
                                 <Input 
                                     name="composition" 
                                     value={formData.composition} 
                                     onChange={handleChange} 
                                     placeholder="e.g. Acetaminophen"
-                                    className="h-14 rounded-2xl bg-gray-50/50 border-gray-100 focus:bg-white transition-all text-lg font-medium" 
+                                    className="h-14 rounded-2xl bg-gray-50/50 border-gray-100 focus:bg-white transition-all text-lg font-black text-black placeholder:text-black" 
                                 />
                             </div>
 
@@ -200,11 +200,11 @@ export default function MedicineManagement() {
                     {/* BULK UPLOAD SECTION */}
                     <Card className="rounded-[2.5rem] border border-gray-100 shadow-2xl p-0 overflow-hidden bg-white">
                         <div className="p-10 border-b border-gray-50 bg-gray-50/30">
-                            <h2 className="text-lg font-black text-gray-800 flex items-center gap-2">
+                            <h2 className="text-lg font-black text-black flex items-center gap-2">
                                 <Upload className="w-5 h-5 text-indigo-500" />
                                 Bulk Upload Medicines
                             </h2>
-                            <p className="text-gray-400 text-xs font-medium mt-1">Upload Excel, PDF, or JPG files containing medicine lists.</p>
+                            <p className="text-black text-xs font-black mt-1 uppercase tracking-tight">Upload Excel, PDF, or JPG files containing medicine lists.</p>
                         </div>
 
                         <div className="p-10 space-y-8">
@@ -226,7 +226,7 @@ export default function MedicineManagement() {
                                                  <File className="w-8 h-8" />}
                                             </div>
                                             <p className="text-lg font-black text-gray-800 truncate max-w-xs">{selectedFile.name}</p>
-                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">{(selectedFile.size / 1024).toFixed(1)} KB</p>
+                                            <p className="text-xs font-black text-black uppercase tracking-widest mt-1">{(selectedFile.size / 1024).toFixed(1)} KB</p>
                                             <button 
                                                 onClick={(e) => { e.stopPropagation(); setSelectedFile(null); document.getElementById('medicine-file-upload').value = ""; }}
                                                 className="mt-4 text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline cursor-pointer relative z-20"
@@ -236,11 +236,11 @@ export default function MedicineManagement() {
                                         </>
                                     ) : (
                                         <>
-                                            <div className="w-16 h-16 bg-gray-50 rounded-3xl flex items-center justify-center text-gray-300 mb-4 group-hover:scale-110 transition-transform">
-                                                <Upload className="w-8 h-8" />
+                                            <div className="w-16 h-16 bg-gray-50 rounded-3xl flex items-center justify-center text-black mb-4 group-hover:scale-110 transition-transform">
+                                                <Upload className="w-8 h-8 opacity-20" />
                                             </div>
-                                            <p className="text-lg font-black text-gray-400">Click to select or drag & drop</p>
-                                            <p className="text-xs font-bold text-gray-300 uppercase tracking-widest mt-2">Excel, CSV, PDF, or Images</p>
+                                            <p className="text-lg font-black text-black opacity-30">Click to select or drag & drop</p>
+                                            <p className="text-xs font-black text-black uppercase tracking-widest mt-2 opacity-30">Excel, CSV, PDF, or Images</p>
                                         </>
                                     )}
                                 </div>
@@ -250,7 +250,7 @@ export default function MedicineManagement() {
                                 <Button 
                                     onClick={handleFileUpload}
                                     disabled={!selectedFile || uploading}
-                                    className={`w-full h-16 rounded-2xl text-lg font-black shadow-lg transition-all active:scale-[0.98] ${selectedFile ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'}`}
+                                    className={`w-full h-16 rounded-2xl text-lg font-black shadow-lg transition-all active:scale-[0.98] ${selectedFile ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200' : 'bg-gray-100 text-black opacity-40 cursor-not-allowed shadow-none'}`}
                                 >
                                     {uploading ? (
                                         <Loader2 className="w-6 h-6 animate-spin" />
@@ -269,15 +269,15 @@ export default function MedicineManagement() {
                 {/* LOGS / RECENT ACTIVITY COLUMN */}
                 <div className="space-y-6">
                     <div className="flex items-center gap-3 px-2">
-                        <History className="w-5 h-5 text-gray-400" />
-                        <h3 className="text-sm font-black uppercase tracking-widest text-gray-500">Activity Log</h3>
+                        <History className="w-5 h-5 text-black" />
+                        <h3 className="text-sm font-black uppercase tracking-widest text-black">Activity Log</h3>
                     </div>
 
                     <div className="space-y-4">
                         {logs.length === 0 ? (
                             <div className="p-10 border-2 border-dashed border-gray-100 rounded-[2rem] flex flex-col items-center justify-center text-center space-y-3">
-                                <Clock className="w-10 h-10 text-gray-200" />
-                                <p className="text-xs font-bold text-gray-300 uppercase tracking-widest leading-loose">No medicines added <br/> in this session yet</p>
+                                <Clock className="w-10 h-10 text-black opacity-10" />
+                                <p className="text-xs font-black text-black uppercase tracking-widest leading-loose opacity-30 text-center">No medicines added <br/> in this session yet</p>
                             </div>
                         ) : (
                             logs.map(log => (
@@ -288,11 +288,11 @@ export default function MedicineManagement() {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start">
                                             <p className="text-sm font-black text-gray-900 truncate pr-2">{log.name}</p>
-                                            <span className="text-[10px] font-black text-gray-400 uppercase shrink-0">{log.time}</span>
+                                            <span className="text-[10px] font-black text-black uppercase shrink-0">{log.time}</span>
                                         </div>
                                         <div className="flex items-center gap-2 mt-1">
-                                            <span className="px-2 py-0.5 bg-gray-50 text-[9px] font-black text-gray-500 rounded-md uppercase tracking-tighter">{log.form}</span>
-                                            <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Added Successfully</span>
+                                            <span className="px-2 py-0.5 bg-gray-50 text-[9px] font-black text-black rounded-md uppercase tracking-tighter">{log.form}</span>
+                                            <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Added Successfully</span>
                                         </div>
                                     </div>
                                 </div>

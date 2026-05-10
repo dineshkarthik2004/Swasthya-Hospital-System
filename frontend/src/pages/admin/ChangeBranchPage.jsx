@@ -65,7 +65,7 @@ export default function ChangeBranchPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
         <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
-        <p className="text-gray-400 font-black uppercase tracking-widest text-[10px]">Loading Details...</p>
+        <p className="text-black font-black uppercase tracking-widest text-[10px]">Loading Details...</p>
       </div>
     )
   }
@@ -77,14 +77,14 @@ export default function ChangeBranchPage() {
       <Button 
         variant="ghost" 
         onClick={() => navigate(-1)}
-        className="text-gray-400 hover:text-gray-900 -ml-4 rounded-2xl h-12 font-black uppercase tracking-widest text-[10px]"
+        className="text-black hover:text-black -ml-4 rounded-2xl h-12 font-black uppercase tracking-widest text-[10px]"
       >
         <ArrowLeft className="w-4 h-4 mr-2" /> Back to Staff
       </Button>
 
       <div className="space-y-2">
-        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Change Branch</h1>
-        <p className="text-gray-500 font-medium">Transfer doctor to a different branch location.</p>
+        <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Change Branch</h1>
+        <p className="text-black font-black uppercase tracking-widest text-[11px]">Transfer doctor to a different branch location.</p>
       </div>
 
       <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-sm space-y-8">
@@ -93,37 +93,37 @@ export default function ChangeBranchPage() {
             <Building2 className="w-8 h-8" />
           </div>
           <div>
-            <h3 className="text-xl font-black text-gray-900">{doctor.name}</h3>
-            <p className="text-gray-500 font-bold text-sm mt-1">Current Branch: <span className="text-blue-600">{doctor.branchName || "Not Assigned"}</span></p>
+            <h3 className="text-xl font-black text-black">{doctor.name}</h3>
+            <p className="text-black font-black text-sm mt-1 uppercase tracking-tight opacity-40">Current Branch: <span className="text-blue-600 font-black">{doctor.branchName || "Not Assigned"}</span></p>
           </div>
         </div>
 
         <form onSubmit={handleSave} className="space-y-6">
           <div className="space-y-1.5">
-            <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Transfer to Branch Name</Label>
+            <Label className="text-[10px] uppercase font-black tracking-widest text-black ml-1">Transfer to Branch Name</Label>
             <Input 
               placeholder="e.g. Bangalore Branch"
               value={newBranch}
               onChange={(e) => setNewBranch(e.target.value)}
-              className="h-14 rounded-2xl bg-gray-50/50 text-base font-bold border-gray-200 focus-visible:ring-orange-500"
+              className="h-14 rounded-2xl bg-gray-50/50 text-base font-black border-gray-200 focus-visible:ring-orange-500 text-black placeholder:text-black"
               required
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-[10px] uppercase font-black tracking-widest text-gray-400 ml-1">Duration (Months) - Optional</Label>
+            <Label className="text-[10px] uppercase font-black tracking-widest text-black ml-1">Duration (Months) - Optional</Label>
             <div className="relative">
-              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-black opacity-30" />
               <Input 
                 type="number"
                 min="1"
                 placeholder="e.g. 2"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
-                className="h-14 pl-12 rounded-2xl bg-gray-50/50 text-base font-bold border-gray-200 focus-visible:ring-orange-500"
+                className="h-14 pl-12 rounded-2xl bg-gray-50/50 text-base font-black border-gray-200 focus-visible:ring-orange-500 text-black placeholder:text-black"
               />
             </div>
-            <p className="text-xs text-gray-400 ml-2 mt-2 font-medium">Leave blank if this is a permanent transfer.</p>
+            <p className="text-[10px] text-black ml-2 mt-2 font-black uppercase tracking-widest opacity-30">Leave blank if this is a permanent transfer.</p>
           </div>
 
           <div className="pt-4">

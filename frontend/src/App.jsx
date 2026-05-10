@@ -28,11 +28,13 @@ import CreateVisitPage from "./pages/patient/CreateVisitPage"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import HospitalManagement from "./pages/admin/HospitalManagement"
 import DoctorManagement from "./pages/admin/DoctorManagement"
+import DoctorSettings from "./pages/admin/DoctorSettings"
 import PatientManagement from "./pages/admin/PatientManagement"
 import PaymentManagement from "./pages/admin/PaymentManagement"
 import AdminSettings from "./pages/admin/AdminSettings"
 import ChangeBranchPage from "./pages/admin/ChangeBranchPage"
 import MedicineManagement from "./pages/admin/MedicineManagement"
+import ChangePasswordPage from "./pages/ChangePasswordPage"
 
 
 // Auth
@@ -61,6 +63,7 @@ function App() {
           <Route path="staff/change-branch/:id" element={<ChangeBranchPage />} />
           <Route path="patients" element={<PatientDirectoryPage />} />
           <Route path="create-visit" element={<CreatePatientVisitPage />} />
+          <Route path="change-password" element={<ChangePasswordPage />} />
         </Route>
 
         {/* Doctor Routes */}
@@ -70,6 +73,7 @@ function App() {
           <Route path="consultation/:id" element={<ConsultationPage />} />
           <Route path="history" element={<MyPatientsHistory />} />
           <Route path="history/:visitId" element={<DoctorPatientHistoryDetails />} />
+          <Route path="change-password" element={<ChangePasswordPage />} />
         </Route>
 
         {/* Admin Routes */}
@@ -78,6 +82,7 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="hospitals" element={<HospitalManagement />} />
           <Route path="doctors" element={<DoctorManagement />} />
+          <Route path="doctors/:doctorId/settings" element={<DoctorSettings />} />
           <Route path="patients" element={<PatientManagement />} />
           <Route path="staff" element={<StaffManagementPage />} />
           <Route path="staff/register" element={<StaffRegistrationPage />} />
@@ -87,6 +92,7 @@ function App() {
           <Route path="payments" element={<PaymentManagement />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="medicines" element={<MedicineManagement />} />
+          <Route path="change-password" element={<ChangePasswordPage />} />
         </Route>
 
 
@@ -95,6 +101,7 @@ function App() {
           <Route path="dashboard" element={<PatientRecordsPage />} />
           <Route path="records" element={<PatientRecordsPage />} />
           <Route path="create-visit" element={<CreateVisitPage />} />
+          <Route path="change-password" element={<ChangePasswordPage />} />
         </Route>
 
         {/* Unprotected Print Route */}

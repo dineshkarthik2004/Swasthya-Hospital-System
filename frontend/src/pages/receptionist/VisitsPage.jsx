@@ -238,7 +238,7 @@ export default function DailyVisitsPage() {
    if (loading) return (
       <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
          <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-         <p className="text-gray-400 font-black uppercase tracking-widest text-[10px]">Syncing Clinic Status...</p>
+         <p className="text-black font-black uppercase tracking-widest text-[10px]">Syncing Clinic Status...</p>
       </div>
    )
 
@@ -247,7 +247,7 @@ export default function DailyVisitsPage() {
          <div className="flex justify-between items-center bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <div>
                <h1 className="text-3xl font-black tracking-tighter text-gray-900 leading-none">Daily Operations</h1>
-               <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mt-2 ml-1 opacity-80">Clinic Reception Command Center</p>
+               <p className="text-black text-sm font-bold uppercase tracking-widest mt-2 ml-1">Clinic Reception Command Center</p>
             </div>
             <div className="flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100 text-sm font-black text-gray-700 shadow-inner">
                <Calendar className="w-4 h-4 text-blue-500" /> {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}
@@ -266,7 +266,7 @@ export default function DailyVisitsPage() {
             </Card>
             <Card className="border border-gray-100 shadow-sm rounded-[2rem] p-6 bg-white overflow-hidden relative group hover:ring-1 hover:ring-orange-100 transition-all">
                <div className="flex justify-between items-start mb-6">
-                  <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Pending Vitals</span>
+                  <span className="text-[10px] font-black uppercase text-black tracking-widest">Pending Vitals</span>
                   <div className="p-2 bg-orange-50 rounded-xl text-orange-500"><ClipboardList className="w-5 h-5" /></div>
                </div>
                <div className="text-5xl font-black text-gray-900 leading-none">{stats.pendingVisits}</div>
@@ -274,7 +274,7 @@ export default function DailyVisitsPage() {
             </Card>
             <Card className="border border-gray-100 shadow-sm rounded-[2rem] p-6 bg-white overflow-hidden relative group hover:ring-1 hover:ring-green-100 transition-all">
                <div className="flex justify-between items-start mb-6">
-                  <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Revenue Status</span>
+                  <span className="text-[10px] font-black uppercase text-black tracking-widest">Revenue Status</span>
                   <div className="p-2 bg-green-50 rounded-xl text-green-500"><Wallet className="w-5 h-5" /></div>
                </div>
                <div className="text-5xl font-black text-gray-900 leading-none">{stats.unpaidVisits}</div>
@@ -291,14 +291,14 @@ export default function DailyVisitsPage() {
                     <Calendar className="w-4 h-4 text-blue-500" /> 
                     <input 
                       type="date" 
-                      className="bg-transparent border-none text-[11px] font-black text-gray-600 focus:outline-none" 
+                      className="bg-transparent border-none text-[11px] font-black text-black focus:outline-none" 
                       value={dateRange.start}
                       onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
                     />
-                    <span className="text-gray-300 mx-1 font-black">─</span>
+                    <span className="text-black mx-1 font-black">─</span>
                     <input 
                       type="date" 
-                      className="bg-transparent border-none text-[11px] font-black text-gray-600 focus:outline-none" 
+                      className="bg-transparent border-none text-[11px] font-black text-black focus:outline-none" 
                       value={dateRange.end}
                       onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
                     />
@@ -313,9 +313,9 @@ export default function DailyVisitsPage() {
                   </div>
 
                   <div className="relative w-64">
-                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
                      <input
-                        className="w-full pl-9 pr-4 rounded-2xl border border-gray-100 bg-white h-10 text-[11px] font-black shadow-sm focus:ring-1 focus:ring-blue-100 outline-none"
+                        className="w-full pl-9 pr-4 rounded-2xl border border-gray-100 bg-white h-10 text-[11px] font-black shadow-sm focus:ring-1 focus:ring-blue-100 outline-none text-black"
                         placeholder="Search patient, phone or doctor..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
@@ -327,14 +327,14 @@ export default function DailyVisitsPage() {
                <Table>
                   <TableHeader className="bg-gray-50/30">
                      <TableRow className="hover:bg-transparent border-gray-50 h-16">
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 pl-10">Visit ID</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Patient</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Problem / Symptoms</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Physician</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 text-center">Status</TableHead>
-                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 text-center">Fee Type</TableHead>
-                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 text-center">Payment</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 text-right pr-10">Actions</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-black pl-10">Visit ID</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Patient</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Problem / Symptoms</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Physician</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-black text-center">Status</TableHead>
+                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-black text-center">Fee Type</TableHead>
+                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-black text-center">Payment</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-black text-right pr-10">Actions</TableHead>
                      </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -379,7 +379,7 @@ export default function DailyVisitsPage() {
                                }
                             }}
                          >
-                           <TableCell className="font-black text-gray-300 text-[11px] pl-10"># {(v.id || "").slice(-8).toUpperCase()}</TableCell>
+                           <TableCell className="font-black text-black text-[11px] pl-10"># {(v.id || "").slice(-8).toUpperCase()}</TableCell>
                            <TableCell>
                               <div className="flex flex-col leading-tight">
                                  <div className="flex items-center gap-2">
@@ -388,18 +388,18 @@ export default function DailyVisitsPage() {
                                        <Badge className="bg-blue-50 text-blue-600 rounded-lg font-black text-[8px] px-1.5 py-0 border-none uppercase tracking-tighter shadow-none">{v.relation}</Badge>
                                     )}
                                  </div>
-                                 <span className="text-[10px] text-gray-400 font-bold uppercase mt-0.5 opacity-60">{(v.patient?.gender || "MALE").toLowerCase()} / {new Date().getFullYear() - (new Date(v.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} yrs</span>
+                                 <span className="text-[10px] text-black font-bold uppercase mt-0.5">{(v.patient?.gender || "MALE").toLowerCase()} / {new Date().getFullYear() - (new Date(v.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} yrs</span>
                               </div>
                            </TableCell>
                            <TableCell>
-                              <p className="text-xs font-bold text-gray-500 max-w-[200px] truncate">{v.notes || "General checkup"}</p>
+                              <p className="text-xs font-bold text-black max-w-[200px] truncate">{v.notes || "General checkup"}</p>
                            </TableCell>
                            <TableCell>
                               <div className="flex items-center gap-2">
                                  {v.doctor?.name ? (
                                     <Badge className="bg-purple-50 text-purple-600 rounded-lg font-black text-[9px] px-2 py-0.5 border-none uppercase">Dr. {v.doctor.name}</Badge>
                                  ) : (
-                                    <span className="text-[10px] font-black text-gray-300 uppercase italic">Unallocated</span>
+                                    <span className="text-[10px] font-black text-black uppercase italic">Unallocated</span>
                                  )}
                               </div>
                            </TableCell>
@@ -410,7 +410,7 @@ export default function DailyVisitsPage() {
                               {v.feeType ? (
                                  <span className="font-black text-[11px] text-gray-900">{v.feeType}</span>
                               ) : (
-                                 <span className="text-[10px] font-bold text-gray-300">--</span>
+                                 <span className="text-[10px] font-bold text-black">--</span>
                               )}
                            </TableCell>
                            <TableCell className="text-center">
@@ -421,7 +421,7 @@ export default function DailyVisitsPage() {
                            <TableCell className="text-right pr-10">
                               <DropdownMenu>
                                  <DropdownMenuTrigger asChild>
-                                    <div className="p-2.5 hover:bg-gray-100 rounded-2xl inline-flex cursor-pointer text-gray-400 border border-transparent transition-all hover:text-gray-900 shadow-none">
+                                    <div className="p-2.5 hover:bg-gray-100 rounded-2xl inline-flex cursor-pointer text-black border border-transparent transition-all hover:text-gray-900 shadow-none">
                                        <MoreVertical className="w-5 h-5" />
                                     </div>
                                  </DropdownMenuTrigger>
@@ -487,9 +487,9 @@ export default function DailyVisitsPage() {
                         </TableRow>
                      ))}
                      {filteredVisits.length === 0 && (
-                        <TableRow><TableCell colSpan={8} className="text-center py-32 text-gray-300 font-bold flex flex-col items-center gap-4">
+                        <TableRow><TableCell colSpan={8} className="text-center py-32 text-black font-bold flex flex-col items-center gap-4">
                            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center border border-dashed border-gray-200"><AlertCircle className="w-8 h-8 opacity-20" /></div>
-                           <p className="uppercase tracking-[0.2em] text-[10px] opacity-70">No matching visits found</p>
+                           <p className="uppercase tracking-[0.2em] text-[10px]">No matching visits found</p>
                         </TableCell></TableRow>
                      )}
                   </TableBody>
@@ -500,19 +500,19 @@ export default function DailyVisitsPage() {
                    <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="font-black text-[10px] uppercase tracking-widest gap-2 hover:bg-white border border-transparent disabled:opacity-30"
+                      className="font-black text-[10px] uppercase tracking-widest gap-2 hover:bg-white border border-transparent disabled:opacity-30 text-black"
                       onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
                    >
                       Previous
                    </Button>
-                   <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                   <div className="text-[10px] font-black text-black uppercase tracking-widest">
                       Page {currentPage} of {totalPages || 1}
                    </div>
                    <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="font-black text-[10px] uppercase tracking-widest gap-2 hover:bg-white border border-transparent disabled:opacity-30"
+                      className="font-black text-[10px] uppercase tracking-widest gap-2 hover:bg-white border border-transparent disabled:opacity-30 text-black"
                       onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                       disabled={currentPage === totalPages || totalPages === 0}
                    >
@@ -526,7 +526,7 @@ export default function DailyVisitsPage() {
             <DialogContent className="max-w-md rounded-[3rem] border-none shadow-2xl p-0 overflow-hidden bg-white z-[100]">
                <div className="bg-blue-600 p-10 text-white relative">
                   <DialogHeader>
-                     <DialogTitle className="text-2xl font-black tracking-tight leading-none">Record Vitals</DialogTitle>
+                     <DialogTitle className="text-2xl font-black tracking-tight leading-none text-white">Record Vitals</DialogTitle>
                      <p className="text-blue-100 text-[10px] font-black uppercase tracking-[0.2em] mt-3 opacity-80">Patient: {activeVisit?.patient?.name || "Patient"}</p>
                   </DialogHeader>
                </div>
@@ -540,31 +540,31 @@ export default function DailyVisitsPage() {
                            onExtractionSuccess={(v) => { setManualVitals({ bp: v.bp, pulse: v.pulse, temp: v.temperature, weight: v.weight, height: v.height }); }}
                            voiceEnabled={voiceEnabled}
                         />
-                        <p className="text-[11px] text-gray-400 font-bold italic text-center px-4 leading-relaxed">"BP 120 over 80, pulse 75, temperature 98.6"</p>
+                        <p className="text-[11px] text-black font-bold italic text-center px-4 leading-relaxed">"BP 120 over 80, pulse 75, temperature 98.6"</p>
                      </div>
 
                      <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
-                           <Label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-2">Blood Pressure</Label>
+                           <Label className="text-[10px] font-black uppercase text-black tracking-widest ml-2">Blood Pressure</Label>
                            <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-gray-700 px-6 text-sm" value={manualVitals.bp} onChange={e => setManualVitals({ ...manualVitals, bp: e.target.value })} placeholder="120/80" />
                         </div>
                         <div className="space-y-2">
-                           <Label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-2">Pulse Rate</Label>
+                           <Label className="text-[10px] font-black uppercase text-black tracking-widest ml-2">Pulse Rate</Label>
                            <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-gray-700 px-6 text-sm" value={manualVitals.pulse} onChange={e => setManualVitals({ ...manualVitals, pulse: e.target.value })} placeholder="72 BPM" />
                         </div>
                      </div>
                      <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
-                           <Label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-2">Temp (°F)</Label>
+                           <Label className="text-[10px] font-black uppercase text-black tracking-widest ml-2">Temp (°F)</Label>
                            <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-gray-700 px-6 text-sm" value={manualVitals.temp} onChange={e => setManualVitals({ ...manualVitals, temp: e.target.value })} placeholder="98.4 °F" />
                         </div>
                         <div className="space-y-2">
-                           <Label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-2">Weight (KG)</Label>
+                           <Label className="text-[10px] font-black uppercase text-black tracking-widest ml-2">Weight (KG)</Label>
                            <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-gray-700 px-6 text-sm" value={manualVitals.weight} onChange={e => setManualVitals({ ...manualVitals, weight: e.target.value })} placeholder="70 KG" />
                         </div>
                      </div>
                      <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 h-16 rounded-[1.5rem] font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-100 mt-4">Safe Data Record</Button>
-                     <Button type="button" variant="ghost" className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-gray-300" onClick={() => setIsVitalsOpen(false)}>Cancel Update</Button>
+                     <Button type="button" variant="ghost" className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-black hover:text-gray-900" onClick={() => setIsVitalsOpen(false)}>Cancel Update</Button>
                   </form>
                </div>
             </DialogContent>
@@ -573,7 +573,7 @@ export default function DailyVisitsPage() {
          <Dialog open={isAssignOpen} onOpenChange={setIsAssignOpen}>
             <DialogContent className="max-w-md rounded-[3rem] border-none shadow-2xl p-0 overflow-hidden bg-white z-[100]">
                <div className="bg-purple-600 p-10 text-white relative">
-                  <DialogTitle className="text-2xl font-black tracking-tight leading-none">Resource Allocation</DialogTitle>
+                  <DialogTitle className="text-2xl font-black tracking-tight leading-none text-white">Resource Allocation</DialogTitle>
                   <p className="text-purple-100 text-[10px] font-black uppercase tracking-[0.2em] mt-3 opacity-80">Assign Physician to Visit</p>
                </div>
                <div className="p-10 space-y-8">
@@ -585,11 +585,11 @@ export default function DailyVisitsPage() {
                            onExtractionSuccess={(d) => { if (d.id) setSelectedDoctor(d.id); else if (d.name) { const found = doctors.find(doc => (doc.name || "").toLowerCase().includes(d.name.toLowerCase())); if (found) setSelectedDoctor(found.id); } }}
                            voiceEnabled={voiceEnabled}
                         />
-                        <p className="text-[11px] text-gray-400 font-bold italic text-center px-4 leading-relaxed">"Assign to Doctor Sharma"</p>
+                        <p className="text-[11px] text-black font-bold italic text-center px-4 leading-relaxed">"Assign to Doctor Sharma"</p>
                      </div>
 
                      <div className="space-y-3">
-                        <Label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-2">Select Physician</Label>
+                        <Label className="text-[10px] font-black uppercase text-black tracking-widest ml-2">Select Physician</Label>
                         <Select value={selectedDoctor} onValueChange={setSelectedDoctor}>
                            <SelectTrigger className="h-16 rounded-[1.5rem] bg-gray-50 border-gray-100 font-black text-gray-700 px-6 shadow-none">
                               <SelectValue placeholder="Choose doctor..." />
@@ -602,7 +602,7 @@ export default function DailyVisitsPage() {
                         </Select>
                      </div>
                      <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-16 rounded-[1.5rem] font-black text-sm uppercase tracking-widest shadow-xl shadow-purple-100">Confirm Appointment</Button>
-                     <Button type="button" variant="ghost" className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-gray-300" onClick={() => setIsAssignOpen(false)}>Cancel Allocation</Button>
+                     <Button type="button" variant="ghost" className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-black hover:text-gray-900" onClick={() => setIsAssignOpen(false)}>Cancel Allocation</Button>
                   </form>
                </div>
             </DialogContent>
@@ -622,30 +622,30 @@ export default function DailyVisitsPage() {
                boxShadow: "-10px 0 30px rgba(0,0,0,0.1)",
                borderLeft: "1px solid #eee"
             }}>
-               <h2 className="text-2xl font-black mb-4 tracking-tight">Visit Profile</h2>
+               <h2 className="text-2xl font-black mb-4 tracking-tight text-black">Visit Profile</h2>
 
                <div className="bg-gray-50 p-5 rounded-xl mb-6 shadow-none border border-gray-100">
-                  <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest mb-3">Patient Info</h3>
+                  <h3 className="font-black text-[10px] text-black uppercase tracking-widest mb-3">Patient Info</h3>
                   <p className="font-black text-gray-900 text-sm">{selectedVisit?.patient?.name || "Patient"}</p>
-                  <p className="text-xs font-bold text-gray-500 mt-1">
+                  <p className="text-xs font-bold text-black mt-1">
                      Age: {new Date().getFullYear() - (new Date(selectedVisit?.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} | Gender: {(selectedVisit?.patient?.gender || "MALE").toLowerCase()}
                      {selectedVisit?.patient?.bloodGroup && ` | Blood: ${selectedVisit.patient.bloodGroup}`}
                   </p>
-                  <p className="text-xs font-bold text-gray-500 mt-1">
+                  <p className="text-xs font-bold text-black mt-1">
                      {selectedVisit?.vitals?.height && `Height: ${selectedVisit.vitals.height} cm`}
                      {selectedVisit?.vitals?.height && selectedVisit?.appointmentTime && ' | '}
                      {selectedVisit?.appointmentTime && `Slot: ${new Date(selectedVisit.appointmentTime).toLocaleString()}`}
                   </p>
 
                    <div className="mt-4 pt-4 border-t border-gray-100">
-                      <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest mb-2">Patient Identity</h3>
+                      <h3 className="font-black text-[10px] text-black uppercase tracking-widest mb-2">Patient Identity</h3>
                       <div className="space-y-4">
                          <div className="space-y-1">
-                            <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">UHID Number</Label>
+                            <Label className="text-[10px] font-black uppercase text-black ml-1">UHID Number</Label>
                             <Input placeholder="Enter UHID..." value={uhid} onChange={(e) => setUhid(e.target.value)} className="h-10 text-xs font-bold bg-gray-50 border-gray-100 w-full rounded-xl" />
                          </div>
                          <div className="space-y-1">
-                            <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">ABHA ID</Label>
+                            <Label className="text-[10px] font-black uppercase text-black ml-1">ABHA ID</Label>
                             <Input placeholder="Enter ABHA..." value={abha} onChange={(e) => setAbha(e.target.value)} className="h-10 text-xs font-bold bg-gray-50 border-gray-100 w-full rounded-xl" />
                          </div>
                          <Button onClick={async () => {
@@ -661,48 +661,48 @@ export default function DailyVisitsPage() {
                    </div>
 
                    <div className="mt-4 pt-4 border-t border-gray-100">
-                      <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest mb-2">Symptoms</h3>
-                      <p className="text-sm font-bold text-gray-700">{selectedVisit?.notes || "-"}</p>
+                      <h3 className="font-black text-[10px] text-black uppercase tracking-widest mb-2">Symptoms</h3>
+                      <p className="text-sm font-bold text-black">{selectedVisit?.notes || "-"}</p>
                    </div>
                 </div>
 
 
 
 <div className="mb-6 pt-2 border-t border-gray-100">
-                  <h3 className="font-black text-xs text-gray-500 uppercase tracking-widest mb-4 mt-4">Vitals Tracking</h3>
+                  <h3 className="font-black text-xs text-black uppercase tracking-widest mb-4 mt-4">Vitals Tracking</h3>
                   <div className="space-y-4">
                      <div className="space-y-1">
-                        <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Blood Pressure</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1">Blood Pressure</Label>
                         <div className="flex gap-2">
-                           <Input placeholder="120/80" value={manualVitals.bp} onChange={(e) => setManualVitals({ ...manualVitals, bp: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
+                           <Input placeholder="120/80" value={manualVitals.bp} onChange={(e) => setManualVitals({ ...manualVitals, bp: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1 text-black" />
                            <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_bp")} voiceEnabled={voiceEnabled} />
                         </div>
                      </div>
                      <div className="space-y-1">
-                        <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Pulse</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1">Pulse</Label>
                         <div className="flex gap-2">
-                           <Input placeholder="72" value={manualVitals.pulse} onChange={(e) => setManualVitals({ ...manualVitals, pulse: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
+                           <Input placeholder="72" value={manualVitals.pulse} onChange={(e) => setManualVitals({ ...manualVitals, pulse: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1 text-black" />
                            <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_pulse")} voiceEnabled={voiceEnabled} />
                         </div>
                      </div>
                      <div className="space-y-1">
-                        <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Temperature</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1">Temperature</Label>
                         <div className="flex gap-2">
-                           <Input placeholder="98.6" value={manualVitals.temp} onChange={(e) => setManualVitals({ ...manualVitals, temp: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
+                           <Input placeholder="98.6" value={manualVitals.temp} onChange={(e) => setManualVitals({ ...manualVitals, temp: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1 text-black" />
                            <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_temperature")} voiceEnabled={voiceEnabled} />
                         </div>
                      </div>
                      <div className="space-y-1">
-                        <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Weight</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1">Weight</Label>
                         <div className="flex gap-2">
-                           <Input placeholder="70" value={manualVitals.weight} onChange={(e) => setManualVitals({ ...manualVitals, weight: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
+                           <Input placeholder="70" value={manualVitals.weight} onChange={(e) => setManualVitals({ ...manualVitals, weight: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1 text-black" />
                            <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_weight")} voiceEnabled={voiceEnabled} />
                         </div>
                      </div>
                      <div className="space-y-1">
-                        <Label className="text-[10px] font-black uppercase text-gray-500 ml-1">Height (cm)</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1">Height (cm)</Label>
                         <div className="flex gap-2">
-                           <Input placeholder="175" value={manualVitals.height} onChange={(e) => setManualVitals({ ...manualVitals, height: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1" />
+                           <Input placeholder="175" value={manualVitals.height} onChange={(e) => setManualVitals({ ...manualVitals, height: e.target.value })} className="h-12 text-sm font-bold bg-gray-50 border-gray-100 flex-1 text-black" />
                            <VoiceMicButton endpoint="/api/voice/extract" onExtractionSuccess={(text) => handleVoiceResult(text, "vital_height")} voiceEnabled={voiceEnabled} />
                         </div>
                      </div>
@@ -711,25 +711,25 @@ export default function DailyVisitsPage() {
                </div>
 
                <div className="mb-6 pt-6 border-t border-gray-100">
-                  <h3 className="font-black text-xs text-gray-500 uppercase tracking-widest mb-4">Doctor Assignment</h3>
+                  <h3 className="font-black text-xs text-black uppercase tracking-widest mb-4">Doctor Assignment</h3>
                   <div className="space-y-3">
                      <Select value={selectedDoctor} onValueChange={setSelectedDoctor}>
                         <div className="relative z-50">
-                           <SelectTrigger className="h-12 rounded-xl text-sm font-bold bg-gray-50 border-gray-100 shadow-none">
+                           <SelectTrigger className="h-12 rounded-xl text-sm font-bold bg-gray-50 border-gray-100 shadow-none text-black">
                               <SelectValue placeholder="Choose doctor..." />
                            </SelectTrigger>
                         </div>
                         <SelectContent position="popper" className="z-[99999] rounded-xl border-gray-100 shadow-2xl bg-white p-2">
                            {loadingDoctors ? (
-                              <div className="p-2 text-sm text-gray-400">Loading doctors...</div>
+                              <div className="p-2 text-sm text-black">Loading doctors...</div>
                            ) : doctors && doctors.length > 0 ? (
                               doctors.map((doc) => (
-                                 <SelectItem key={doc.id} value={doc.id} className="text-sm font-bold py-3 px-4 rounded-lg">
+                                 <SelectItem key={doc.id} value={doc.id} className="text-sm font-bold py-3 px-4 rounded-lg text-black">
                                     Dr. {doc.name || doc.email || "Doctor"}
                                  </SelectItem>
                               ))
                            ) : (
-                              <div className="p-2 text-sm text-gray-400">No doctors available</div>
+                              <div className="p-2 text-sm text-black">No doctors available</div>
                            )}
                         </SelectContent>
                      </Select>
@@ -738,7 +738,7 @@ export default function DailyVisitsPage() {
                </div>
 
                <div className="mt-8 mb-10 border-t border-gray-100 flex justify-center pt-8">
-                  <Button variant="ghost" onClick={() => setSelectedVisit(null)} className="h-10 text-[10px] font-black uppercase tracking-widest text-gray-300 w-full rounded-xl hover:bg-red-50 hover:text-red-500 transition-colors">
+                  <Button variant="ghost" onClick={() => setSelectedVisit(null)} className="h-10 text-[10px] font-black uppercase tracking-widest text-black w-full rounded-xl hover:bg-red-50 hover:text-red-500 transition-colors">
                      Close Detail View
                   </Button>
                </div>

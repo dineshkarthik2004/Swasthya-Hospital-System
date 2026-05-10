@@ -35,17 +35,17 @@ export default function ReceptionistDashboard() {
         <h1 className="text-[42px] font-black text-gray-900 tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900">
           Reception Command Center
         </h1>
-        <p className="text-sm font-bold tracking-tight text-gray-400 mt-3 flex items-center gap-2">
+        <p className="text-sm font-bold tracking-tight text-black mt-3 flex items-center gap-2">
           Current Branch: <span className="text-blue-600 hover:underline cursor-pointer transition-all">Chennai City Center</span>
         </p>
       </div>
 
       <div className="w-full max-w-6xl relative group z-50">
-        <div className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-500 transition-all duration-300">
+        <div className="absolute left-8 top-1/2 -translate-y-1/2 text-black group-focus-within:text-blue-500 transition-all duration-300">
            <Search className="w-6 h-6" />
         </div>
         <Input 
-          className="h-20 pl-20 pr-10 rounded-[2.5rem] border-gray-100 bg-[#FBFBFC] shadow-[0_8px_30px_rgb(0,0,0,0.02)] text-lg font-medium focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all placeholder:text-gray-300 border-2"
+          className="h-20 pl-20 pr-10 rounded-[2.5rem] border-gray-100 bg-[#FBFBFC] shadow-[0_8px_30px_rgb(0,0,0,0.02)] text-lg font-medium focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all placeholder:text-black border-2 text-black"
           placeholder="Search name or phone number..."
           value={search}
           onChange={(e) => {
@@ -55,7 +55,7 @@ export default function ReceptionistDashboard() {
           onFocus={() => setShowDropdown(true)}
         />
         <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-2">
-           <div className="text-[10px] font-black text-gray-300 uppercase tracking-widest bg-white px-4 py-2 rounded-2xl border border-gray-50 shadow-sm">Press Enter ↵</div>
+           <div className="text-[10px] font-black text-black uppercase tracking-widest bg-white px-4 py-2 rounded-2xl border border-gray-50 shadow-sm">Press Enter ↵</div>
         </div>
 
         {search && showDropdown && (
@@ -70,7 +70,7 @@ export default function ReceptionistDashboard() {
                              </div>
                              <div>
                                 <p className="font-black text-gray-900">{p.name}</p>
-                                <p className="text-xs font-bold text-gray-400">{p.phone}</p>
+                                <p className="text-xs font-bold text-black">{p.phone}</p>
                              </div>
                           </div>
                           <Button size="sm" variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:bg-blue-50 rounded-xl px-4 h-10">Create Visit</Button>
@@ -79,7 +79,7 @@ export default function ReceptionistDashboard() {
                  </div>
               ) : (
                  <div className="p-10 flex flex-col items-center justify-center text-center">
-                    <p className="text-sm font-black text-gray-400 mb-6">No patient records match "{search}"</p>
+                    <p className="text-sm font-black text-black mb-6">No patient records match "{search}"</p>
                     <Button 
                        onClick={() => navigate("/receptionist/create-visit", { state: { searchInit: search } })}
                        className="bg-blue-600 hover:bg-blue-700 h-14 px-8 rounded-2xl shadow-xl shadow-blue-100 text-[10px] font-black uppercase tracking-widest gap-2"
@@ -94,7 +94,7 @@ export default function ReceptionistDashboard() {
 
       <div className="mt-32 w-full max-w-6xl z-10 relative">
          <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-100 to-transparent mb-12"></div>
-         <div className="flex items-center gap-4 text-gray-300 mb-8 opacity-40">
+         <div className="flex items-center gap-4 text-black mb-8 opacity-40">
             <LayoutDashboard className="w-5 h-5" />
             <span className="text-[10px] font-black uppercase tracking-[0.4em]">Quick Access Panel</span>
          </div>

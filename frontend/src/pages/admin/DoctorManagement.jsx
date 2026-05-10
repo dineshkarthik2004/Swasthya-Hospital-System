@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import { Stethoscope, Search, Filter, Shield, MoreHorizontal, UserCheck, UserX, Building2, Mail, Phone, MapPin } from "lucide-react"
 import api from "@/services/api"
 import { Button } from "@/components/ui/button"
@@ -32,24 +33,24 @@ export default function DoctorManagement() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Medical Staff</h1>
-          <p className="text-gray-500 font-medium">Registry of authorized healthcare professionals in the system.</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Medical Staff</h1>
+          <p className="text-black font-black uppercase tracking-widest text-[11px]">Registry of authorized healthcare professionals in the system.</p>
         </div>
       </div>
 
       <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
         <div className="p-8 border-b border-gray-50 flex flex-col md:flex-row gap-4 items-center justify-between">
            <div className="relative w-full md:w-96">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
               <Input 
                  placeholder="Search by name or specialty..." 
-                 className="pl-12 h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-bold"
+                 className="pl-12 h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
                  value={searchTerm}
                  onChange={e => setSearchTerm(e.target.value)}
               />
            </div>
            <div className="flex gap-3">
-              <Button variant="outline" className="h-14 px-6 rounded-2xl border-gray-100 font-black uppercase tracking-widest text-[10px] text-gray-500">
+              <Button variant="outline" className="h-14 px-6 rounded-2xl border-gray-100 font-black uppercase tracking-widest text-[10px] text-black">
                  <Filter className="w-4 h-4 mr-2" /> Filter
               </Button>
            </div>
@@ -59,21 +60,21 @@ export default function DoctorManagement() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Practitioner</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Affiliation</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Contact</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Actions</th>
+                <th className="px-8 py-6 text-[10px] font-black text-black uppercase tracking-[0.2em]">Practitioner</th>
+                <th className="px-8 py-6 text-[10px] font-black text-black uppercase tracking-[0.2em]">Affiliation</th>
+                <th className="px-8 py-6 text-[10px] font-black text-black uppercase tracking-[0.2em]">Contact</th>
+                <th className="px-8 py-6 text-[10px] font-black text-black uppercase tracking-[0.2em]">Status</th>
+                <th className="px-8 py-6 text-[10px] font-black text-black uppercase tracking-[0.2em]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {loading ? (
                 <tr>
-                   <td colSpan="5" className="px-8 py-12 text-center text-gray-400 font-bold">Warming up registry...</td>
+                   <td colSpan="5" className="px-8 py-12 text-center text-black font-black uppercase tracking-widest text-[11px]">Warming up registry...</td>
                 </tr>
               ) : filteredDoctors.length === 0 ? (
                 <tr>
-                   <td colSpan="5" className="px-8 py-12 text-center text-gray-400 font-bold">No practitioners found matching your criteria.</td>
+                   <td colSpan="5" className="px-8 py-12 text-center text-black font-black uppercase tracking-widest text-[11px]">No practitioners found matching your criteria.</td>
                 </tr>
               ) : (
                 filteredDoctors.map((doc) => (
@@ -84,23 +85,25 @@ export default function DoctorManagement() {
                              {doc.name.charAt(0)}
                           </div>
                           <div className="flex flex-col">
-                             <span className="font-black text-gray-900 tracking-tight">{doc.name}</span>
-                             <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-0.5">{doc.specialization || "General Medicine"}</span>
+                             <Link to={`/admin/doctors/${doc.id}/settings`} className="font-black text-gray-900 tracking-tight hover:text-blue-600 hover:underline transition-all">
+                               {doc.name}
+                             </Link>
+                             <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mt-0.5">{doc.specialization || "General Medicine"}</span>
                           </div>
                        </div>
                     </td>
                     <td className="px-8 py-6">
                        <div className="flex items-center gap-2">
-                          <Building2 className="w-4 h-4 text-gray-300" />
-                          <span className="text-sm font-bold text-gray-600">{doc.hospital?.name || doc.clinicName || "Independent"}</span>
+                          <Building2 className="w-4 h-4 text-black opacity-30" />
+                          <span className="text-sm font-black text-black">{doc.hospital?.name || doc.clinicName || "Independent"}</span>
                        </div>
                     </td>
                     <td className="px-8 py-6">
                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500">
+                          <div className="flex items-center gap-2 text-[11px] font-black text-black">
                              <Mail className="w-3 h-3" /> {doc.email}
                           </div>
-                          <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500">
+                          <div className="flex items-center gap-2 text-[11px] font-black text-black">
                              <Phone className="w-3 h-3" /> {doc.phone || "N/A"}
                           </div>
                        </div>
@@ -113,10 +116,10 @@ export default function DoctorManagement() {
                     </td>
                     <td className="px-8 py-6">
                        <div className="flex gap-2">
-                          <button className="p-2.5 hover:bg-white hover:shadow-md rounded-xl transition-all text-gray-400 hover:text-indigo-600 border border-transparent hover:border-gray-100">
+                          <button className="p-2.5 hover:bg-white hover:shadow-md rounded-xl transition-all text-black hover:text-indigo-600 border border-transparent hover:border-gray-100">
                              <Shield className="w-4 h-4" />
                           </button>
-                          <button className="p-2.5 hover:bg-white hover:shadow-md rounded-xl transition-all text-gray-400 hover:text-indigo-600 border border-transparent hover:border-gray-100">
+                          <button className="p-2.5 hover:bg-white hover:shadow-md rounded-xl transition-all text-black hover:text-indigo-600 border border-transparent hover:border-gray-100">
                              <MoreHorizontal className="w-4 h-4" />
                           </button>
                        </div>
