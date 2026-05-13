@@ -119,7 +119,7 @@ export function VoiceMicButton({
          onClick={handleVoice} 
          disabled={processing}
          className={`p-1.5 rounded-full ${recording ? 'bg-red-100 text-red-500 animate-pulse' : 'bg-gray-100 text-gray-500 hover:bg-blue-100 hover:text-blue-500'} transition-all flex items-center justify-center`}
-         title={recording ? "Recording..." : processing ? "Processing AI..." : "Start Dictation"}
+         title={recording ? "Recording..." : processing ? "Processing..." : "Start Dictation"}
       >
          {processing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 
           recording ? <MicOff className="w-3.5 h-3.5" /> : 
@@ -137,7 +137,7 @@ export function VoiceMicButton({
       className={`gap-2 ${recording ? 'animate-pulse' : ''}`}
     >
       {processing ? (
-        <><Loader2 className="w-4 h-4 animate-spin" /> Processing AI...</>
+        <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
       ) : recording ? (
         <><MicOff className="w-4 h-4" /> Stop Recording</>
       ) : (
