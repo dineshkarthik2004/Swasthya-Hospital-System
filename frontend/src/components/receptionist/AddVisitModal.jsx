@@ -113,10 +113,10 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
           <div className="p-8 pb-10 space-y-8 max-h-[75vh] overflow-y-auto custom-scrollbar">
              {/* Patient Info */}
              <div className="space-y-4">
-                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1 border-l-2 border-blue-600 ml-1">Primary Information</h4>
+                <h4 className="text-[10px] font-black text-black uppercase tracking-widest pl-1 border-l-2 border-blue-600 ml-1">Primary Information</h4>
                 <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-gray-500 ml-1">Full Name *</Label>
+                      <Label className="text-xs font-bold text-black ml-1">Full Name *</Label>
                       <Input 
                         placeholder="John Doe" 
                         required 
@@ -126,7 +126,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
                       />
                    </div>
                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-gray-500 ml-1">Phone Number *</Label>
+                      <Label className="text-xs font-bold text-black ml-1">Phone Number *</Label>
                       <Input 
                         placeholder="9876543210" 
                         required 
@@ -138,7 +138,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-gray-500 ml-1">Age *</Label>
+                      <Label className="text-xs font-bold text-black ml-1">Age *</Label>
                       <Input 
                         type="number" 
                         placeholder="25" 
@@ -149,7 +149,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
                       />
                    </div>
                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-gray-500 ml-1">Gender *</Label>
+                      <Label className="text-xs font-bold text-black ml-1">Gender *</Label>
                       <Select value={formData.gender} onValueChange={v => setFormData({...formData, gender: v})}>
                          <SelectTrigger className="rounded-xl border-gray-100 font-bold h-12 focus:ring-blue-500 shadow-sm bg-white">
                             <SelectValue />
@@ -162,7 +162,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
                       </Select>
                    </div>
                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-gray-500 ml-1">Email (Optional)</Label>
+                      <Label className="text-xs font-bold text-black ml-1">Email (Optional)</Label>
                       <Input 
                         type="email" 
                         placeholder="john@example.com" 
@@ -177,7 +177,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
              {/* Complaint Section */}
              <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                   <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1 border-l-2 border-blue-600 ml-1">Symptoms & Complaint</h4>
+                   <h4 className="text-[10px] font-black text-black uppercase tracking-widest pl-1 border-l-2 border-blue-600 ml-1">Symptoms & Complaint</h4>
                    <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "notes")} small voiceEnabled={voiceEnabled} />
                 </div>
                 <Input 
@@ -191,12 +191,12 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
              {/* Vitals Section */}
              <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                   <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1 border-l-2 border-blue-600 ml-1">Vitals (Optional)</h4>
+                   <h4 className="text-[10px] font-black text-black uppercase tracking-widest pl-1 border-l-2 border-blue-600 ml-1">Vitals (Optional)</h4>
                    <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "vitals")} small voiceEnabled={voiceEnabled} />
                 </div>
                 <div className="grid grid-cols-4 gap-4">
                    <div className="space-y-1">
-                      <Label className="text-[9px] font-black text-gray-400 opacity-70 tracking-tighter uppercase ml-1">BP (mmHg)</Label>
+                      <Label className="text-[9px] font-black text-black opacity-70 tracking-tighter uppercase ml-1">BP (mmHg)</Label>
                       <Input 
                         placeholder="120/80" 
                         className="rounded-xl border-gray-100 font-bold text-xs h-10 shadow-sm"
@@ -205,7 +205,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
                       />
                    </div>
                    <div className="space-y-1">
-                      <Label className="text-[9px] font-black text-gray-400 opacity-70 tracking-tighter uppercase ml-1">Pulse (bpm)</Label>
+                      <Label className="text-[9px] font-black text-black opacity-70 tracking-tighter uppercase ml-1">Pulse (bpm)</Label>
                       <Input 
                         placeholder="72" 
                         className="rounded-xl border-gray-100 font-bold text-xs h-10 shadow-sm"
@@ -214,7 +214,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
                       />
                    </div>
                    <div className="space-y-1">
-                      <Label className="text-[9px] font-black text-gray-400 opacity-70 tracking-tighter uppercase ml-1">Temp (°F)</Label>
+                      <Label className="text-[9px] font-black text-black opacity-70 tracking-tighter uppercase ml-1">Temp (°F)</Label>
                       <Input 
                         placeholder="98.6" 
                         className="rounded-xl border-gray-100 font-bold text-xs h-10 shadow-sm"
@@ -223,7 +223,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
                       />
                    </div>
                    <div className="space-y-1">
-                      <Label className="text-[9px] font-black text-gray-400 opacity-70 tracking-tighter uppercase ml-1">Weight (kg)</Label>
+                      <Label className="text-[9px] font-black text-black opacity-70 tracking-tighter uppercase ml-1">Weight (kg)</Label>
                       <Input 
                         placeholder="70" 
                         className="rounded-xl border-gray-100 font-bold text-xs h-10 shadow-sm"
@@ -236,7 +236,7 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
 
              {/* Doctor Assignment */}
              <div className="space-y-4">
-                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1 border-l-2 border-blue-600 ml-1">Assign Doctor</h4>
+                <h4 className="text-[10px] font-black text-black uppercase tracking-widest pl-1 border-l-2 border-blue-600 ml-1">Assign Doctor</h4>
                 <Select value={formData.doctorId} onValueChange={v => setFormData({...formData, doctorId: v})}>
                    <SelectTrigger className="rounded-2xl border-blue-100 font-black h-16 bg-blue-50/20 text-blue-700 shadow-sm hover:ring-2 hover:ring-blue-100 transition-all">
                       <SelectValue placeholder="Choose Doctor" />
@@ -244,10 +244,10 @@ export default function AddVisitModal({ open, onOpenChange, onSuccess }) {
                    <SelectContent className="rounded-2xl border-gray-100 shadow-2xl bg-white p-2">
                       {doctors.map(doc => (
                          <SelectItem key={doc.id} value={doc.id} className="font-bold py-3 px-4 rounded-xl focus:bg-blue-50 focus:text-blue-600">
-                            Dr. {doc.name} - <span className="text-gray-400 font-medium text-xs">{doc.specialization}</span>
+                            Dr. {doc.name} - <span className="text-black font-medium text-xs">{doc.specialization}</span>
                          </SelectItem>
                       ))}
-                      {doctors.length === 0 && <SelectItem disabled value="none" className="text-gray-400">No active doctors found</SelectItem>}
+                      {doctors.length === 0 && <SelectItem disabled value="none" className="text-black">No active doctors found</SelectItem>}
                    </SelectContent>
                 </Select>
              </div>

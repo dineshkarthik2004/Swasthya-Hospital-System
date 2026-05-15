@@ -170,7 +170,7 @@ export default function CreateVisitPage() {
           console.log("[CreateVisitPage] Back button clicked")
           navigate("/patient/records")
         }}
-        className="gap-2 text-gray-500 hover:text-gray-900 font-bold text-sm rounded-2xl px-6 h-12"
+        className="gap-2 text-black hover:text-black font-bold text-sm rounded-2xl px-6 h-12"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Dashboard
       </Button>
@@ -180,8 +180,8 @@ export default function CreateVisitPage() {
         <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
           <Plus className="w-8 h-8 text-blue-600" />
         </div>
-        <h1 className="text-2xl md:text-3xl font-black tracking-tight text-gray-900">Book New Visit</h1>
-        <p className="text-gray-500 text-[10px] md:text-sm font-medium">Fill in your details and describe your symptoms to schedule an appointment.</p>
+        <h1 className="text-2xl md:text-3xl font-black tracking-tight text-black">Book New Visit</h1>
+        <p className="text-black text-[10px] md:text-sm font-medium">Fill in your details and describe your symptoms to schedule an appointment.</p>
       </div>
 
       {/* Form Card */}
@@ -190,14 +190,14 @@ export default function CreateVisitPage() {
 
           {/* Patient Info Section */}
           <div className="space-y-2 mb-2">
-            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400">Patient Information</h3>
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-black">Patient Information</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-               <Label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">Relation / Booking For</Label>
+               <Label className="text-[10px] font-black uppercase tracking-widest text-black ml-1">Relation / Booking For</Label>
                <Select value={form.relation} onValueChange={v => handleChange("relation", v)}>
-                 <SelectTrigger className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 shadow-none">
+                 <SelectTrigger className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-black shadow-none">
                    <SelectValue placeholder="Booking for..." />
                  </SelectTrigger>
                  <SelectContent className="rounded-2xl border-gray-100 shadow-2xl bg-white p-2 z-[500]">
@@ -216,11 +216,11 @@ export default function CreateVisitPage() {
             </div>
             
             <div className="space-y-2 relative z-50">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">Full Name</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-black ml-1">Full Name</Label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 z-10" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black z-10" />
                 <Input
-                  className="pl-12 rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm relative z-0"
+                  className="pl-12 rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-black text-sm relative z-0"
                   value={form.patientName}
                   onChange={e => handleNameChange(e.target.value)}
                   onFocus={() => setShowAutoFill(true)}
@@ -238,13 +238,13 @@ export default function CreateVisitPage() {
                           >
                             <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs shrink-0">{p.name.charAt(0).toUpperCase()}</div>
                             <div className="flex flex-col min-w-0">
-                               <p className="text-sm font-bold text-gray-800 truncate">{p.name}</p>
-                               <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest truncate">{p.phone}</p>
+                               <p className="text-sm font-bold text-black truncate">{p.name}</p>
+                               <p className="text-[10px] text-black font-black uppercase tracking-widest truncate">{p.phone}</p>
                             </div>
                          </div>
                       ))}
                       {pastPatients.filter(p => p.name.toLowerCase().includes(form.patientName.toLowerCase())).length === 0 && (
-                         <div className="px-4 py-3 text-xs font-bold text-gray-400 text-center">New Family Member</div>
+                         <div className="px-4 py-3 text-xs font-bold text-black text-center">New Family Member</div>
                       )}
                    </div>
                 )}
@@ -254,9 +254,9 @@ export default function CreateVisitPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">Age</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-black ml-1">Age</Label>
               <Input
-                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm"
+                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-black text-sm"
                 value={form.age}
                 onChange={e => handleChange("age", e.target.value)}
                 placeholder="25"
@@ -267,9 +267,9 @@ export default function CreateVisitPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Mobile Number</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-black ml-1">Mobile Number</Label>
               <Input
-                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm"
+                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-black text-sm"
                 value={form.mobile}
                 onChange={e => handleChange("mobile", e.target.value)}
                 placeholder="9876543210"
@@ -280,9 +280,9 @@ export default function CreateVisitPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Gender</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-black ml-1">Gender</Label>
               <Select value={form.gender} onValueChange={v => handleChange("gender", v)}>
-                 <SelectTrigger className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 shadow-none">
+                 <SelectTrigger className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-black shadow-none">
                     <SelectValue />
                  </SelectTrigger>
                  <SelectContent className="rounded-2xl border-gray-100 bg-white z-[500] shadow-2xl p-2">
@@ -293,9 +293,9 @@ export default function CreateVisitPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Blood Group</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-black ml-1">Blood Group</Label>
               <Select value={form.bloodGroup} onValueChange={v => handleChange("bloodGroup", v)}>
-                 <SelectTrigger className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 shadow-none">
+                 <SelectTrigger className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-black shadow-none">
                     <SelectValue placeholder="Select (Optional)" />
                  </SelectTrigger>
                  <SelectContent className="rounded-2xl border-gray-100 bg-white z-[500] shadow-2xl p-2">
@@ -309,9 +309,9 @@ export default function CreateVisitPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Height (cm)</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-black ml-1">Height (cm)</Label>
               <Input
-                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm"
+                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-black text-sm"
                 value={form.height}
                 onChange={e => handleChange("height", e.target.value)}
                 placeholder="E.g., 175"
@@ -322,9 +322,9 @@ export default function CreateVisitPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Slot Date</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-black ml-1">Slot Date</Label>
               <Input
-                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm"
+                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-black text-sm"
                 value={form.slotDate}
                 onChange={e => handleChange("slotDate", e.target.value)}
                 type="date"
@@ -333,9 +333,9 @@ export default function CreateVisitPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Slot Time</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-black ml-1">Slot Time</Label>
               <Input
-                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-gray-800 text-sm"
+                className="rounded-2xl h-14 bg-gray-50/50 border-gray-100 font-bold text-black text-sm"
                 value={form.slotTime}
                 onChange={e => handleChange("slotTime", e.target.value)}
                 type="time"
@@ -346,22 +346,22 @@ export default function CreateVisitPage() {
 
           {/* Symptoms Section */}
           <div className="space-y-2 pt-4 border-t border-gray-50">
-            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Symptoms / Problem</h3>
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-black mb-4">Symptoms / Problem</h3>
           </div>
 
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Describe your problem</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-black ml-1">Describe your problem</Label>
             </div>
             <div className="relative">
               <Textarea
-                className="rounded-[1.5rem] bg-gray-50/50 border-gray-100 min-h-[160px] font-bold text-gray-700 p-6 text-sm focus-visible:ring-1 focus-visible:bg-white transition-all shadow-inner leading-relaxed"
+                className="rounded-[1.5rem] bg-gray-50/50 border-gray-100 min-h-[160px] font-bold text-black p-6 text-sm focus-visible:ring-1 focus-visible:bg-white transition-all shadow-inner leading-relaxed"
                 value={form.notes}
                 onChange={e => handleChange("notes", e.target.value)}
                 placeholder="E.g., I have a headache and mild fever since 2 days. Also experiencing body pain..."
                 required
               />
-              <div className="absolute bottom-4 right-4 text-gray-300">
+              <div className="absolute bottom-4 right-4 text-black">
                 <Mic className="w-5 h-5 opacity-20" />
               </div>
             </div>
@@ -379,7 +379,7 @@ export default function CreateVisitPage() {
             <Button
               type="button"
               variant="ghost"
-              className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-gray-300"
+              className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-black"
               onClick={() => navigate("/patient/records")}
             >
               Cancel

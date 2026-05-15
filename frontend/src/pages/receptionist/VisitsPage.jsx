@@ -21,7 +21,8 @@ export default function DailyVisitsPage() {
    const [doctors, setDoctors] = useState([])
    const [loading, setLoading] = useState(true)
    const [search, setSearch] = useState("")
-   const [dateRange, setDateRange] = useState({ start: "", end: "" })
+   const today = new Date().toISOString().split('T')[0]
+   const [dateRange, setDateRange] = useState({ start: today, end: today })
    const [currentPage, setCurrentPage] = useState(1)
    const [uhid, setUhid] = useState("")
    const [abha, setAbha] = useState("")
@@ -205,32 +206,33 @@ export default function DailyVisitsPage() {
    useEffect(() => { loadData() }, [])
    useEffect(() => { setCurrentPage(1) }, [search, dateRange])
 
-    const filteredVisits = visits.filter(v => {
-       const searchMatches = (
-          (v.patient?.name || "").toLowerCase().includes(search.toLowerCase()) ||
-          (v.patient?.phone || "").toLowerCase().includes(search.toLowerCase()) ||
-          (v.notes || "").toLowerCase().includes(search.toLowerCase()) ||
-          (v.doctor?.name || "").toLowerCase().includes(search.toLowerCase())
-       );
-       
-       let dateMatches = true;
-       if (dateRange.start && dateRange.end) {
-          const vDate = new Date(v.createdAt);
-          vDate.setHours(0,0,0,0);
-          const start = new Date(dateRange.start);
-          start.setHours(0,0,0,0);
-          const end = new Date(dateRange.end);
-          end.setHours(0,0,0,0);
-          dateMatches = (vDate >= start && vDate <= end);
-       } else if (dateRange.start || dateRange.end) {
-          // If only one is selected, match that day
-          const vDate = new Date(v.createdAt).toLocaleDateString();
-          const targetDate = new Date(dateRange.start || dateRange.end).toLocaleDateString();
-          dateMatches = vDate === targetDate;
-       }
+     const filteredVisits = visits.filter(v => {
+        const searchMatches = (
+           (v.patient?.name || "").toLowerCase().includes(search.toLowerCase()) ||
+           (v.patient?.phone || "").toLowerCase().includes(search.toLowerCase()) ||
+           (v.notes || "").toLowerCase().includes(search.toLowerCase()) ||
+           (v.doctor?.name || "").toLowerCase().includes(search.toLowerCase())
+        );
+        
+        let dateMatches = true;
+        if (!search) {
+           if (dateRange.start && dateRange.end) {
+              const vDate = new Date(v.createdAt);
+              vDate.setHours(0,0,0,0);
+              const start = new Date(dateRange.start);
+              start.setHours(0,0,0,0);
+              const end = new Date(dateRange.end);
+              end.setHours(0,0,0,0);
+              dateMatches = (vDate >= start && vDate <= end);
+           } else if (dateRange.start || dateRange.end) {
+              const vDate = new Date(v.createdAt).toLocaleDateString();
+              const targetDate = new Date(dateRange.start || dateRange.end).toLocaleDateString();
+              dateMatches = vDate === targetDate;
+           }
+        }
 
-       return searchMatches && dateMatches;
-    })
+        return searchMatches && dateMatches;
+     })
 
     const totalPages = Math.ceil(filteredVisits.length / itemsPerPage);
     const paginatedVisits = filteredVisits.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -246,10 +248,10 @@ export default function DailyVisitsPage() {
       <div className="space-y-10 max-w-7xl mx-auto px-6 py-8 pb-20">
          <div className="flex justify-between items-center bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <div>
-               <h1 className="text-3xl font-black tracking-tighter text-gray-900 leading-none">Daily Operations</h1>
+               <h1 className="text-3xl font-black tracking-tighter text-black leading-none">Daily Operations</h1>
                <p className="text-black text-sm font-bold uppercase tracking-widest mt-2 ml-1">Clinic Reception Command Center</p>
             </div>
-            <div className="flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100 text-sm font-black text-gray-700 shadow-inner">
+            <div className="flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100 text-sm font-black text-black shadow-inner">
                <Calendar className="w-4 h-4 text-blue-500" /> {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}
             </div>
          </div>
@@ -269,7 +271,7 @@ export default function DailyVisitsPage() {
                   <span className="text-[10px] font-black uppercase text-black tracking-widest">Pending Vitals</span>
                   <div className="p-2 bg-orange-50 rounded-xl text-orange-500"><ClipboardList className="w-5 h-5" /></div>
                </div>
-               <div className="text-5xl font-black text-gray-900 leading-none">{stats.pendingVisits}</div>
+               <div className="text-5xl font-black text-black leading-none">{stats.pendingVisits}</div>
                <p className="text-orange-400 text-[10px] font-bold mt-2 uppercase tracking-widest">Waiting in Queue</p>
             </Card>
             <Card className="border border-gray-100 shadow-sm rounded-[2rem] p-6 bg-white overflow-hidden relative group hover:ring-1 hover:ring-green-100 transition-all">
@@ -277,14 +279,14 @@ export default function DailyVisitsPage() {
                   <span className="text-[10px] font-black uppercase text-black tracking-widest">Revenue Status</span>
                   <div className="p-2 bg-green-50 rounded-xl text-green-500"><Wallet className="w-5 h-5" /></div>
                </div>
-               <div className="text-5xl font-black text-gray-900 leading-none">{stats.unpaidVisits}</div>
+               <div className="text-5xl font-black text-black leading-none">{stats.unpaidVisits}</div>
                <p className="text-green-500 text-[10px] font-bold mt-2 uppercase tracking-widest">Unpaid Ledger</p>
             </Card>
          </div>
 
          <div className="space-y-6">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-2">
-               <h2 className="text-xl font-black text-gray-900 tracking-tight">Visit Management</h2>
+               <h2 className="text-xl font-black text-black tracking-tight">Visit Management</h2>
                
                <div className="flex flex-wrap items-center gap-3">
                   <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
@@ -328,6 +330,7 @@ export default function DailyVisitsPage() {
                   <TableHeader className="bg-gray-50/30">
                      <TableRow className="hover:bg-transparent border-gray-50 h-16">
                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-black pl-10">Visit ID</TableHead>
+                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Date</TableHead>
                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Patient</TableHead>
                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Problem / Symptoms</TableHead>
                         <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Physician</TableHead>
@@ -380,10 +383,11 @@ export default function DailyVisitsPage() {
                             }}
                          >
                            <TableCell className="font-black text-black text-[11px] pl-10"># {(v.id || "").slice(-8).toUpperCase()}</TableCell>
+                            <TableCell className="font-black text-black text-[11px] whitespace-nowrap">{v.createdAt ? new Date(v.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : "--"}</TableCell>
                            <TableCell>
                               <div className="flex flex-col leading-tight">
                                  <div className="flex items-center gap-2">
-                                    <span className="font-black text-gray-900 text-sm whitespace-nowrap">{v.patient?.name || "Patient"}</span>
+                                    <span className="font-black text-black text-sm whitespace-nowrap">{v.patient?.name || "Patient"}</span>
                                     {v.relation && v.relation !== 'SELF' && (
                                        <Badge className="bg-blue-50 text-blue-600 rounded-lg font-black text-[8px] px-1.5 py-0 border-none uppercase tracking-tighter shadow-none">{v.relation}</Badge>
                                     )}
@@ -408,7 +412,7 @@ export default function DailyVisitsPage() {
                            </TableCell>
                            <TableCell className="text-center">
                               {v.feeType ? (
-                                 <span className="font-black text-[11px] text-gray-900">{v.feeType}</span>
+                                 <span className="font-black text-[11px] text-black">{v.feeType}</span>
                               ) : (
                                  <span className="text-[10px] font-bold text-black">--</span>
                               )}
@@ -421,7 +425,7 @@ export default function DailyVisitsPage() {
                            <TableCell className="text-right pr-10">
                               <DropdownMenu>
                                  <DropdownMenuTrigger asChild>
-                                    <div className="p-2.5 hover:bg-gray-100 rounded-2xl inline-flex cursor-pointer text-black border border-transparent transition-all hover:text-gray-900 shadow-none">
+                                    <div className="p-2.5 hover:bg-gray-100 rounded-2xl inline-flex cursor-pointer text-black border border-transparent transition-all hover:text-black shadow-none">
                                        <MoreVertical className="w-5 h-5" />
                                     </div>
                                  </DropdownMenuTrigger>
@@ -487,7 +491,7 @@ export default function DailyVisitsPage() {
                         </TableRow>
                      ))}
                      {filteredVisits.length === 0 && (
-                        <TableRow><TableCell colSpan={8} className="text-center py-32 text-black font-bold flex flex-col items-center gap-4">
+                        <TableRow><TableCell colSpan={9} className="text-center py-32 text-black font-bold flex flex-col items-center gap-4">
                            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center border border-dashed border-gray-200"><AlertCircle className="w-8 h-8 opacity-20" /></div>
                            <p className="uppercase tracking-[0.2em] text-[10px]">No matching visits found</p>
                         </TableCell></TableRow>
@@ -546,25 +550,25 @@ export default function DailyVisitsPage() {
                      <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
                            <Label className="text-[10px] font-black uppercase text-black tracking-widest ml-2">Blood Pressure</Label>
-                           <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-gray-700 px-6 text-sm" value={manualVitals.bp} onChange={e => setManualVitals({ ...manualVitals, bp: e.target.value })} placeholder="120/80" />
+                           <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-black px-6 text-sm" value={manualVitals.bp} onChange={e => setManualVitals({ ...manualVitals, bp: e.target.value })} placeholder="120/80" />
                         </div>
                         <div className="space-y-2">
                            <Label className="text-[10px] font-black uppercase text-black tracking-widest ml-2">Pulse Rate</Label>
-                           <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-gray-700 px-6 text-sm" value={manualVitals.pulse} onChange={e => setManualVitals({ ...manualVitals, pulse: e.target.value })} placeholder="72 BPM" />
+                           <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-black px-6 text-sm" value={manualVitals.pulse} onChange={e => setManualVitals({ ...manualVitals, pulse: e.target.value })} placeholder="72 BPM" />
                         </div>
                      </div>
                      <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
                            <Label className="text-[10px] font-black uppercase text-black tracking-widest ml-2">Temp (°F)</Label>
-                           <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-gray-700 px-6 text-sm" value={manualVitals.temp} onChange={e => setManualVitals({ ...manualVitals, temp: e.target.value })} placeholder="98.4 °F" />
+                           <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-black px-6 text-sm" value={manualVitals.temp} onChange={e => setManualVitals({ ...manualVitals, temp: e.target.value })} placeholder="98.4 °F" />
                         </div>
                         <div className="space-y-2">
                            <Label className="text-[10px] font-black uppercase text-black tracking-widest ml-2">Weight (KG)</Label>
-                           <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-gray-700 px-6 text-sm" value={manualVitals.weight} onChange={e => setManualVitals({ ...manualVitals, weight: e.target.value })} placeholder="70 KG" />
+                           <Input className="rounded-2xl bg-gray-50 border-gray-100 h-14 font-black text-black px-6 text-sm" value={manualVitals.weight} onChange={e => setManualVitals({ ...manualVitals, weight: e.target.value })} placeholder="70 KG" />
                         </div>
                      </div>
                      <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 h-16 rounded-[1.5rem] font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-100 mt-4">Safe Data Record</Button>
-                     <Button type="button" variant="ghost" className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-black hover:text-gray-900" onClick={() => setIsVitalsOpen(false)}>Cancel Update</Button>
+                     <Button type="button" variant="ghost" className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-black hover:text-black" onClick={() => setIsVitalsOpen(false)}>Cancel Update</Button>
                   </form>
                </div>
             </DialogContent>
@@ -591,7 +595,7 @@ export default function DailyVisitsPage() {
                      <div className="space-y-3">
                         <Label className="text-[10px] font-black uppercase text-black tracking-widest ml-2">Select Physician</Label>
                         <Select value={selectedDoctor} onValueChange={setSelectedDoctor}>
-                           <SelectTrigger className="h-16 rounded-[1.5rem] bg-gray-50 border-gray-100 font-black text-gray-700 px-6 shadow-none">
+                           <SelectTrigger className="h-16 rounded-[1.5rem] bg-gray-50 border-gray-100 font-black text-black px-6 shadow-none">
                               <SelectValue placeholder="Choose doctor..." />
                            </SelectTrigger>
                            <SelectContent className="rounded-[1.5rem] border-gray-100 shadow-2xl p-3 bg-white">
@@ -602,7 +606,7 @@ export default function DailyVisitsPage() {
                         </Select>
                      </div>
                      <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-16 rounded-[1.5rem] font-black text-sm uppercase tracking-widest shadow-xl shadow-purple-100">Confirm Appointment</Button>
-                     <Button type="button" variant="ghost" className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-black hover:text-gray-900" onClick={() => setIsAssignOpen(false)}>Cancel Allocation</Button>
+                     <Button type="button" variant="ghost" className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-black hover:text-black" onClick={() => setIsAssignOpen(false)}>Cancel Allocation</Button>
                   </form>
                </div>
             </DialogContent>
@@ -626,7 +630,7 @@ export default function DailyVisitsPage() {
 
                <div className="bg-gray-50 p-5 rounded-xl mb-6 shadow-none border border-gray-100">
                   <h3 className="font-black text-[10px] text-black uppercase tracking-widest mb-3">Patient Info</h3>
-                  <p className="font-black text-gray-900 text-sm">{selectedVisit?.patient?.name || "Patient"}</p>
+                  <p className="font-black text-black text-sm">{selectedVisit?.patient?.name || "Patient"}</p>
                   <p className="text-xs font-bold text-black mt-1">
                      Age: {new Date().getFullYear() - (new Date(selectedVisit?.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} | Gender: {(selectedVisit?.patient?.gender || "MALE").toLowerCase()}
                      {selectedVisit?.patient?.bloodGroup && ` | Blood: ${selectedVisit.patient.bloodGroup}`}

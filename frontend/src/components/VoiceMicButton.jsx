@@ -118,7 +118,7 @@ export function VoiceMicButton({
          type="button"
          onClick={handleVoice} 
          disabled={processing}
-         className={`p-1.5 rounded-full ${recording ? 'bg-red-100 text-red-500 animate-pulse' : 'bg-gray-100 text-gray-500 hover:bg-blue-100 hover:text-blue-500'} transition-all flex items-center justify-center`}
+         className={`p-1.5 rounded-full ${recording ? 'bg-red-100 text-red-500 animate-pulse' : 'bg-gray-100 text-black hover:bg-blue-100 hover:text-blue-500'} transition-all flex items-center justify-center`}
          title={recording ? "Recording..." : processing ? "Processing..." : "Start Dictation"}
       >
          {processing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 

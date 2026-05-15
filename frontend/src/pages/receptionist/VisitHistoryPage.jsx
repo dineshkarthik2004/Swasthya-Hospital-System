@@ -59,21 +59,21 @@ export default function VisitHistoryPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-4">
-        <h1 className="text-2xl font-black tracking-tight text-gray-900">Visit History</h1>
+        <h1 className="text-2xl font-black tracking-tight text-black">Visit History</h1>
         
         <div className="flex items-center gap-3">
            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-gray-100 shadow-sm">
              <Calendar className="w-4 h-4 text-blue-500" /> 
              <input 
                type="date" 
-               className="bg-transparent border-none text-xs font-bold text-gray-600 focus:outline-none" 
+               className="bg-transparent border-none text-xs font-bold text-black focus:outline-none" 
                value={dateRange.start}
                onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
              />
-             <span className="text-gray-300 mx-1 font-black">─</span>
+             <span className="text-black mx-1 font-black">─</span>
              <input 
                type="date" 
-               className="bg-transparent border-none text-xs font-bold text-gray-600 focus:outline-none" 
+               className="bg-transparent border-none text-xs font-bold text-black focus:outline-none" 
                value={dateRange.end}
                onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
              />
@@ -88,7 +88,7 @@ export default function VisitHistoryPage() {
            </div>
            
            <div className="relative">
-             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
              <input 
                className="pl-9 pr-4 rounded-xl border border-gray-100 bg-white h-10 text-xs font-bold shadow-sm w-48 focus:ring-1 focus:ring-blue-100 outline-none" 
                placeholder="Patient Search..." 
@@ -103,14 +103,14 @@ export default function VisitHistoryPage() {
          <Table>
             <TableHeader className="bg-white">
                <TableRow className="hover:bg-transparent border-gray-50 h-16">
-                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-gray-800 pl-8">Visit ID</TableHead>
-                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-gray-800">Patient</TableHead>
-                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-gray-800">Patient Number</TableHead>
-                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-gray-800">Doctor</TableHead>
-                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-gray-800">Vitals</TableHead>
-                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-gray-800">Status</TableHead>
-                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-gray-800">Fee Type</TableHead>
-                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-gray-800">Payment</TableHead>
+                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-black pl-8">Visit ID</TableHead>
+                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-black">Patient</TableHead>
+                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-black">Patient Number</TableHead>
+                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-black">Doctor</TableHead>
+                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-black">Vitals</TableHead>
+                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-black">Status</TableHead>
+                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-black">Fee Type</TableHead>
+                 <TableHead className="font-bold text-[11px] uppercase tracking-widest text-black">Payment</TableHead>
                </TableRow>
             </TableHeader>
             <TableBody>
@@ -126,23 +126,23 @@ export default function VisitHistoryPage() {
                        }
                     }}
                  >
-                   <TableCell className="font-bold text-gray-400 text-[10px] pl-8">#{v.id?.slice(-8)}</TableCell>
-                   <TableCell className="font-bold text-gray-900 text-sm">{v.patient?.name}</TableCell>
-                   <TableCell className="font-bold text-gray-500 text-sm">{v.patient?.phone || "--"}</TableCell>
-                   <TableCell className="font-bold text-gray-500 text-sm">
+                   <TableCell className="font-bold text-black text-[10px] pl-8">#{v.id?.slice(-8)}</TableCell>
+                   <TableCell className="font-bold text-black text-sm">{v.patient?.name}</TableCell>
+                   <TableCell className="font-bold text-black text-sm">{v.patient?.phone || "--"}</TableCell>
+                   <TableCell className="font-bold text-black text-sm">
                       {v.doctor?.name ? `Dr. ${v.doctor.name}` : "--"}
                    </TableCell>
-                   <TableCell className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                   <TableCell className="text-[10px] font-bold text-black uppercase tracking-tight">
                       {v.vitals ? `BP: ${v.vitals.bloodPressure} | Wt: ${v.vitals.weight}` : "--"}
                    </TableCell>
                    <TableCell>
                       <Badge className={`rounded-full px-3 py-0.5 font-black text-[10px] uppercase tracking-widest border-none ${
-                        v.status === 'PRESCRIPTION_COMPLETED' || v.status === 'CONSULTED' ? 'bg-blue-600 text-white' : 'bg-[#F1F3F9] text-gray-600'
+                        v.status === 'PRESCRIPTION_COMPLETED' || v.status === 'CONSULTED' ? 'bg-blue-600 text-white' : 'bg-[#F1F3F9] text-black'
                       }`}>
                          {v.status === 'PRESCRIPTION_COMPLETED' ? 'Completed' : v.status}
                       </Badge>
                    </TableCell>
-                   <TableCell className="text-gray-400 font-bold text-sm">
+                   <TableCell className="text-black font-bold text-sm">
                       {v.feeType || "--"}
                    </TableCell>
                    <TableCell>
@@ -155,7 +155,7 @@ export default function VisitHistoryPage() {
                  </TableRow>
                ))}
                {filteredVisits.length === 0 && (
-                  <TableRow><TableCell colSpan={8} className="text-center py-32 text-gray-300 font-bold flex flex-col items-center gap-4">
+                  <TableRow><TableCell colSpan={8} className="text-center py-32 text-black font-bold flex flex-col items-center gap-4">
                      <Calendar className="w-12 h-12 opacity-10" />
                      <p className="uppercase tracking-[0.2em] text-[10px] opacity-70">No history records matching your filter.</p>
                   </TableCell></TableRow>
@@ -164,9 +164,9 @@ export default function VisitHistoryPage() {
          </Table>
 
          <div className="border-t border-gray-50 p-6 flex justify-between items-center bg-white">
-            <Button variant="ghost" size="sm" className="font-bold text-gray-400 gap-1 hover:text-gray-900 border border-transparent"><ChevronLeft className="w-4 h-4"/> Previous</Button>
-            <div className="text-sm font-bold text-gray-800 uppercase tracking-widest text-[10px]">Page 1 / {Math.ceil(filteredVisits.length / 10) || 1}</div>
-            <Button variant="ghost" size="sm" className="font-bold text-gray-400 gap-1 hover:text-gray-900 border border-transparent">Next <ChevronRight className="w-4 h-4"/></Button>
+            <Button variant="ghost" size="sm" className="font-bold text-black gap-1 hover:text-black border border-transparent"><ChevronLeft className="w-4 h-4"/> Previous</Button>
+            <div className="text-sm font-bold text-black uppercase tracking-widest text-[10px]">Page 1 / {Math.ceil(filteredVisits.length / 10) || 1}</div>
+            <Button variant="ghost" size="sm" className="font-bold text-black gap-1 hover:text-black border border-transparent">Next <ChevronRight className="w-4 h-4"/></Button>
          </div>
       </Card>
     </div>

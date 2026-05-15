@@ -33,7 +33,7 @@ export default function AppLayout({ allowedRoles }) {
     return (
        <div className="flex flex-col items-center justify-center h-screen bg-[#F8F9FA] gap-4">
           <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-          <span className="text-[10px] font-bold uppercase text-gray-800 tracking-widest">Warming up systems...</span>
+          <span className="text-[10px] font-bold uppercase text-black tracking-widest">Warming up systems...</span>
        </div>
     )
   }
@@ -50,8 +50,8 @@ export default function AppLayout({ allowedRoles }) {
          <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
             <ShieldCheck className="w-10 h-10" />
          </div>
-          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Access Restricted</h2>
-          <p className="mt-2 text-gray-800 font-medium">Your credentials lack authorization for this wing.</p>
+          <h2 className="text-2xl font-bold text-black tracking-tight">Access Restricted</h2>
+          <p className="mt-2 text-black font-medium">Your credentials lack authorization for this wing.</p>
           <Button type="button" className="mt-8 bg-blue-600 hover:bg-blue-700 h-12 px-10 rounded-2xl font-bold uppercase tracking-widest text-[10px]" onClick={() => navigate(-1)}>Secure Return</Button>
        </div>
     )
@@ -104,8 +104,8 @@ export default function AppLayout({ allowedRoles }) {
                  <HeartPulse className="w-6 h-6" />
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="font-bold text-xl text-gray-900 tracking-tighter">Swasthya</span>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-800 font-bold opacity-80 mt-0.5">Hospital System</span>
+                <span className="font-bold text-xl text-black tracking-tighter">Swasthya</span>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-black font-bold opacity-80 mt-0.5">Hospital System</span>
               </div>
             </div>
           )}
@@ -115,7 +115,7 @@ export default function AppLayout({ allowedRoles }) {
         </div>
         
         <div className="px-8 pt-8 pb-4">
-            {!collapsed && <span className="text-[10px] font-bold text-gray-800 uppercase tracking-[0.3em] pl-1">Platform</span>}
+            {!collapsed && <span className="text-[10px] font-bold text-black uppercase tracking-[0.3em] pl-1">Platform</span>}
          </div>
 
         <nav className="flex-1 overflow-y-auto px-4 space-y-1.5 scrollbar-hide">
@@ -126,10 +126,10 @@ export default function AppLayout({ allowedRoles }) {
               title={collapsed ? item.name : undefined}
               className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 border border-transparent ${
                 location.pathname.startsWith(item.path) 
-                   ? "bg-[#F3F6FF] text-blue-600 font-bold border-[#E0E7FF] shadow-inner" : "text-gray-800 hover:bg-gray-50 font-bold"
+                   ? "bg-[#F3F6FF] text-blue-600 font-bold border-[#E0E7FF] shadow-inner" : "text-black hover:bg-gray-50 font-bold"
               }`}
             >
-              <div className={`${location.pathname.startsWith(item.path) ? "text-blue-600 scale-110" : "text-gray-800"} transition-all duration-300`}>
+              <div className={`${location.pathname.startsWith(item.path) ? "text-blue-600 scale-110" : "text-black"} transition-all duration-300`}>
                  {item.icon}
               </div>
               {!collapsed && <span className="text-[13px] tracking-tight whitespace-nowrap">{item.name}</span>}
@@ -141,12 +141,12 @@ export default function AppLayout({ allowedRoles }) {
       <main className="flex-1 flex flex-col h-full overflow-hidden">
         <header className="h-20 bg-white/80 backdrop-blur-3xl border-b border-gray-100/50 flex items-center px-10 shrink-0 justify-between z-10">
             <div className="flex items-center gap-6">
-                <div className="p-2.5 hover:bg-gray-50 rounded-2xl cursor-pointer text-gray-800 transition-colors border border-transparent hover:border-gray-100" onClick={() => { if (window.innerWidth < 768) { setMobileOpen(!mobileOpen); } else { setCollapsed(!collapsed); } }}>
+                <div className="p-2.5 hover:bg-gray-50 rounded-2xl cursor-pointer text-black transition-colors border border-transparent hover:border-gray-100" onClick={() => { if (window.innerWidth < 768) { setMobileOpen(!mobileOpen); } else { setCollapsed(!collapsed); } }}>
                    <Menu className="w-5 h-5" />
                 </div>
                <div className="flex flex-col leading-none">
-                   <h2 className="font-bold text-gray-900 text-lg tracking-tight">{navItems.find(i => location.pathname.startsWith(i.path))?.name || "Clinic Portal"}</h2>
-                   <span className="text-[10px] text-gray-800 font-bold uppercase tracking-[0.2em] mt-1.5 opacity-70">
+                   <h2 className="font-bold text-black text-lg tracking-tight">{navItems.find(i => location.pathname.startsWith(i.path))?.name || "Clinic Portal"}</h2>
+                   <span className="text-[10px] text-black font-bold uppercase tracking-[0.2em] mt-1.5 opacity-70">
                       {new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}
                    </span>
                </div>
@@ -164,14 +164,14 @@ export default function AppLayout({ allowedRoles }) {
                            {(user?.name || 'U').charAt(0)}
                         </div>
                          <div className="flex flex-col">
-                            <span className="text-[11px] font-black text-gray-900 leading-none">{(user?.name || "User").split(' ')[0]}</span>
+                            <span className="text-[11px] font-black text-black leading-none">{(user?.name || "User").split(' ')[0]}</span>
                             <span className="text-[9px] font-bold text-black uppercase tracking-widest mt-1">Status: Active</span>
                          </div>
                          <ChevronDown className="w-3.5 h-3.5 text-black mt-1 ml-1" />
                       </div>
                   </DropdownMenuTrigger>
                    <DropdownMenuContent align="end" className="w-64 rounded-[2rem] shadow-2xl mt-4 border-none p-4 bg-white ring-1 ring-black/5 z-[200]">
-                      <DropdownMenuLabel className="font-black text-gray-900 text-sm px-4 pt-4 pb-2">Session Overview</DropdownMenuLabel>
+                      <DropdownMenuLabel className="font-black text-black text-sm px-4 pt-4 pb-2">Session Overview</DropdownMenuLabel>
                       <p className="px-4 pb-4 text-[10px] font-bold text-black uppercase tracking-widest leading-none shrink-0">{user?.email || "user@hospital.com"}</p>
                       <DropdownMenuSeparator className="bg-gray-50 mb-3 mx-2" />
                       

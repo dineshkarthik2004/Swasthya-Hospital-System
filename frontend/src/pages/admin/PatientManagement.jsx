@@ -32,7 +32,7 @@ export default function PatientManagement() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Patient Population</h1>
+          <h1 className="text-3xl font-black text-black tracking-tight text-black">Patient Population</h1>
           <p className="text-black font-black uppercase tracking-widest text-[11px]">Global database of registered patients across the network.</p>
         </div>
       </div>
@@ -79,7 +79,7 @@ export default function PatientManagement() {
                              {p.name.charAt(0)}
                           </div>
                           <div className="flex flex-col">
-                             <span className="font-black text-gray-900 tracking-tight">{p.name}</span>
+                             <span className="font-black text-black tracking-tight">{p.name}</span>
                              <span className="text-[10px] font-black text-black opacity-40 uppercase tracking-widest mt-0.5">{p.gender || "UNSPECIFIED"} • {p.bloodGroup || "N/A"}</span>
                           </div>
                        </div>

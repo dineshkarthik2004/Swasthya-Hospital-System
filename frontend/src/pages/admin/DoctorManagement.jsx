@@ -33,7 +33,7 @@ export default function DoctorManagement() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Medical Staff</h1>
+          <h1 className="text-3xl font-black text-black tracking-tight text-black">Medical Staff</h1>
           <p className="text-black font-black uppercase tracking-widest text-[11px]">Registry of authorized healthcare professionals in the system.</p>
         </div>
       </div>
@@ -85,7 +85,7 @@ export default function DoctorManagement() {
                              {doc.name.charAt(0)}
                           </div>
                           <div className="flex flex-col">
-                             <Link to={`/admin/doctors/${doc.id}/settings`} className="font-black text-gray-900 tracking-tight hover:text-blue-600 hover:underline transition-all">
+                             <Link to={`/admin/doctors/${doc.id}/settings`} className="font-black text-black tracking-tight hover:text-blue-600 hover:underline transition-all">
                                {doc.name}
                              </Link>
                              <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mt-0.5">{doc.specialization || "General Medicine"}</span>

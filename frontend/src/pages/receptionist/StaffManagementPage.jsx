@@ -83,7 +83,7 @@ export default function StaffManagementPage() {
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
       <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
-      <p className="text-gray-400 font-black uppercase tracking-widest text-[10px]">Fetching Team Directory...</p>
+      <p className="text-black font-black uppercase tracking-widest text-[10px]">Fetching Team Directory...</p>
     </div>
   )
 
@@ -94,8 +94,8 @@ export default function StaffManagementPage() {
     <div className="space-y-10 max-w-7xl mx-auto px-6 py-8 pb-32">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-gray-900 leading-none">Staff Management</h1>
-          <p className="text-gray-400 text-sm font-medium mt-3 opacity-80">Manage medical staff, roles, and department assignments.</p>
+          <h1 className="text-3xl font-black tracking-tight text-black leading-none">Staff Management</h1>
+          <p className="text-black text-sm font-medium mt-3 opacity-80">Manage medical staff, roles, and department assignments.</p>
         </div>
 
         <Button
@@ -113,22 +113,22 @@ export default function StaffManagementPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <Card className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center justify-between group transition-all hover:ring-1 hover:ring-blue-100">
           <div>
-            <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4">Total Staff</div>
-            <div className="text-5xl font-black text-gray-900 leading-none">{staff.length}</div>
+            <div className="text-[10px] font-black text-black uppercase tracking-[0.3em] mb-4">Total Staff</div>
+            <div className="text-5xl font-black text-black leading-none">{staff.length}</div>
           </div>
-          <div className="p-4 bg-gray-50 text-gray-400 rounded-3xl"><ShieldCheck className="w-7 h-7"/></div>
+          <div className="p-4 bg-gray-50 text-black rounded-3xl"><ShieldCheck className="w-7 h-7"/></div>
         </Card>
         <Card className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center justify-between group transition-all hover:ring-1 hover:ring-green-100">
           <div>
-            <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4">Active Doctors</div>
+            <div className="text-[10px] font-black text-black uppercase tracking-[0.3em] mb-4">Active Doctors</div>
             <div className="text-5xl font-black text-green-600 leading-none">{staff.filter(s=>s.role==='DOCTOR' && s.isActive).length}</div>
           </div>
           <div className="p-4 bg-green-50 text-green-500 rounded-3xl"><Award className="w-7 h-7"/></div>
         </Card>
         <Card className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center justify-between group transition-all hover:ring-1 hover:ring-purple-100">
           <div>
-            <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4">Receptionists</div>
-            <div className="text-5xl font-black text-gray-900 leading-none">{staff.filter(s=>s.role==='RECEPTIONIST').length}</div>
+            <div className="text-[10px] font-black text-black uppercase tracking-[0.3em] mb-4">Receptionists</div>
+            <div className="text-5xl font-black text-black leading-none">{staff.filter(s=>s.role==='RECEPTIONIST').length}</div>
           </div>
           <div className="p-4 bg-purple-50 text-purple-500 rounded-3xl"><UserSquare className="w-7 h-7"/></div>
         </Card>
@@ -138,7 +138,7 @@ export default function StaffManagementPage() {
       <Card className="border border-gray-100 shadow-sm rounded-[2.5rem] p-0 overflow-hidden bg-white">
         <div className="p-6 flex gap-4 border-b border-gray-50 items-center justify-between px-10">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
             <Input
               className="pl-12 h-12 rounded-2xl border-none bg-gray-50/50 font-bold text-sm focus-visible:ring-1"
               placeholder="Filter by name, specialty..."
@@ -151,7 +151,7 @@ export default function StaffManagementPage() {
               <div
                 key={r}
                 onClick={() => setRoleFilter(r)}
-                className={`${roleFilter === r ? "bg-white text-gray-900 shadow-sm scale-105" : "text-gray-400"} px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest cursor-pointer transition-all whitespace-nowrap`}
+                className={`${roleFilter === r ? "bg-white text-black shadow-sm scale-105" : "text-black"} px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest cursor-pointer transition-all whitespace-nowrap`}
               >{r === "ALL" ? "All Team" : r === "DOCTOR" ? "Doctors" : r === "RECEPTIONIST" ? "Receptionists" : "Lab Techs"}</div>
             ))}
           </div>
@@ -160,13 +160,13 @@ export default function StaffManagementPage() {
         <Table>
           <TableHeader className="bg-gray-50/10 h-16">
             <TableRow className="hover:bg-transparent border-gray-50">
-              <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400 pl-12">Identity</TableHead>
-              <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Qualification</TableHead>
-              <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Email ID</TableHead>
-              <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Role</TableHead>
-              <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Branch</TableHead>
-              <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Specialization</TableHead>
-              <TableHead className="font-black text-[10px] uppercase tracking-widest text-gray-400">Status</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-black pl-12">Identity</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Qualification</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Email ID</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Role</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Branch</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Specialization</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-black">Status</TableHead>
               <TableHead className="w-[80px] text-right pr-12"></TableHead>
             </TableRow>
           </TableHeader>
@@ -178,11 +178,11 @@ export default function StaffManagementPage() {
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 font-black text-[10px] flex items-center justify-center uppercase shadow-inner border border-white group-hover:scale-110 transition-transform">
                       {(s.name || 'S').split(' ').map(n=>n[0]).join('').slice(0, 2)}
                     </div>
-                    <span className="font-black text-gray-900 text-sm whitespace-nowrap">{(s.role === 'DOCTOR' ? 'Dr. ' : '') + (s.name || "")}</span>
+                    <span className="font-black text-black text-sm whitespace-nowrap">{(s.role === 'DOCTOR' ? 'Dr. ' : '') + (s.name || "")}</span>
                   </div>
                 </TableCell>
-                <TableCell className="text-[12px] font-bold text-gray-500 uppercase">{s.qualification || "--"}</TableCell>
-                <TableCell className="text-[12px] font-bold text-gray-500">{s.email || ""}</TableCell>
+                <TableCell className="text-[12px] font-bold text-black uppercase">{s.qualification || "--"}</TableCell>
+                <TableCell className="text-[12px] font-bold text-black">{s.email || ""}</TableCell>
                 <TableCell>
                   <Badge className={`rounded-xl px-4 py-1.5 text-[9px] font-black uppercase tracking-widest border-none ${
                     s.role === 'DOCTOR' ? 'bg-blue-100 text-blue-700' : 
@@ -190,8 +190,8 @@ export default function StaffManagementPage() {
                     'bg-orange-100 text-orange-700'
                   }`}>{s.role || ""}</Badge>
                 </TableCell>
-                <TableCell className="text-[12px] font-bold text-gray-500">{s.branchName || "--"}</TableCell>
-                <TableCell className="text-[12px] font-bold text-gray-400">{s.specialization || "--"}</TableCell>
+                <TableCell className="text-[12px] font-bold text-black">{s.branchName || "--"}</TableCell>
+                <TableCell className="text-[12px] font-bold text-black">{s.specialization || "--"}</TableCell>
                 <TableCell>
                   <Badge className={`rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border-none ${
                     s.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
@@ -200,12 +200,12 @@ export default function StaffManagementPage() {
                 <TableCell className="text-right pr-12">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button type="button" variant="ghost" size="icon" className="rounded-2xl hover:bg-white hover:shadow-2xl text-gray-300 transition-all">
+                      <Button type="button" variant="ghost" size="icon" className="rounded-2xl hover:bg-white hover:shadow-2xl text-black transition-all">
                         <MoreHorizontal className="w-5 h-5"/>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-60 rounded-[2rem] border-gray-100 shadow-2xl p-4 bg-white ring-1 ring-black/5 z-[50]">
-                      <DropdownMenuLabel className="text-[10px] font-black uppercase text-gray-400 px-4 py-2 tracking-[0.2em]">Actions</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-[10px] font-black uppercase text-black px-4 py-2 tracking-[0.2em]">Actions</DropdownMenuLabel>
 
                       <DropdownMenuItem
                         className="rounded-2xl font-black text-[11px] uppercase tracking-widest gap-4 py-4 hover:bg-gray-50 cursor-pointer transition-colors"
@@ -215,7 +215,7 @@ export default function StaffManagementPage() {
                           toast({ title: "Copied!", description: "Staff ID copied to clipboard." });
                         }}
                       >
-                        <Copy className="w-4 h-4 text-gray-300" /> Copy Staff ID
+                        <Copy className="w-4 h-4 text-black" /> Copy Staff ID
                       </DropdownMenuItem>
 
                       <DropdownMenuItem
@@ -267,7 +267,7 @@ export default function StaffManagementPage() {
               </TableRow>
             ))}
             {filteredStaff.length === 0 && (
-              <TableRow><TableCell colSpan={7} className="text-center py-32 text-gray-300 font-black uppercase tracking-[0.3em] text-[10px] opacity-20">No matching staff records found</TableCell></TableRow>
+              <TableRow><TableCell colSpan={7} className="text-center py-32 text-black font-black uppercase tracking-[0.3em] text-[10px] opacity-20">No matching staff records found</TableCell></TableRow>
             )}
           </TableBody>
         </Table>

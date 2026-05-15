@@ -505,7 +505,7 @@ export default function ConsultationPage() {
    }
 
    if (loading) return <div className="p-32 flex flex-col items-center justify-center gap-4"><Loader2 className="w-12 h-12 animate-spin text-blue-500" />Loading...</div>
-   if (!visit || !visit.id) return <div className="p-10 flex flex-col items-center justify-center gap-4 text-gray-500 font-bold">Failed to load consultation</div>
+   if (!visit || !visit.id) return <div className="p-10 flex flex-col items-center justify-center gap-4 text-black font-bold">Failed to load consultation</div>
    return (
       <div className="w-full pt-6 px-4 md:px-6 lg:px-10 space-y-6 flex flex-col xl:flex-row gap-8 pb-32">
 
@@ -516,9 +516,9 @@ export default function ConsultationPage() {
                <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-2xl uppercase mb-3 text-center">
                   {(visit.patient?.name || "P").charAt(0)}
                </div>
-               <h2 className="text-xl font-bold text-gray-900 leading-none mb-2">{visit.patient?.name || "Patient"}</h2>
-               <p className="text-xs font-bold text-gray-800 mb-1">{visit.patient?.gender || "MALE"}, {new Date().getFullYear() - (new Date(visit.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} Years</p>
-               <p className="text-xs font-bold text-gray-800">ID: p-{(visit.patient?.id || "").slice(-8).toUpperCase()}</p>
+               <h2 className="text-xl font-bold text-black leading-none mb-2">{visit.patient?.name || "Patient"}</h2>
+               <p className="text-xs font-bold text-black mb-1">{visit.patient?.gender || "MALE"}, {new Date().getFullYear() - (new Date(visit.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} Years</p>
+               <p className="text-xs font-bold text-black">ID: p-{(visit.patient?.id || "").slice(-8).toUpperCase()}</p>
                {visit.patient?.uhid && <p className="text-[11px] font-bold text-blue-600 mt-1 uppercase tracking-tight">UHID: {visit.patient.uhid}</p>}
                {visit.patient?.abha && <p className="text-[11px] font-bold text-emerald-600 mt-0.5 uppercase tracking-tight">ABHA: {visit.patient.abha}</p>}
                {visit.patient?.bloodGroup && <p className="text-xs font-bold text-red-500 mt-1">Blood: {visit.patient.bloodGroup}</p>}
@@ -527,11 +527,11 @@ export default function ConsultationPage() {
             {/* Vitals Signs Box */}
             <div>
                <div className="flex justify-between items-center mb-4 px-2 tracking-tight">
-                  <h3 className="text-[11px] font-bold text-gray-800 uppercase tracking-widest">Vitals Signs</h3>
+                  <h3 className="text-[11px] font-bold text-black uppercase tracking-widest">Vitals Signs</h3>
                   {editingVitals ? (
                      <Button type="button" onClick={handleSaveVitals} className="h-6 text-[10px] font-bold px-3">Save</Button>
                   ) : (
-                     <button type="button" onClick={() => setEditingVitals(true)} className="text-[11px] font-bold text-gray-900 flex items-center gap-1 hover:text-blue-600 transition-colors">
+                     <button type="button" onClick={() => setEditingVitals(true)} className="text-[11px] font-bold text-black flex items-center gap-1 hover:text-blue-600 transition-colors">
                         <Edit2 className="w-3 h-3" /> Edit
                      </button>
                   )}
@@ -540,46 +540,46 @@ export default function ConsultationPage() {
                   <div className="flex flex-col p-4 rounded-2xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center">
                      <div className="flex items-center gap-2 text-red-500">
                         <span className="font-bold text-lg leading-none"></span>
-                        <span className="text-[10px] uppercase font-bold text-gray-800">BP</span>
+                        <span className="text-[10px] uppercase font-bold text-black">BP</span>
                      </div>
-                     <Input value={vitalsTemp.bp} onChange={(e) => setVitalsTemp({ ...vitalsTemp, bp: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full text-gray-900" placeholder="--" />
+                     <Input value={vitalsTemp.bp} onChange={(e) => setVitalsTemp({ ...vitalsTemp, bp: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full text-black" placeholder="--" />
                   </div>
                   <div className="flex flex-col p-4 rounded-2xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center">
                      <div className="flex items-center gap-2 text-pink-500">
                         <span className="font-bold text-lg leading-none"></span>
-                        <span className="text-[10px] uppercase font-bold text-gray-800">Heart Rate</span>
+                        <span className="text-[10px] uppercase font-bold text-black">Heart Rate</span>
                      </div>
-                     <Input value={vitalsTemp.pulse} onChange={(e) => setVitalsTemp({ ...vitalsTemp, pulse: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full text-gray-900" placeholder="--" />
+                     <Input value={vitalsTemp.pulse} onChange={(e) => setVitalsTemp({ ...vitalsTemp, pulse: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full text-black" placeholder="--" />
                   </div>
                   <div className="flex flex-col p-4 rounded-2xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center">
                      <div className="flex items-center gap-2 text-orange-500">
                         <span className="font-bold text-lg leading-none"></span>
-                        <span className="text-[10px] uppercase font-bold text-gray-800">Temperature</span>
+                        <span className="text-[10px] uppercase font-bold text-black">Temperature</span>
                      </div>
-                     <Input value={vitalsTemp.temp} onChange={(e) => setVitalsTemp({ ...vitalsTemp, temp: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full text-gray-900" placeholder="--" />
+                     <Input value={vitalsTemp.temp} onChange={(e) => setVitalsTemp({ ...vitalsTemp, temp: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full text-black" placeholder="--" />
                   </div>
                   <div className="flex flex-col p-4 rounded-2xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center">
                      <div className="flex items-center gap-2 text-blue-500">
                         <span className="font-bold text-lg leading-none"></span>
-                        <span className="text-[10px] uppercase font-bold text-gray-800">Weight</span>
+                        <span className="text-[10px] uppercase font-bold text-black">Weight</span>
                      </div>
-                     <Input value={vitalsTemp.weight} onChange={(e) => setVitalsTemp({ ...vitalsTemp, weight: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full text-gray-900" placeholder="--" />
+                     <Input value={vitalsTemp.weight} onChange={(e) => setVitalsTemp({ ...vitalsTemp, weight: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full text-black" placeholder="--" />
                   </div>
                   <div className="flex flex-col p-4 rounded-2xl bg-white shadow-sm border border-gray-100 gap-2 h-26 justify-center col-span-2">
                      <div className="flex items-center gap-2 text-green-500">
                         <span className="font-bold text-lg leading-none"></span>
-                        <span className="text-[10px] uppercase font-bold text-gray-800">Height (cm)</span>
+                        <span className="text-[10px] uppercase font-bold text-black">Height (cm)</span>
                      </div>
-                     <Input value={vitalsTemp.height} onChange={(e) => setVitalsTemp({ ...vitalsTemp, height: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full text-gray-900" placeholder="--" />
+                     <Input value={vitalsTemp.height} onChange={(e) => setVitalsTemp({ ...vitalsTemp, height: e.target.value })} disabled={!editingVitals} className="h-7 border-gray-200 mt-1 text-xs font-bold w-full text-black" placeholder="--" />
                   </div>
                </div>
             </div>
 
             {/* Patient Complaints */}
             <div className="pt-2">
-               <h3 className="text-[11px] font-bold text-gray-800 uppercase tracking-widest px-2 mb-3">Patient Complaints</h3>
+               <h3 className="text-[11px] font-bold text-black uppercase tracking-widest px-2 mb-3">Patient Complaints</h3>
                <Card className="rounded-2xl border border-gray-100 shadow-sm bg-gray-50/50 p-5 min-h-[100px]">
-                  <p className="text-sm font-bold text-gray-900 leading-relaxed shadow-none bg-transparent">
+                  <p className="text-sm font-bold text-black leading-relaxed shadow-none bg-transparent">
                      {visit.notes || "No initial observation provided."}
                   </p>
                </Card>
@@ -592,7 +592,7 @@ export default function ConsultationPage() {
             {/* Prescription Card */}
             <Card className="rounded-2xl border border-gray-100 shadow-sm bg-white pb-4">
                <div className="px-6 py-5 border-b border-gray-50 flex items-center justify-between bg-white">
-                  <h2 className="text-base font-bold text-gray-900 tracking-tight">Prescription</h2>
+                  <h2 className="text-base font-bold text-black tracking-tight">Prescription</h2>
                   <div className="flex gap-2">
                      <VoiceMicButton onExtractionSuccess={(text) => handleVoiceResult(text, "prescription")} voiceEnabled={voiceEnabled} />
                      <button onClick={handleAddMedicine} className="rounded-full h-8 px-4 bg-gray-50 text-blue-600 border border-gray-100 hover:bg-blue-50 font-bold text-xs flex items-center gap-2 transition-colors">
@@ -604,11 +604,11 @@ export default function ConsultationPage() {
                <Table className="overflow-visible">
                   <TableHeader className="bg-transparent h-12">
                      <TableRow className="border-b border-gray-100 hover:bg-transparent">
-                        <TableHead className="text-[10px] font-bold text-gray-800 uppercase tracking-widest pl-6 w-[25%]">Medicine Name</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-800 uppercase tracking-widest w-[20%]">Composition</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-800 uppercase tracking-widest text-center w-[120px]">Frequency</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-800 uppercase tracking-widest w-[140px]">Timing</TableHead>
-                        <TableHead className="text-[10px] font-bold text-gray-800 uppercase tracking-widest w-[80px]">Duration</TableHead>
+                        <TableHead className="text-[10px] font-bold text-black uppercase tracking-widest pl-6 w-[25%]">Medicine Name</TableHead>
+                        <TableHead className="text-[10px] font-bold text-black uppercase tracking-widest w-[20%]">Composition</TableHead>
+                        <TableHead className="text-[10px] font-bold text-black uppercase tracking-widest text-center w-[120px]">Frequency</TableHead>
+                        <TableHead className="text-[10px] font-bold text-black uppercase tracking-widest w-[140px]">Timing</TableHead>
+                        <TableHead className="text-[10px] font-bold text-black uppercase tracking-widest w-[80px]">Duration</TableHead>
                         <TableHead className="w-[40px] pr-4"></TableHead>
                      </TableRow>
                   </TableHeader>
@@ -637,7 +637,7 @@ export default function ConsultationPage() {
                                            }
                                         }, 200);
                                      }}
-                                     className="h-9 text-sm font-bold border-none bg-gray-50 rounded-full px-4 shadow-none focus-visible:ring-1 transition-colors w-full text-gray-900 placeholder:text-gray-500" 
+                                     className="h-9 text-sm font-bold border-none bg-gray-50 rounded-full px-4 shadow-none focus-visible:ring-1 transition-colors w-full text-black placeholder:text-black" 
                                   />
                                   
                                   {activeSearchIndex === index && medicineSuggestions.length > 0 && (
@@ -651,7 +651,7 @@ export default function ConsultationPage() {
                                               }}
                                               className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer group transition-colors border-b border-gray-50/50 last:border-none"
                                            >
-                                              <div className="text-[13px] font-black text-gray-800 group-hover:text-blue-600">{s.name}</div>
+                                              <div className="text-[13px] font-black text-black group-hover:text-blue-600">{s.name}</div>
                                               <div className="text-[11px] text-black mt-0.5 truncate font-black">
                                                  {s.composition || 'NA'}
                                               </div>
@@ -668,7 +668,7 @@ export default function ConsultationPage() {
                                            <button
                                               type="button"
                                               onClick={() => setVoiceCandidates(prev => { const u = { ...prev }; delete u[index]; return u; })}
-                                              className="text-[10px] font-bold text-gray-800 hover:text-red-500 transition-colors"
+                                              className="text-[10px] font-bold text-black hover:text-red-500 transition-colors"
                                            >✕ Close</button>
                                         </div>
                                         {voiceCandidates[index].map((c, ci) => (
@@ -677,8 +677,8 @@ export default function ConsultationPage() {
                                               onClick={() => handleSelectVoiceCandidate(index, c)}
                                               className="px-4 py-2.5 hover:bg-blue-50 cursor-pointer group transition-colors border-b border-gray-50/50 last:border-none"
                                            >
-                                              <div className="text-[13px] font-bold text-gray-800 group-hover:text-blue-600">{c.name}</div>
-                                              <div className="text-[11px] text-gray-800 mt-0.5 truncate font-bold">
+                                              <div className="text-[13px] font-bold text-black group-hover:text-blue-600">{c.name}</div>
+                                              <div className="text-[11px] text-black mt-0.5 truncate font-bold">
                                                  {c.composition || 'NA'}
                                               </div>
                                            </div>
@@ -724,7 +724,7 @@ export default function ConsultationPage() {
                                              <div className="text-[11px] text-black font-black truncate">
                                                 {s.composition || 'NA'}
                                              </div>
-                                             <div className="text-[13px] font-black text-gray-800 group-hover:text-blue-600 mt-0.5">{s.name}</div>
+                                             <div className="text-[13px] font-black text-black group-hover:text-blue-600 mt-0.5">{s.name}</div>
                                           </div>
                                        ))}
                                     </div>
@@ -793,14 +793,14 @@ export default function ConsultationPage() {
                {showDiagnosis && (
                   <Card className="rounded-2xl border border-gray-100 shadow-sm bg-white overflow-hidden flex flex-col pt-2 min-h-[160px]">
                      <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-                        <h3 className="text-sm font-bold text-gray-800">Clinical Diagnosis</h3>
+                        <h3 className="text-sm font-bold text-black">Clinical Diagnosis</h3>
                         <VoiceMicButton onExtractionSuccess={(text) => handleVoiceResult(text, "diagnosis")} small voiceEnabled={voiceEnabled} />
                      </div>
                      <Textarea
                         value={diagnosis}
                         onChange={(e) => setDiagnosis(e.target.value)}
                         placeholder="Enter diagnosis..."
-                        className="flex-1 border-0 rounded-none resize-none focus-visible:ring-0 px-6 py-5 min-h-[120px] shadow-none font-bold text-gray-900 text-sm bg-transparent leading-relaxed placeholder:text-gray-400"
+                        className="flex-1 border-0 rounded-none resize-none focus-visible:ring-0 px-6 py-5 min-h-[120px] shadow-none font-bold text-black text-sm bg-transparent leading-relaxed placeholder:text-black"
                      />
                   </Card>
                )}
@@ -808,14 +808,14 @@ export default function ConsultationPage() {
                {showInvestigation && (
                   <Card className="rounded-2xl border border-gray-100 shadow-sm bg-white overflow-hidden flex flex-col pt-2 min-h-[160px]">
                      <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-                        <h3 className="text-sm font-bold text-gray-800">Investigation</h3>
+                        <h3 className="text-sm font-bold text-black">Investigation</h3>
                         <VoiceMicButton onExtractionSuccess={(text) => handleVoiceResult(text, "remarks")} small voiceEnabled={voiceEnabled} />
                      </div>
                      <Textarea
                         value={remarks}
                         onChange={(e) => setRemarks(e.target.value)}
                         placeholder="..."
-                        className="flex-1 border-0 rounded-none resize-none focus-visible:ring-0 px-6 py-5 min-h-[120px] shadow-none font-bold text-gray-900 text-sm bg-transparent leading-relaxed placeholder:text-gray-400"
+                        className="flex-1 border-0 rounded-none resize-none focus-visible:ring-0 px-6 py-5 min-h-[120px] shadow-none font-bold text-black text-sm bg-transparent leading-relaxed placeholder:text-black"
                      />
                   </Card>
                )}
@@ -825,14 +825,14 @@ export default function ConsultationPage() {
             {showClinicalNotes && (
                <Card className="rounded-2xl border border-gray-100 shadow-sm bg-white overflow-hidden flex flex-col pt-2">
                   <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-                     <h3 className="text-sm font-bold text-gray-800">Clinical Notes <span className="text-gray-500 font-bold">(Visible only to doctors)</span></h3>
+                     <h3 className="text-sm font-bold text-black">Clinical Notes <span className="text-black font-bold">(Visible only to doctors)</span></h3>
                      <VoiceMicButton onExtractionSuccess={(text) => handleVoiceResult(text, "notes")} small voiceEnabled={voiceEnabled} />
                   </div>
                   <Textarea
                      value={clinicalNotes}
                      onChange={(e) => setClinicalNotes(e.target.value)}
                      placeholder="Private clinical notes..."
-                     className="min-h-[150px] border-0 rounded-none resize-none focus-visible:ring-0 px-6 py-5 shadow-none font-bold text-gray-900 text-sm bg-transparent leading-relaxed placeholder:text-gray-400"
+                     className="min-h-[150px] border-0 rounded-none resize-none focus-visible:ring-0 px-6 py-5 shadow-none font-bold text-black text-sm bg-transparent leading-relaxed placeholder:text-black"
                   />
                </Card>
             )}
@@ -841,22 +841,22 @@ export default function ConsultationPage() {
                {/* Follow Up Date */}
                <Card className="rounded-2xl border border-gray-100 shadow-sm bg-white overflow-hidden flex flex-col pt-2 h-fit">
                   <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-                     <h3 className="text-sm font-bold text-gray-800">Follow-up Date</h3>
+                     <h3 className="text-sm font-bold text-black">Follow-up Date</h3>
                   </div>
                   <div className="p-6 pb-2">
                      <Input 
                         type="date"
                         value={followUpDate}
                         onChange={(e) => setFollowUpDate(e.target.value)}
-                        className="h-14 rounded-2xl bg-gray-50 border-gray-100 font-bold text-gray-900 px-8 shadow-none focus-visible:ring-1 text-lg mb-4"
+                        className="h-14 rounded-2xl bg-gray-50 border-gray-100 font-bold text-black px-8 shadow-none focus-visible:ring-1 text-lg mb-4"
                      />
                   </div>
 
                   {/* Lab Pending - nested in Follow-Up card */}
                   <div className="mx-6 mb-6 p-4 px-6 bg-gray-50/50 rounded-2xl border border-gray-100 flex items-center justify-between">
                      <div className="space-y-0.5">
-                        <h3 className="text-[13px] font-bold text-gray-800">Lab Pending</h3>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest opacity-60">Awaiting results</p>
+                        <h3 className="text-[13px] font-bold text-black">Lab Pending</h3>
+                        <p className="text-[10px] text-black font-bold uppercase tracking-widest opacity-60">Awaiting results</p>
                      </div>
                      <div
                         onClick={() => setLabPending(!labPending)}
@@ -870,14 +870,14 @@ export default function ConsultationPage() {
                {showAdvice && (
                   <Card className="rounded-2xl border border-gray-100 shadow-sm bg-white overflow-hidden flex flex-col pt-2 min-h-[180px]">
                      <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-                        <h3 className="text-sm font-bold text-gray-800">Advice / Instructions</h3>
+                        <h3 className="text-sm font-bold text-black">Advice / Instructions</h3>
                         <VoiceMicButton onExtractionSuccess={(text) => handleVoiceResult(text, "advice")} small voiceEnabled={voiceEnabled} />
                      </div>
                      <Textarea
                         value={adviceInstructions}
                         onChange={(e) => setAdviceInstructions(e.target.value)}
                         placeholder="Patient instructions for printing..."
-                        className="flex-1 border-0 rounded-none resize-none focus-visible:ring-0 px-8 py-6 min-h-[140px] shadow-none font-bold text-gray-900 text-sm bg-transparent leading-relaxed placeholder:text-gray-400"
+                        className="flex-1 border-0 rounded-none resize-none focus-visible:ring-0 px-8 py-6 min-h-[140px] shadow-none font-bold text-black text-sm bg-transparent leading-relaxed placeholder:text-black"
                      />
                   </Card>
                )}
@@ -886,12 +886,12 @@ export default function ConsultationPage() {
             <div className="bg-white border border-gray-100 p-8 px-10 rounded-[2rem] flex flex-col md:flex-row justify-between items-center gap-6 mt-6 shadow-sm mb-12">
                <div className="flex items-center gap-6">
                   <div className="flex items-center gap-3">
-                     <span className="text-sm font-bold text-gray-800 flex items-center gap-2 uppercase tracking-tight opacity-60"><div className="w-4 h-4 rounded-full border border-green-500 flex items-center justify-center text-green-500 text-[8px] font-bold">✓</div> Select Fee Type</span>
+                     <span className="text-sm font-bold text-black flex items-center gap-2 uppercase tracking-tight opacity-60"><div className="w-4 h-4 rounded-full border border-green-500 flex items-center justify-center text-green-500 text-[8px] font-bold">✓</div> Select Fee Type</span>
                      <Select value={feeType} onValueChange={setFeeType}>
-                        <SelectTrigger className="w-[160px] rounded-full border border-gray-200 bg-white shadow-sm font-bold text-gray-900 h-10 px-5 text-sm focus:ring-0"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="w-[160px] rounded-full border border-gray-200 bg-white shadow-sm font-bold text-black h-10 px-5 text-sm focus:ring-0"><SelectValue /></SelectTrigger>
                         <SelectContent position="popper" sideOffset={5} className="rounded-2xl border border-gray-100 shadow-2xl z-[99999] bg-white p-2">
-                           <SelectItem value="Type A" className="font-bold text-gray-900">Type A</SelectItem>
-                           <SelectItem value="Type B" className="font-bold text-gray-900">Type B</SelectItem>
+                           <SelectItem value="Type A" className="font-bold text-black">Type A</SelectItem>
+                           <SelectItem value="Type B" className="font-bold text-black">Type B</SelectItem>
                            <SelectItem value="Free" className="font-bold text-red-500">Free</SelectItem>
                         </SelectContent>
                      </Select>

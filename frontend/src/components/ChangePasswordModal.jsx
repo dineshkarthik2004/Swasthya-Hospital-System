@@ -71,11 +71,11 @@ export default function ChangePasswordModal({ open, onOpenChange }) {
         
         <form onSubmit={handleSubmit} className="p-10 space-y-8">
           <div className="space-y-3">
-            <Label className="text-[11px] font-black uppercase text-gray-900 tracking-widest ml-1 opacity-60">Current Password</Label>
+            <Label className="text-[11px] font-black uppercase text-black tracking-widest ml-1 opacity-60">Current Password</Label>
             <Input 
               type="password"
               required
-              className="rounded-2xl border-gray-100 bg-gray-50 h-16 font-bold text-gray-900 px-8 focus:ring-blue-500 text-lg" 
+              className="rounded-2xl border-gray-100 bg-gray-50 h-16 font-bold text-black px-8 focus:ring-blue-500 text-lg" 
               placeholder="••••••••"
               value={formData.currentPassword}
               onChange={e => setFormData({ ...formData, currentPassword: e.target.value })}
@@ -83,11 +83,11 @@ export default function ChangePasswordModal({ open, onOpenChange }) {
           </div>
 
           <div className="space-y-3">
-            <Label className="text-[11px] font-black uppercase text-gray-900 tracking-widest ml-1 opacity-60">New Password</Label>
+            <Label className="text-[11px] font-black uppercase text-black tracking-widest ml-1 opacity-60">New Password</Label>
             <Input 
               type="password"
               required
-              className="rounded-2xl border-gray-100 bg-gray-50 h-16 font-bold text-gray-900 px-8 focus:ring-blue-500 text-lg" 
+              className="rounded-2xl border-gray-100 bg-gray-50 h-16 font-bold text-black px-8 focus:ring-blue-500 text-lg" 
               placeholder="••••••••"
               value={formData.newPassword}
               onChange={e => setFormData({ ...formData, newPassword: e.target.value })}
@@ -95,11 +95,11 @@ export default function ChangePasswordModal({ open, onOpenChange }) {
           </div>
 
           <div className="space-y-3">
-            <Label className="text-[11px] font-black uppercase text-gray-900 tracking-widest ml-1 opacity-60">Confirm New Password</Label>
+            <Label className="text-[11px] font-black uppercase text-black tracking-widest ml-1 opacity-60">Confirm New Password</Label>
             <Input 
               type="password"
               required
-              className="rounded-2xl border-gray-100 bg-gray-50 h-16 font-bold text-gray-900 px-8 focus:ring-blue-500 text-lg" 
+              className="rounded-2xl border-gray-100 bg-gray-50 h-16 font-bold text-black px-8 focus:ring-blue-500 text-lg" 
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
@@ -117,7 +117,7 @@ export default function ChangePasswordModal({ open, onOpenChange }) {
           <Button 
             type="button" 
             variant="ghost" 
-            className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-900"
+            className="w-full h-10 text-[9px] font-black uppercase tracking-widest text-black hover:text-black"
             onClick={() => onOpenChange(false)}
           >
             Cancel & Return

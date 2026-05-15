@@ -44,7 +44,7 @@ export default function AdminLayout() {
          <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
             <ShieldCheck className="w-10 h-10" />
          </div>
-         <h2 className="text-2xl font-black text-gray-900 tracking-tight text-black">Access Restricted</h2>
+         <h2 className="text-2xl font-black text-black tracking-tight text-black">Access Restricted</h2>
          <p className="mt-2 text-black font-black uppercase tracking-widest text-[11px] opacity-40">Your credentials lack authorization for this wing.</p>
          <Button type="button" className="mt-8 bg-blue-600 hover:bg-blue-700 h-12 px-10 rounded-2xl font-black uppercase tracking-widest text-[10px]" onClick={() => navigate(-1)}>Secure Return</Button>
       </div>
@@ -95,8 +95,8 @@ export default function AdminLayout() {
                  <ShieldCheck className="w-6 h-6" />
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="font-bold text-xl text-gray-900 tracking-tighter uppercase">Admin Panel</span>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-800 font-bold opacity-40 mt-0.5">Control Center</span>
+                <span className="font-bold text-xl text-black tracking-tighter uppercase">Admin Panel</span>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-black font-bold opacity-40 mt-0.5">Control Center</span>
               </div>
             </div>
           )}
@@ -118,10 +118,10 @@ export default function AdminLayout() {
               className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 border border-transparent ${
                 location.pathname.startsWith(item.path) 
                    ? "bg-indigo-50 text-indigo-600 font-bold border-indigo-100 shadow-inner" 
-                   : "text-gray-800 hover:bg-gray-50 font-bold"
+                   : "text-black hover:bg-gray-50 font-bold"
               }`}
             >
-              <div className={`${location.pathname.startsWith(item.path) ? "text-indigo-600 scale-110" : "text-gray-800 opacity-30"} transition-all duration-300`}>
+              <div className={`${location.pathname.startsWith(item.path) ? "text-indigo-600 scale-110" : "text-black opacity-30"} transition-all duration-300`}>
                  {item.icon}
               </div>
               {!collapsed && <span className="text-[13px] tracking-tight whitespace-nowrap">{item.name}</span>}
@@ -137,7 +137,7 @@ export default function AdminLayout() {
                   <Menu className="w-5 h-5" />
                </div>
                <div className="flex flex-col leading-none">
-                  <h2 className="font-black text-gray-900 text-lg tracking-tight text-black">{navItems.find(i => location.pathname.startsWith(i.path))?.name || "Admin Overview"}</h2>
+                  <h2 className="font-black text-black text-lg tracking-tight text-black">{navItems.find(i => location.pathname.startsWith(i.path))?.name || "Admin Overview"}</h2>
                   <span className="text-[10px] text-black font-black uppercase tracking-[0.2em] mt-1.5 opacity-40">
                      System Administrator
                   </span>
@@ -156,14 +156,14 @@ export default function AdminLayout() {
                            {(user?.name || 'A').charAt(0)}
                         </div>
                         <div className="flex flex-col">
-                           <span className="text-[11px] font-black text-gray-900 leading-none text-black">{(user?.name || "Admin").split(' ')[0]}</span>
+                           <span className="text-[11px] font-black text-black leading-none text-black">{(user?.name || "Admin").split(' ')[0]}</span>
                            <span className="text-[9px] font-bold text-black uppercase tracking-widest mt-1 opacity-40">{isSuperAdmin ? "Super Admin" : "Hospital Admin"}</span>
                         </div>
                         <ChevronDown className="w-3.5 h-3.5 text-black mt-1 ml-1 opacity-20" />
                      </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-64 rounded-[2rem] shadow-2xl mt-4 border-none p-4 bg-white ring-1 ring-black/5 z-[200]">
-                     <DropdownMenuLabel className="font-black text-gray-900 text-sm px-4 pt-4 pb-2 text-black">Admin Account</DropdownMenuLabel>
+                     <DropdownMenuLabel className="font-black text-black text-sm px-4 pt-4 pb-2 text-black">Admin Account</DropdownMenuLabel>
                      <p className="px-4 pb-4 text-[10px] font-bold text-black uppercase tracking-widest leading-none shrink-0 opacity-40">{user?.email || "admin@gmail.com"}</p>
                      <DropdownMenuSeparator className="bg-gray-50 mb-3 mx-2" />
                      

@@ -160,7 +160,7 @@ export default function CreatePatientVisitPage() {
         type="button"
         variant="ghost"
         onClick={() => navigate("/receptionist/patients")}
-        className="gap-2 text-gray-500 hover:text-gray-900 font-black text-[10px] uppercase tracking-widest rounded-2xl px-6 h-12 bg-white shadow-sm border border-gray-100"
+        className="gap-2 text-black hover:text-black font-black text-[10px] uppercase tracking-widest rounded-2xl px-6 h-12 bg-white shadow-sm border border-gray-100"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Directory
       </Button>
@@ -172,8 +172,8 @@ export default function CreatePatientVisitPage() {
             <Plus className="w-10 h-10" />
          </div>
          <div className="relative z-10">
-            <h1 className="text-4xl font-black tracking-tight text-gray-900 leading-none">Create Patient Visit</h1>
-            <p className="text-gray-400 text-sm font-medium mt-3 max-w-md opacity-80">Check-in new or existing patients, record vitals, and assign to a doctor in one seamless flow.</p>
+            <h1 className="text-4xl font-black tracking-tight text-black leading-none">Create Patient Visit</h1>
+            <p className="text-black text-sm font-medium mt-3 max-w-md opacity-80">Check-in new or existing patients, record vitals, and assign to a doctor in one seamless flow.</p>
          </div>
       </div>
 
@@ -186,12 +186,12 @@ export default function CreatePatientVisitPage() {
                <section className="space-y-6">
                   <div className="flex items-center gap-4">
                      <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-black"><User className="w-5 h-5"/></div>
-                     <h3 className="text-lg font-black text-gray-900 tracking-tight">Patient Identification</h3>
+                     <h3 className="text-lg font-black text-black tracking-tight">Patient Identification</h3>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Full Name *</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">Full Name *</Label>
                         <Input 
                            value={formData.name}
                            onChange={e => { setFormData({...formData, name: e.target.value}); setShowPatientList(true); }}
@@ -202,7 +202,7 @@ export default function CreatePatientVisitPage() {
                         />
                      </div>
                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Phone Number *</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">Phone Number *</Label>
                         <Input 
                            value={formData.phone}
                            onChange={e => { setFormData({...formData, phone: e.target.value}); setShowPatientList(true); }}
@@ -222,10 +222,10 @@ export default function CreatePatientVisitPage() {
                                  className="p-4 border-b border-gray-50 hover:bg-blue-50 cursor-pointer transition-colors flex justify-between items-center"
                               >
                                  <div>
-                                    <p className="font-black text-sm text-gray-900">{p.name}</p>
-                                    <p className="text-xs font-bold text-gray-400">{p.phone}</p>
+                                    <p className="font-black text-sm text-black">{p.name}</p>
+                                    <p className="text-xs font-bold text-black">{p.phone}</p>
                                  </div>
-                                 <Badge className="bg-white border-gray-200 text-gray-500 font-bold uppercase text-[9px]">Select Past Record</Badge>
+                                 <Badge className="bg-white border-gray-200 text-black font-bold uppercase text-[9px]">Select Past Record</Badge>
                               </div>
                            ))}
                         </div>
@@ -234,7 +234,7 @@ export default function CreatePatientVisitPage() {
 
                   <div className="grid grid-cols-3 gap-6">
                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Age *</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">Age *</Label>
                         <Input 
                            value={formData.age}
                            onChange={e => setFormData({...formData, age: e.target.value})}
@@ -245,7 +245,7 @@ export default function CreatePatientVisitPage() {
                         />
                      </div>
                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Gender *</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">Gender *</Label>
                         <Select value={formData.gender} onValueChange={v => setFormData({...formData, gender: v})}>
                            <SelectTrigger className="h-14 rounded-2xl border-gray-50 bg-gray-50/50 font-bold text-sm shadow-none">
                               <SelectValue />
@@ -258,7 +258,7 @@ export default function CreatePatientVisitPage() {
                         </Select>
                      </div>
                       <div className="space-y-2">
-                         <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Email</Label>
+                         <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">Email</Label>
                          <Input 
                             value={formData.email}
                             onChange={e => setFormData({...formData, email: e.target.value})}
@@ -271,7 +271,7 @@ export default function CreatePatientVisitPage() {
 
                    <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
-                         <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">UHID Number</Label>
+                         <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">UHID Number</Label>
                          <Input 
                             value={formData.uhid}
                             onChange={e => setFormData({...formData, uhid: e.target.value})}
@@ -280,7 +280,7 @@ export default function CreatePatientVisitPage() {
                          />
                       </div>
                       <div className="space-y-2">
-                         <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">ABHA ID</Label>
+                         <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">ABHA ID</Label>
                          <Input 
                             value={formData.abha}
                             onChange={e => setFormData({...formData, abha: e.target.value})}
@@ -292,7 +292,7 @@ export default function CreatePatientVisitPage() {
 
                   <div className="grid grid-cols-3 gap-6">
                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Blood Group</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">Blood Group</Label>
                         <Select value={formData.bloodGroup} onValueChange={v => setFormData({...formData, bloodGroup: v})}>
                            <SelectTrigger className="h-14 rounded-2xl border-gray-50 bg-gray-50/50 font-bold text-sm shadow-none">
                               <SelectValue placeholder="Select" />
@@ -305,7 +305,7 @@ export default function CreatePatientVisitPage() {
                         </Select>
                      </div>
                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Appt. Date</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">Appt. Date</Label>
                         <Input 
                            value={formData.appointmentDate}
                            onChange={e => setFormData({...formData, appointmentDate: e.target.value})}
@@ -314,7 +314,7 @@ export default function CreatePatientVisitPage() {
                         />
                      </div>
                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Appt. Time</Label>
+                        <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">Appt. Time</Label>
                         <Input 
                            value={formData.appointmentTime}
                            onChange={e => setFormData({...formData, appointmentTime: e.target.value})}
@@ -332,18 +332,18 @@ export default function CreatePatientVisitPage() {
                   <div className="flex items-center justify-between">
                      <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center font-black"><Activity className="w-5 h-5"/></div>
-                        <h3 className="text-lg font-black text-gray-900 tracking-tight">Diseases / Symptoms</h3>
+                        <h3 className="text-lg font-black text-black tracking-tight">Diseases / Symptoms</h3>
                      </div>
                      <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "diseases_only")} small voiceEnabled={voiceEnabled} />
                   </div>
                   
                   <div className="space-y-2">
-                     <Label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">Patient's Problem Description</Label>
+                     <Label className="text-[10px] font-black uppercase text-black ml-1 tracking-widest">Patient's Problem Description</Label>
                      <textarea 
                         value={formData.complaint}
                         onChange={e => setFormData({...formData, complaint: e.target.value})}
                         placeholder="E.g., Severe stomach pain for 2 days..."
-                        className="w-full min-h-[120px] rounded-[1.5rem] border-gray-50 bg-gray-50/50 font-bold text-gray-700 p-6 text-sm focus:ring-1 focus:ring-blue-500 shadow-inner"
+                        className="w-full min-h-[120px] rounded-[1.5rem] border-gray-50 bg-gray-50/50 font-bold text-black p-6 text-sm focus:ring-1 focus:ring-blue-500 shadow-inner"
                      />
                   </div>
                </section>
@@ -355,13 +355,13 @@ export default function CreatePatientVisitPage() {
             <Card className="rounded-[2.5rem] border border-gray-100 shadow-sm p-10 bg-white space-y-10">
                <section className="space-y-8">
                   <div className="flex items-center justify-between">
-                     <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Clinical Vitals</h3>
+                     <h3 className="text-[10px] font-black uppercase text-black tracking-[0.2em]">Clinical Vitals</h3>
                      <VoiceMicButton onExtractionSuccess={t => handleAiExtraction(t, "vitals")} small voiceEnabled={voiceEnabled} />
                   </div>
 
                   <div className="space-y-6">
                      <div className="space-y-2">
-                        <Label className="text-[9px] font-black uppercase text-gray-400 ml-1 opacity-70">Blood Pressure</Label>
+                        <Label className="text-[9px] font-black uppercase text-black ml-1 opacity-70">Blood Pressure</Label>
                         <Input 
                            value={formData.vitals.bloodPressure}
                            onChange={e => setFormData({...formData, vitals: {...formData.vitals, bloodPressure: e.target.value}})}
@@ -370,7 +370,7 @@ export default function CreatePatientVisitPage() {
                         />
                      </div>
                      <div className="space-y-2">
-                        <Label className="text-[9px] font-black uppercase text-gray-400 ml-1 opacity-70">Pulse (BPM)</Label>
+                        <Label className="text-[9px] font-black uppercase text-black ml-1 opacity-70">Pulse (BPM)</Label>
                         <Input 
                            value={formData.vitals.pulse}
                            onChange={e => setFormData({...formData, vitals: {...formData.vitals, pulse: e.target.value}})}
@@ -380,7 +380,7 @@ export default function CreatePatientVisitPage() {
                      </div>
                       <div className="grid grid-cols-2 gap-4">
                          <div className="space-y-2">
-                            <Label className="text-[9px] font-black uppercase text-gray-400 ml-1 opacity-70">Temp (°F)</Label>
+                            <Label className="text-[9px] font-black uppercase text-black ml-1 opacity-70">Temp (°F)</Label>
                             <Input 
                                value={formData.vitals.temperature}
                                onChange={e => setFormData({...formData, vitals: {...formData.vitals, temperature: e.target.value}})}
@@ -389,7 +389,7 @@ export default function CreatePatientVisitPage() {
                             />
                          </div>
                          <div className="space-y-2">
-                            <Label className="text-[9px] font-black uppercase text-gray-400 ml-1 opacity-70">Weight (KG)</Label>
+                            <Label className="text-[9px] font-black uppercase text-black ml-1 opacity-70">Weight (KG)</Label>
                             <Input 
                                value={formData.vitals.weight}
                                onChange={e => setFormData({...formData, vitals: {...formData.vitals, weight: e.target.value}})}
@@ -400,7 +400,7 @@ export default function CreatePatientVisitPage() {
                       </div>
                       <div className="flex gap-4">
                          <div className="space-y-2 w-1/2">
-                            <Label className="text-[9px] font-black uppercase text-gray-400 ml-1 opacity-70">Height (cm)</Label>
+                            <Label className="text-[9px] font-black uppercase text-black ml-1 opacity-70">Height (cm)</Label>
                             <Input 
                                value={formData.vitals.height}
                                onChange={e => setFormData({...formData, vitals: {...formData.vitals, height: e.target.value}})}
@@ -415,7 +415,7 @@ export default function CreatePatientVisitPage() {
                <div className="h-px bg-gray-50"></div>
 
                <section className="space-y-6">
-                  <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Assignment</h3>
+                  <h3 className="text-[10px] font-black uppercase text-black tracking-widest">Assignment</h3>
                   <div className="space-y-2">
                      <Label className="text-[10px] font-black uppercase text-blue-400 ml-1">Assign to Doctor</Label>
                      <Select value={formData.doctorId} onValueChange={v => setFormData({...formData, doctorId: v})}>

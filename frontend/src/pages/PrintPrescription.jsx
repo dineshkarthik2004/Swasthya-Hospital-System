@@ -51,7 +51,7 @@ export default function PrintPrescription() {
    return (
       <div className="bg-gray-100 min-h-screen flex flex-col items-center py-10">
          <div className="print:hidden w-full max-w-[850px] bg-white p-4 mb-6 shadow-sm rounded-2xl border border-gray-200 flex justify-between items-center">
-            <button onClick={() => navigate(-1)} className="px-5 py-2 hover:bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-700 transition-colors">
+            <button onClick={() => navigate(-1)} className="px-5 py-2 hover:bg-gray-50 border border-gray-200 rounded-xl font-bold text-black transition-colors">
                Go Back
             </button>
             <button onClick={() => window.print()} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold transition-colors shadow-md">
@@ -94,21 +94,21 @@ export default function PrintPrescription() {
                   <div>
                      <h1 className="text-3xl font-bold tracking-tighter uppercase leading-none mb-1">{visit.doctor?.clinicName || "Hospital"}</h1>
                      {visit.doctor?.doorNo || visit.doctor?.street || visit.doctor?.area || visit.doctor?.city ? (
-                        <div className="text-[10px] text-gray-500 mt-1 uppercase font-bold">
+                        <div className="text-[10px] text-black mt-1 uppercase font-bold">
                            <p>{visit.doctor?.doorNo ? `No: ${visit.doctor.doorNo}, ` : ""}{visit.doctor?.street ? `${visit.doctor.street},` : ""}</p>
                            <p>{visit.doctor?.area ? `${visit.doctor.area}, ` : ""}{visit.doctor?.city || ""} {visit.doctor?.pincode ? `- ${visit.doctor.pincode}` : ""}</p>
                            {visit.doctor?.state && <p>{visit.doctor.state}</p>}
                         </div>
                      ) : (
-                        <div className="text-[10px] text-gray-400 mt-1"></div>
+                        <div className="text-[10px] text-black mt-1"></div>
                      )}
                   </div>
                </div>
                <div className="text-right">
                   <h2 className="text-xl font-bold leading-none mb-1">Dr. {visit.doctor?.name || "Shivananda Manohar"}</h2>
-                  {visit.doctor?.qualification && <p className="text-xs text-gray-500 italic mb-1 uppercase font-bold">{visit.doctor.qualification}</p>}
-                  <p className="text-xs text-gray-500 italic mb-1">{visit.doctor?.specialization || "Consultant Physician"}</p>
-                  <p className="text-[10px] font-bold text-gray-800">{visit.doctor?.licenseNumber ? `REG: ${visit.doctor.licenseNumber}` : "REG: MMC-12345"} {visit.doctor?.phone ? `· PH: ${visit.doctor.phone}` : ""}</p>
+                  {visit.doctor?.qualification && <p className="text-xs text-black italic mb-1 uppercase font-bold">{visit.doctor.qualification}</p>}
+                  <p className="text-xs text-black italic mb-1">{visit.doctor?.specialization || "Consultant Physician"}</p>
+                  <p className="text-[10px] font-bold text-black">{visit.doctor?.licenseNumber ? `REG: ${visit.doctor.licenseNumber}` : "REG: MMC-12345"} {visit.doctor?.phone ? `· PH: ${visit.doctor.phone}` : ""}</p>
                </div>
             </div>
 
@@ -119,27 +119,27 @@ export default function PrintPrescription() {
                   mode !== 'standard' && "p-3 rounded-xl gap-4"
                )}>
                   <div className="space-y-1">
-                     <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">Patient Details</p>
-                     <p className="text-base"><span className="text-gray-500 uppercase text-[10px] mr-2">Name:</span> <strong className="font-bold text-lg uppercase">{patient.name}</strong></p>
+                     <p className="text-xs text-black uppercase font-bold tracking-widest">Patient Details</p>
+                     <p className="text-base"><span className="text-black uppercase text-[10px] mr-2">Name:</span> <strong className="font-bold text-lg uppercase">{patient.name}</strong></p>
                      <div className="flex items-center gap-4">
-                        <p className="text-sm"><span className="text-gray-500 uppercase text-[10px] mr-2">Age/Sex:</span> <span className="font-medium">{new Date().getFullYear() - (new Date(patient.dateOfBirth || Date.now()).getFullYear() || 1990)}Y / {patient.gender}</span></p>
+                        <p className="text-sm"><span className="text-black uppercase text-[10px] mr-2">Age/Sex:</span> <span className="font-medium">{new Date().getFullYear() - (new Date(patient.dateOfBirth || Date.now()).getFullYear() || 1990)}Y / {patient.gender}</span></p>
                         {patient.bloodGroup && (
-                           <p className="text-sm border-l border-gray-300 pl-4"><span className="text-gray-500 uppercase text-[10px] mr-2">Blood Group:</span> <span className="font-bold text-red-600 uppercase tracking-widest">{patient.bloodGroup}</span></p>
+                           <p className="text-sm border-l border-gray-300 pl-4"><span className="text-black uppercase text-[10px] mr-2">Blood Group:</span> <span className="font-bold text-red-600 uppercase tracking-widest">{patient.bloodGroup}</span></p>
                         )}
                         {patient.height && (
-                           <p className="text-sm border-l border-gray-300 pl-4"><span className="text-gray-500 uppercase text-[10px] mr-2">Height:</span> <span className="font-medium uppercase">{patient.height}</span></p>
+                           <p className="text-sm border-l border-gray-300 pl-4"><span className="text-black uppercase text-[10px] mr-2">Height:</span> <span className="font-medium uppercase">{patient.height}</span></p>
                         )}
                      </div>
                      <div className="flex items-center gap-4 mt-1">
-                        <p className="text-sm"><span className="text-gray-500 uppercase text-[10px] mr-2">Phone:</span> <span className="font-medium">{patient.phone || "N/A"}</span></p>
-                        <p className="text-sm border-l border-gray-300 pl-4"><span className="text-gray-500 uppercase text-[10px] mr-2">UHID:</span> <span className="font-medium">{patient.uhid || "N/A"}</span></p>
-                        <p className="text-sm border-l border-gray-300 pl-4"><span className="text-gray-500 uppercase text-[10px] mr-2">ABHA:</span> <span className="font-medium">{patient.abha || "N/A"}</span></p>
+                        <p className="text-sm"><span className="text-black uppercase text-[10px] mr-2">Phone:</span> <span className="font-medium">{patient.phone || "N/A"}</span></p>
+                        <p className="text-sm border-l border-gray-300 pl-4"><span className="text-black uppercase text-[10px] mr-2">UHID:</span> <span className="font-medium">{patient.uhid || "N/A"}</span></p>
+                        <p className="text-sm border-l border-gray-300 pl-4"><span className="text-black uppercase text-[10px] mr-2">ABHA:</span> <span className="font-medium">{patient.abha || "N/A"}</span></p>
                      </div>
                   </div>
                   <div className="text-right space-y-1">
-                     <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">Visit Info</p>
+                     <p className="text-xs text-black uppercase font-bold tracking-widest">Visit Info</p>
                      <p className="text-sm font-bold text-black uppercase">{new Date(visit.createdAt).toLocaleDateString("en-US", { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-                     <p className="text-xs text-gray-500">ID: <span className="font-bold text-black border-l border-gray-300 pl-2 ml-2 tracking-widest uppercase">p-{patient.id?.slice(-5)}</span></p>
+                     <p className="text-xs text-black">ID: <span className="font-bold text-black border-l border-gray-300 pl-2 ml-2 tracking-widest uppercase">p-{patient.id?.slice(-5)}</span></p>
                   </div>
                </div>
 
@@ -148,7 +148,7 @@ export default function PrintPrescription() {
                   <div className="flex-1">
                      <h4 className="text-[10px] font-bold uppercase border-b border-black mb-2 opacity-30">Patient Complaints & Diagnosis</h4>
                      <div className="space-y-1 p-1">
-                        <p className="text-xs text-gray-500 italic leading-snug">Patient Complaints: <span className="text-black not-italic font-medium">{visit.notes || ""}</span></p>
+                        <p className="text-xs text-black italic leading-snug">Patient Complaints: <span className="text-black not-italic font-medium">{visit.notes || ""}</span></p>
                         <p className="text-sm font-bold text-black italic">Diagnosis: {consultation?.diagnosis || ""}</p>
                      </div>
                   </div>
@@ -156,19 +156,19 @@ export default function PrintPrescription() {
                      <h4 className="text-[10px] font-bold uppercase border-b border-black mb-2 opacity-30">Vital Signs</h4>
                      <div className="grid grid-cols-2 gap-2 p-1">
                         <div>
-                           <p className="text-[8px] text-gray-400 font-bold uppercase">BP</p>
+                           <p className="text-[8px] text-black font-bold uppercase">BP</p>
                            <p className="text-xs font-bold">{vitals?.bloodPressure || "-"}</p>
                         </div>
                         <div>
-                           <p className="text-[8px] text-gray-400 font-bold uppercase">Weight</p>
+                           <p className="text-[8px] text-black font-bold uppercase">Weight</p>
                            <p className="text-xs font-bold">{vitals?.weight || "-"}</p>
                         </div>
                         <div>
-                           <p className="text-[8px] text-gray-400 font-bold uppercase">Pulse</p>
+                           <p className="text-[8px] text-black font-bold uppercase">Pulse</p>
                            <p className="text-xs font-bold">{vitals?.pulse || "-"}</p>
                         </div>
                         <div>
-                           <p className="text-[8px] text-gray-400 font-bold uppercase">Temperature</p>
+                           <p className="text-[8px] text-black font-bold uppercase">Temperature</p>
                            <p className="text-xs font-bold">{vitals?.temperature || "-"}</p>
                         </div>
                      </div>

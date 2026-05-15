@@ -120,7 +120,7 @@ export default function MedicineManagement() {
         <div className="max-w-5xl mx-auto px-6 py-10 space-y-10">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight text-gray-900 text-black">Medicine Management</h1>
+                    <h1 className="text-3xl font-black tracking-tight text-black text-black">Medicine Management</h1>
                     <p className="text-black text-sm font-black mt-2">Add new medicines to your hospital's private list.</p>
                 </div>
                 <div className="w-16 h-16 bg-emerald-50 rounded-3xl flex items-center justify-center text-emerald-600 shadow-inner">
@@ -225,7 +225,7 @@ export default function MedicineManagement() {
                                                  selectedFile.name.match(/\.(jpg|jpeg|png)$/i) ? <FileImage className="w-8 h-8" /> :
                                                  <File className="w-8 h-8" />}
                                             </div>
-                                            <p className="text-lg font-black text-gray-800 truncate max-w-xs">{selectedFile.name}</p>
+                                            <p className="text-lg font-black text-black truncate max-w-xs">{selectedFile.name}</p>
                                             <p className="text-xs font-black text-black uppercase tracking-widest mt-1">{(selectedFile.size / 1024).toFixed(1)} KB</p>
                                             <button 
                                                 onClick={(e) => { e.stopPropagation(); setSelectedFile(null); document.getElementById('medicine-file-upload').value = ""; }}
@@ -287,7 +287,7 @@ export default function MedicineManagement() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start">
-                                            <p className="text-sm font-black text-gray-900 truncate pr-2">{log.name}</p>
+                                            <p className="text-sm font-black text-black truncate pr-2">{log.name}</p>
                                             <span className="text-[10px] font-black text-black uppercase shrink-0">{log.time}</span>
                                         </div>
                                         <div className="flex items-center gap-2 mt-1">

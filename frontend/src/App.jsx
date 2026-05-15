@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider } from "./context/AuthContext"
 import AppLayout from "./layouts/AppLayout"
 import LoginPage from "./pages/LoginPage"
+import OtpLoginPage from "./pages/OtpLoginPage"
 import AdminLayout from "./layouts/AdminLayout"
 
 
@@ -50,6 +51,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/otp-login" element={<OtpLoginPage />} />
         <Route path="/register" element={<PatientRegisterPage />} />
         
         {/* Receptionist Routes */}
@@ -69,7 +71,7 @@ function App() {
         {/* Doctor Routes */}
         <Route path="/doctor" element={<AppLayout allowedRoles={["DOCTOR", "ADMIN"]} />}>
           <Route path="dashboard" element={<DoctorDashboard />} />
-          <Route path="consultation" element={<div className="p-10 text-gray-400">Select a patient from dashboard</div>} />
+          <Route path="consultation" element={<div className="p-10 text-black">Select a patient from dashboard</div>} />
           <Route path="consultation/:id" element={<ConsultationPage />} />
           <Route path="history" element={<MyPatientsHistory />} />
           <Route path="history/:visitId" element={<DoctorPatientHistoryDetails />} />
@@ -108,7 +110,7 @@ function App() {
         <Route path="/print/:visitId" element={<PrintPrescription />} />
 
         {/* Default Redirect */}
-        <Route path="*" element={<div className="h-screen w-full flex items-center justify-center font-black uppercase text-gray-300 tracking-[0.4em] bg-[#F8F9FA]">Error 404: Wing Not Found</div>} />
+        <Route path="*" element={<div className="h-screen w-full flex items-center justify-center font-black uppercase text-black tracking-[0.4em] bg-[#F8F9FA]">Error 404: Wing Not Found</div>} />
       </Routes>
     </AuthProvider>
   )

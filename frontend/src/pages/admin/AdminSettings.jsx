@@ -96,7 +96,7 @@ export default function AdminSettings() {
     <div className="p-8 max-w-4xl mx-auto space-y-8">
       <div className="flex justify-between items-start">
         <div className="space-y-2">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Hospital Settings</h1>
+          <h1 className="text-3xl font-black text-black tracking-tight text-black">Hospital Settings</h1>
           <p className="text-black font-black uppercase tracking-widest text-[11px]">Control hospital-wide feature access and permissions.</p>
         </div>
         <Button
@@ -130,7 +130,7 @@ export default function AdminSettings() {
                   </div>
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between gap-4">
-                      <h3 className="text-lg font-black text-gray-900 tracking-tight text-black">{setting.label}</h3>
+                      <h3 className="text-lg font-black text-black tracking-tight text-black">{setting.label}</h3>
                       <div className="flex items-center gap-3 flex-shrink-0">
                         {isSaving && <Loader2 className="w-4 h-4 animate-spin text-black opacity-20" />}
                         <Switch

@@ -99,6 +99,11 @@ export default function LoginPage() {
             <div className="text-center text-sm mt-4">
                Don't have an account? <Link to="/register" className="text-primary hover:underline">Register</Link>
             </div>
+            <div className="text-center text-sm mt-2">
+               <Link to="/otp-login" className="text-primary hover:underline font-medium">
+                 Sign in with OTP instead
+               </Link>
+            </div>
           </form>
         </CardContent>
       </Card>

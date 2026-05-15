@@ -109,10 +109,10 @@ export default function DoctorSettings() {
           onClick={() => navigate("/admin/doctors")}
           className="p-3 bg-white hover:bg-gray-50 rounded-2xl border border-gray-100 shadow-sm transition-all"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-800" />
+          <ArrowLeft className="w-5 h-5 text-black" />
         </button>
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">{doctorName}'s Settings</h1>
+          <h1 className="text-3xl font-black text-black tracking-tight text-black">{doctorName}'s Settings</h1>
           <p className="text-black font-black uppercase tracking-widest text-[11px]">Individual practitioner configuration</p>
         </div>
       </div>
@@ -124,15 +124,15 @@ export default function DoctorSettings() {
                 <Mic className="w-6 h-6" />
              </div>
              <div>
-               <h2 className="text-xl font-black text-gray-900 tracking-tight">Voice Recognition</h2>
-               <p className="text-[11px] font-black uppercase tracking-widest text-gray-400 mt-1">Enable or disable AI voice input</p>
+               <h2 className="text-xl font-black text-black tracking-tight">Voice Recognition</h2>
+               <p className="text-[11px] font-black uppercase tracking-widest text-black mt-1">Enable or disable AI voice input</p>
              </div>
           </div>
           
           <div className="flex items-center justify-between p-6 bg-gray-50 rounded-2xl border border-gray-100">
              <div className="flex flex-col">
-                <span className="font-black text-gray-900 text-sm">Doctor Voice Input</span>
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Allows {doctorName} to use microphone for dictation</span>
+                <span className="font-black text-black text-sm">Doctor Voice Input</span>
+                <span className="text-[10px] font-bold text-black uppercase tracking-widest mt-1">Allows {doctorName} to use microphone for dictation</span>
              </div>
              <Switch 
                 checked={settings.voice_enabled}
@@ -148,8 +148,8 @@ export default function DoctorSettings() {
                 <ClipboardList className="w-6 h-6" />
              </div>
              <div>
-               <h2 className="text-xl font-black text-gray-900 tracking-tight">Consultation Fields</h2>
-               <p className="text-[11px] font-black uppercase tracking-widest text-gray-400 mt-1">Customize the layout for {doctorName}</p>
+               <h2 className="text-xl font-black text-black tracking-tight">Consultation Fields</h2>
+               <p className="text-[11px] font-black uppercase tracking-widest text-black mt-1">Customize the layout for {doctorName}</p>
              </div>
           </div>
           
@@ -163,8 +163,8 @@ export default function DoctorSettings() {
                    {settings.field_clinical_diagnosis && <CheckSquare className="w-4 h-4" />}
                 </div>
                 <div className="flex flex-col">
-                   <span className="font-black text-gray-900 text-sm">Clinical Diagnosis</span>
-                   <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">Primary diagnosis field</span>
+                   <span className="font-black text-black text-sm">Clinical Diagnosis</span>
+                   <span className="text-[9px] font-bold text-black uppercase tracking-widest mt-0.5">Primary diagnosis field</span>
                 </div>
              </div>
 
@@ -177,8 +177,8 @@ export default function DoctorSettings() {
                    {settings.field_investigation && <CheckSquare className="w-4 h-4" />}
                 </div>
                 <div className="flex flex-col">
-                   <span className="font-black text-gray-900 text-sm">Investigation</span>
-                   <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">Lab tests & remarks</span>
+                   <span className="font-black text-black text-sm">Investigation</span>
+                   <span className="text-[9px] font-bold text-black uppercase tracking-widest mt-0.5">Lab tests & remarks</span>
                 </div>
              </div>
 
@@ -191,8 +191,8 @@ export default function DoctorSettings() {
                    {settings.field_clinical_notes && <CheckSquare className="w-4 h-4" />}
                 </div>
                 <div className="flex flex-col">
-                   <span className="font-black text-gray-900 text-sm">Clinical Notes</span>
-                   <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">Internal doctor notes</span>
+                   <span className="font-black text-black text-sm">Clinical Notes</span>
+                   <span className="text-[9px] font-bold text-black uppercase tracking-widest mt-0.5">Internal doctor notes</span>
                 </div>
              </div>
 
@@ -205,8 +205,8 @@ export default function DoctorSettings() {
                    {settings.field_advice && <CheckSquare className="w-4 h-4" />}
                 </div>
                 <div className="flex flex-col">
-                   <span className="font-black text-gray-900 text-sm">Advice & Instructions</span>
-                   <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">General patient guidance</span>
+                   <span className="font-black text-black text-sm">Advice & Instructions</span>
+                   <span className="text-[9px] font-bold text-black uppercase tracking-widest mt-0.5">General patient guidance</span>
                 </div>
              </div>
           </div>

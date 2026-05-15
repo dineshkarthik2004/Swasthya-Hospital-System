@@ -32,7 +32,7 @@ export default function ReceptionistDashboard() {
   return (
     <div className="flex flex-col items-center justify-start h-full bg-white pt-24 px-8">
       <div className="w-full max-w-6xl space-y-1 mb-12">
-        <h1 className="text-[42px] font-black text-gray-900 tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900">
+        <h1 className="text-[42px] font-black tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900">
           Reception Command Center
         </h1>
         <p className="text-sm font-bold tracking-tight text-black mt-3 flex items-center gap-2">
@@ -53,10 +53,8 @@ export default function ReceptionistDashboard() {
              setShowDropdown(true)
           }}
           onFocus={() => setShowDropdown(true)}
+          onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
         />
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-2">
-           <div className="text-[10px] font-black text-black uppercase tracking-widest bg-white px-4 py-2 rounded-2xl border border-gray-50 shadow-sm">Press Enter ↵</div>
-        </div>
 
         {search && showDropdown && (
            <div className="absolute top-[90px] left-0 right-0 bg-white border border-gray-100 shadow-2xl rounded-3xl overflow-hidden animate-in fade-in slide-in-from-top-4">
@@ -69,7 +67,7 @@ export default function ReceptionistDashboard() {
                                 <User className="w-5 h-5"/>
                              </div>
                              <div>
-                                <p className="font-black text-gray-900">{p.name}</p>
+                                <p className="font-black text-black">{p.name}</p>
                                 <p className="text-xs font-bold text-black">{p.phone}</p>
                              </div>
                           </div>
@@ -94,10 +92,6 @@ export default function ReceptionistDashboard() {
 
       <div className="mt-32 w-full max-w-6xl z-10 relative">
          <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-100 to-transparent mb-12"></div>
-         <div className="flex items-center gap-4 text-black mb-8 opacity-40">
-            <LayoutDashboard className="w-5 h-5" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em]">Quick Access Panel</span>
-         </div>
          
          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-20">
             {[1,2,3].map(i => (

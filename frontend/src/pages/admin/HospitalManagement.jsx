@@ -64,7 +64,7 @@ export default function HospitalManagement() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Hospital Network</h1>
+          <h1 className="text-3xl font-black text-black tracking-tight text-black">Hospital Network</h1>
           <p className="text-black font-black uppercase tracking-widest text-[11px]">Manage affiliated healthcare institutions and their access.</p>
         </div>
         <Button 
@@ -97,7 +97,7 @@ export default function HospitalManagement() {
                   <Building2 className="w-8 h-8" />
                </div>
 
-               <h3 className="text-xl font-black text-gray-900 tracking-tight mb-4 text-black">{hospital.name}</h3>
+               <h3 className="text-xl font-black text-black tracking-tight mb-4 text-black">{hospital.name}</h3>
                
                <div className="space-y-4 mb-8">
                   <div className="flex items-center gap-3 text-black font-black text-sm uppercase tracking-tight">
@@ -129,7 +129,7 @@ export default function HospitalManagement() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
            <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
               <div className="p-10 border-b border-gray-50 flex justify-between items-center">
-                 <h2 className="text-2xl font-black text-gray-900 tracking-tight text-black">{editingHospital ? "Modify Hospital" : "Enlist Institution"}</h2>
+                 <h2 className="text-2xl font-black text-black tracking-tight text-black">{editingHospital ? "Modify Hospital" : "Enlist Institution"}</h2>
                  <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-gray-50 rounded-2xl transition-colors">
                     <X className="w-6 h-6 text-black opacity-40" />
                  </button>

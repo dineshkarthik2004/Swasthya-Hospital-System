@@ -50,14 +50,14 @@ export default function PatientRecordsPage() {
               <Activity className="text-blue-600 w-8 h-8"/>
            </div>
            <div>
-              <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-gray-900 leading-none text-black">My Visit Records</h2>
+              <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-black leading-none text-black">My Visit Records</h2>
               <p className="text-black text-[10px] font-black uppercase tracking-widest mt-2 ml-1">Medical Consultation Dashboard</p>
            </div>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-5 w-full lg:w-auto">
            <div className="flex flex-col items-start lg:items-end mr-2">
-              <span className="text-[10px] font-bold text-gray-800 uppercase tracking-[0.2em] mb-1 ml-1 lg:ml-0">Session Data</span>
-              <div className="bg-gray-50 text-gray-900 text-[10px] font-bold uppercase tracking-widest px-5 py-2.5 rounded-full border border-gray-100 shadow-inner w-full sm:w-auto text-center">
+              <span className="text-[10px] font-bold text-black uppercase tracking-[0.2em] mb-1 ml-1 lg:ml-0">Session Data</span>
+              <div className="bg-gray-50 text-black text-[10px] font-bold uppercase tracking-widest px-5 py-2.5 rounded-full border border-gray-100 shadow-inner w-full sm:w-auto text-center">
                  {visits.length} Total Visits
               </div>
            </div>
@@ -113,14 +113,14 @@ export default function PatientRecordsPage() {
                               <CalendarDays className="w-5 h-5 text-black" />
                            </div>
                            <div className="flex flex-col">
-                              <span className="font-black text-gray-900 text-sm">{new Date(v.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                              <span className="font-black text-black text-sm">{new Date(v.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
                               <span className="text-[9px] text-black font-black uppercase tracking-widest">{new Date(v.createdAt).getFullYear()}</span>
                            </div>
                         </div>
                      </TableCell>
                      <TableCell>
                         <div className="flex flex-col">
-                           <span className="font-black text-gray-800 text-sm max-w-[400px] truncate">{v.consultation?.diagnosis || v.notes || "General Consultation"}</span>
+                           <span className="font-black text-black text-sm max-w-[400px] truncate">{v.consultation?.diagnosis || v.notes || "General Consultation"}</span>
                            <span className="text-[10px] text-black font-black uppercase tracking-tighter mt-1">Problem: {v.notes || "Not specified"}</span>
                         </div>
                      </TableCell>
@@ -180,19 +180,19 @@ export default function PatientRecordsPage() {
                            <div className="grid grid-cols-2 gap-6">
                               <div className="flex items-center gap-5 p-6 rounded-[2rem] border border-gray-100 bg-red-50/30">
                                  <HeartPulse className="text-red-500 w-10 h-10 opacity-30" />
-                                 <div><div className="text-[9px] text-black font-black uppercase tracking-widest">BP</div><div className="font-black text-xl text-gray-900">{selectedVisit.vitals.bloodPressure || "-"} <span className="text-[10px] text-black font-normal">mmHg</span></div></div>
+                                 <div><div className="text-[9px] text-black font-black uppercase tracking-widest">BP</div><div className="font-black text-xl text-black">{selectedVisit.vitals.bloodPressure || "-"} <span className="text-[10px] text-black font-normal">mmHg</span></div></div>
                               </div>
                               <div className="flex items-center gap-5 p-6 rounded-[2rem] border border-gray-100 bg-pink-50/30">
                                  <Activity className="text-pink-500 w-10 h-10 opacity-30" />
-                                 <div><div className="text-[9px] text-black font-black uppercase tracking-widest">Pulse</div><div className="font-black text-xl text-gray-900">{selectedVisit.vitals.pulse || "-"} <span className="text-[10px] text-black font-normal">bpm</span></div></div>
+                                 <div><div className="text-[9px] text-black font-black uppercase tracking-widest">Pulse</div><div className="font-black text-xl text-black">{selectedVisit.vitals.pulse || "-"} <span className="text-[10px] text-black font-normal">bpm</span></div></div>
                               </div>
                               <div className="flex items-center gap-5 p-6 rounded-[2rem] border border-gray-100 bg-orange-50/30">
                                  <div className="text-orange-400 text-3xl font-black w-10 text-center opacity-30">°</div>
-                                 <div className="flex-1"><div className="text-[9px] text-black font-black uppercase tracking-widest">Temp</div><div className="font-black text-xl text-gray-900">{selectedVisit.vitals.temperature || "-"} <span className="text-[10px] text-black font-normal">°F</span></div></div>
+                                 <div className="flex-1"><div className="text-[9px] text-black font-black uppercase tracking-widest">Temp</div><div className="font-black text-xl text-black">{selectedVisit.vitals.temperature || "-"} <span className="text-[10px] text-black font-normal">°F</span></div></div>
                               </div>
                               <div className="flex items-center gap-5 p-6 rounded-[2rem] border border-gray-100 bg-blue-50/30">
                                  <Activity className="text-blue-400 w-10 h-10 opacity-30" />
-                                 <div className="flex-1"><div className="text-[9px] text-black font-black uppercase tracking-widest">Weight</div><div className="font-black text-xl text-gray-900">{selectedVisit.vitals.weight || "-"} <span className="text-[10px] text-black font-normal">kg</span></div></div>
+                                 <div className="flex-1"><div className="text-[9px] text-black font-black uppercase tracking-widest">Weight</div><div className="font-black text-xl text-black">{selectedVisit.vitals.weight || "-"} <span className="text-[10px] text-black font-normal">kg</span></div></div>
                               </div>
                            </div>
                         ) : (
@@ -229,7 +229,7 @@ export default function PatientRecordsPage() {
                                     {selectedVisit.consultation.prescription.items.map((m, idx) => (
                                        <TableRow key={idx} className="border-gray-50 bg-white hover:bg-gray-50/30 h-20 transition-all">
                                           <TableCell className="pl-10">
-                                             <div className="font-black text-sm text-gray-900 leading-none">{m.medicineName || ""}</div>
+                                             <div className="font-black text-sm text-black leading-none">{m.medicineName || ""}</div>
                                              <div className="text-[10px] text-black font-black mt-2 tracking-tight">{m.instructions || m.frequency || ""}</div>
                                           </TableCell>
                                           <TableCell>

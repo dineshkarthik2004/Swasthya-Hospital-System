@@ -49,8 +49,8 @@ export default function DoctorDashboard() {
       
       {/* Welcome Header */}
       <div>
-         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome, Dr. {user?.name || "Physician"}</h1>
-         <p className="text-gray-800 mt-1 font-bold uppercase tracking-widest text-[11px] opacity-40">Your Current Branch: <span className="text-blue-600 font-bold">Chennai City Center</span>, {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}.</p>
+         <h1 className="text-3xl font-bold text-black tracking-tight">Welcome, Dr. {user?.name || "Physician"}</h1>
+         <p className="text-black mt-1 font-bold uppercase tracking-widest text-[11px] opacity-40">Your Current Branch: <span className="text-blue-600 font-bold">Chennai City Center</span>, {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}.</p>
       </div>
 
       {/* KPI Cards */}
@@ -94,12 +94,12 @@ export default function DoctorDashboard() {
       <Card className="rounded-[2.5rem] border-gray-100 shadow-sm overflow-hidden bg-white">
          <div className="p-6 px-8 border-b border-gray-50 flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-6 flex-1">
-               <h2 className="text-xl font-bold text-gray-900 tracking-tight">Patient Queue</h2>
+               <h2 className="text-xl font-bold text-black tracking-tight">Patient Queue</h2>
                <div className="relative w-full max-w-sm">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black w-4 h-4" />
                   <Input 
                      placeholder="Search Name or ID..." 
-                     className="pl-10 h-12 bg-gray-50/50 border-gray-100 rounded-2xl text-sm font-bold text-gray-900 placeholder:text-gray-400 focus:ring-0"
+                     className="pl-10 h-12 bg-gray-50/50 border-gray-100 rounded-2xl text-sm font-bold text-black placeholder:text-black focus:ring-0"
                      value={searchQuery}
                      onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -142,7 +142,7 @@ export default function DoctorDashboard() {
                               className="flex flex-col cursor-pointer group/name" 
                               onClick={() => navigate(`/doctor/consultation/${visit.id}`)}
                            >
-                              <span className="font-black text-gray-900 group-hover/name:text-blue-600 transition-colors text-base tracking-tight">{visit.patient?.name || "Unknown"}</span>
+                              <span className="font-black text-black group-hover/name:text-blue-600 transition-colors text-base tracking-tight">{visit.patient?.name || "Unknown"}</span>
                               <span className="text-[10px] text-black font-black uppercase tracking-widest opacity-40 mt-0.5">{(visit.patient?.gender || "MALE")}, {new Date().getFullYear() - (new Date(visit.patient?.dateOfBirth || Date.now()).getFullYear() || 1990)} Years</span>
                            </div>
                         </div>

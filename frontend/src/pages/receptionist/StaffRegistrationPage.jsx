@@ -57,7 +57,7 @@ export default function StaffRegistrationPage() {
         type="button"
         variant="ghost"
         onClick={() => navigate(backPath)}
-        className="gap-2 text-gray-500 hover:text-gray-900 font-black text-[10px] uppercase tracking-widest rounded-2xl px-6 h-12 bg-white shadow-sm border border-gray-100"
+        className="gap-2 text-black hover:text-black font-black text-[10px] uppercase tracking-widest rounded-2xl px-6 h-12 bg-white shadow-sm border border-gray-100"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Staff Management
       </Button>
@@ -65,8 +65,8 @@ export default function StaffRegistrationPage() {
       <Card className="rounded-[2.5rem] border border-gray-100 shadow-2xl p-0 overflow-hidden bg-white">
          <div className="p-10 border-b border-gray-50 flex items-center justify-between">
             <div>
-               <h1 className="text-3xl font-black tracking-tight text-gray-900 leading-none">{isEdit ? "Edit Staff Profile" : "Staff Registration"}</h1>
-               <p className="text-gray-400 text-sm font-medium mt-3 opacity-80">{isEdit ? "Update existing team member details." : "Register new medical personnel."}</p>
+               <h1 className="text-3xl font-black tracking-tight text-black leading-none">{isEdit ? "Edit Staff Profile" : "Staff Registration"}</h1>
+               <p className="text-black text-sm font-medium mt-3 opacity-80">{isEdit ? "Update existing team member details." : "Register new medical personnel."}</p>
             </div>
             <div className="w-16 h-16 bg-blue-50 rounded-3xl flex items-center justify-center text-blue-600 shadow-inner">
                <UserPlus className="w-8 h-8" />

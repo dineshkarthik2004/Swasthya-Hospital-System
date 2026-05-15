@@ -66,7 +66,7 @@ export default function MyPatientsHistory() {
   return (
     <div className="max-w-[1200px] mx-auto pt-8 px-4 pb-20">
       <div className="space-y-1 mb-8">
-        <h1 className="text-3xl font-black flex items-center gap-3 text-gray-900 tracking-tight text-black">
+        <h1 className="text-3xl font-black flex items-center gap-3 text-black tracking-tight text-black">
           <History className="w-8 h-8 text-blue-600" />
           Visit History
         </h1>
@@ -180,7 +180,7 @@ export default function MyPatientsHistory() {
                       </div>
                     </TableCell>
                     <TableCell className="text-right pr-12">
-                      <span className="bg-white px-4 py-1.5 rounded-full border border-gray-100 text-[11px] font-black text-gray-900 uppercase tracking-widest group-hover:border-blue-200 group-hover:bg-blue-50 transition-all shadow-sm group-hover:shadow-md">
+                      <span className="bg-white px-4 py-1.5 rounded-full border border-gray-100 text-[11px] font-black text-black uppercase tracking-widest group-hover:border-blue-200 group-hover:bg-blue-50 transition-all shadow-sm group-hover:shadow-md">
                         {medCount} Med{medCount !== 1 && 's'}
                       </span>
                     </TableCell>

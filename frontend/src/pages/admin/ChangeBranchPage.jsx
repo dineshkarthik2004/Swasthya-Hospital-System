@@ -83,7 +83,7 @@ export default function ChangeBranchPage() {
       </Button>
 
       <div className="space-y-2">
-        <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Change Branch</h1>
+        <h1 className="text-3xl font-black text-black tracking-tight text-black">Change Branch</h1>
         <p className="text-black font-black uppercase tracking-widest text-[11px]">Transfer doctor to a different branch location.</p>
       </div>
 

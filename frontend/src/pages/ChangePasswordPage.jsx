@@ -116,11 +116,11 @@ export default function ChangePasswordPage() {
           )}
 
           <div className="space-y-4">
-            <Label className="text-[11px] font-black uppercase text-gray-900 tracking-[0.2em] ml-2 opacity-60">Current Password</Label>
+            <Label className="text-[11px] font-black uppercase text-black tracking-[0.2em] ml-2 opacity-60">Current Password</Label>
             <Input 
               type="password"
               required
-              className="rounded-[1.5rem] border-2 border-gray-50 bg-gray-50 h-20 font-black text-gray-900 px-10 focus:ring-blue-500 text-xl focus:border-blue-500 transition-all" 
+              className="rounded-[1.5rem] border-2 border-gray-50 bg-gray-50 h-20 font-black text-black px-10 focus:ring-blue-500 text-xl focus:border-blue-500 transition-all" 
               placeholder="••••••••"
               value={formData.currentPassword}
               onChange={e => setFormData({ ...formData, currentPassword: e.target.value })}
@@ -128,11 +128,11 @@ export default function ChangePasswordPage() {
           </div>
 
           <div className="space-y-4">
-            <Label className="text-[11px] font-black uppercase text-gray-900 tracking-[0.2em] ml-2 opacity-60">New Password</Label>
+            <Label className="text-[11px] font-black uppercase text-black tracking-[0.2em] ml-2 opacity-60">New Password</Label>
             <Input 
               type="password"
               required
-              className="rounded-[1.5rem] border-2 border-gray-50 bg-gray-50 h-20 font-black text-gray-900 px-10 focus:ring-blue-500 text-xl focus:border-blue-500 transition-all" 
+              className="rounded-[1.5rem] border-2 border-gray-50 bg-gray-50 h-20 font-black text-black px-10 focus:ring-blue-500 text-xl focus:border-blue-500 transition-all" 
               placeholder="••••••••"
               value={formData.newPassword}
               onChange={e => setFormData({ ...formData, newPassword: e.target.value })}
@@ -140,11 +140,11 @@ export default function ChangePasswordPage() {
           </div>
 
           <div className="space-y-4">
-            <Label className="text-[11px] font-black uppercase text-gray-900 tracking-[0.2em] ml-2 opacity-60">Confirm New Password</Label>
+            <Label className="text-[11px] font-black uppercase text-black tracking-[0.2em] ml-2 opacity-60">Confirm New Password</Label>
             <Input 
               type="password"
               required
-              className="rounded-[1.5rem] border-2 border-gray-50 bg-gray-50 h-20 font-black text-gray-900 px-10 focus:ring-blue-500 text-xl focus:border-blue-500 transition-all" 
+              className="rounded-[1.5rem] border-2 border-gray-50 bg-gray-50 h-20 font-black text-black px-10 focus:ring-blue-500 text-xl focus:border-blue-500 transition-all" 
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
@@ -165,7 +165,7 @@ export default function ChangePasswordPage() {
               ) : "Save Password"}
             </Button>
             
-            <p className="text-center mt-8 text-[10px] font-black text-gray-400 uppercase tracking-widest leading-relaxed">
+            <p className="text-center mt-8 text-[10px] font-black text-black uppercase tracking-widest leading-relaxed">
               Updates take effect immediately in the hospital database.<br/>Your session will be maintained.
             </p>
           </div>

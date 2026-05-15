@@ -43,7 +43,7 @@ export default function DoctorPatientHistoryDetails() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-black gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
         <p className="font-bold text-lg">Loading patient details...</p>
       </div>
@@ -52,7 +52,7 @@ export default function DoctorPatientHistoryDetails() {
 
   if (error || !selectedVisit) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-black gap-4">
         <p className="font-bold text-lg text-red-500">{error || "Visit not found"}</p>
         <Button onClick={() => navigate("/doctor/history")} variant="outline">
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to History
@@ -79,9 +79,9 @@ export default function DoctorPatientHistoryDetails() {
             onClick={() => navigate(backPath)}
             className="rounded-full hover:bg-gray-100"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5 text-black" />
           </Button>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Patient History Details</h1>
+          <h1 className="text-2xl font-bold text-black tracking-tight">Patient History Details</h1>
         </div>
         <Button
           onClick={handlePrint}
@@ -100,8 +100,8 @@ export default function DoctorPatientHistoryDetails() {
               {(patient.name || "P").charAt(0)}
             </div>
             <div>
-              <h3 className="text-3xl font-black text-gray-900 tracking-tight mb-2">{patient.name || "Patient"}</h3>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-bold text-gray-500 uppercase tracking-wider">
+              <h3 className="text-3xl font-black text-black tracking-tight mb-2">{patient.name || "Patient"}</h3>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-bold text-black uppercase tracking-wider">
                 <span>{gender}</span>
                 <span>·</span>
                 <span>{age} years</span>
@@ -124,9 +124,9 @@ export default function DoctorPatientHistoryDetails() {
                 <span>·</span>
                 <span className="text-emerald-600 bg-emerald-100 px-3 py-0.5 rounded-full">ABHA: {patient.abha || "N/A"}</span>
                 <span>·</span>
-                <span className="text-gray-600 bg-gray-100 px-3 py-0.5 rounded-full">ID: {patient.id?.slice(-8)}</span>
+                <span className="text-black bg-gray-100 px-3 py-0.5 rounded-full">ID: {patient.id?.slice(-8)}</span>
               </div>
-              <p className="text-xs font-bold text-gray-400 mt-2 uppercase tracking-[0.2em]">
+              <p className="text-xs font-bold text-black mt-2 uppercase tracking-[0.2em]">
                 Visit Date: {new Date(selectedVisit.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}
               </p>
             </div>
@@ -134,7 +134,7 @@ export default function DoctorPatientHistoryDetails() {
 
           {/* Vitals Section */}
           <div className="space-y-4">
-            <h4 className="text-xs font-black tracking-[0.2em] text-gray-400 uppercase ml-1">Vitals Statistics</h4>
+            <h4 className="text-xs font-black tracking-[0.2em] text-black uppercase ml-1">Vitals Statistics</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <VitalCard label="BP" value={selectedVisit.vitals?.bloodPressure} unit="mmHg" icon="~" color="text-red-500" bgColor="bg-red-50/50" />
               <VitalCard label="Heart Rate" value={selectedVisit.vitals?.pulse} unit="bpm" icon="♡" color="text-pink-500" bgColor="bg-pink-50/50" />
@@ -146,13 +146,13 @@ export default function DoctorPatientHistoryDetails() {
           {/* Complaint & Diagnosis */}
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <h4 className="text-xs font-black tracking-[0.2em] text-gray-400 uppercase ml-1">Chief Complaint</h4>
-              <div className="bg-gray-50/80 p-6 rounded-3xl border border-gray-100 text-gray-700 font-medium leading-relaxed min-h-[100px]">
+              <h4 className="text-xs font-black tracking-[0.2em] text-black uppercase ml-1">Chief Complaint</h4>
+              <div className="bg-gray-50/80 p-6 rounded-3xl border border-gray-100 text-black font-medium leading-relaxed min-h-[100px]">
                 {selectedVisit.notes || "-"}
               </div>
             </div>
             <div className="space-y-3">
-              <h4 className="text-xs font-black tracking-[0.2em] text-gray-500 uppercase ml-1">Diagnosis</h4>
+              <h4 className="text-xs font-black tracking-[0.2em] text-black uppercase ml-1">Diagnosis</h4>
               <div className="bg-blue-50/50 p-6 rounded-3xl border border-blue-100 text-blue-900 font-bold leading-relaxed min-h-[100px] shadow-sm">
                 {selectedVisit.consultation?.diagnosis || "-"}
               </div>
@@ -162,7 +162,7 @@ export default function DoctorPatientHistoryDetails() {
           {/* Prescription Table */}
           <div className="space-y-4">
             <div className="flex items-center justify-between ml-1">
-              <h4 className="text-xs font-black tracking-[0.2em] text-gray-400 uppercase">Prescribed Medications</h4>
+              <h4 className="text-xs font-black tracking-[0.2em] text-black uppercase">Prescribed Medications</h4>
               <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest">{prescriptionItems.length} items</span>
             </div>
 
@@ -170,32 +170,32 @@ export default function DoctorPatientHistoryDetails() {
               <Table className="min-w-[800px] md:min-w-0">
                 <TableHeader className="bg-gray-50/50 h-12 border-b border-gray-100">
                   <TableRow className="border-none hover:bg-transparent">
-                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-6 w-[60px]">S.No</TableHead>
-                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-[20%]">Medicine Name</TableHead>
-                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-[20%]">Composition</TableHead>
-                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">M-A-N</TableHead>
-                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Duration</TableHead>
-                    <TableHead className="text-[10px] font-black text-gray-400 uppercase tracking-widest pr-6 text-right">Instructions</TableHead>
+                    <TableHead className="text-[10px] font-black text-black uppercase tracking-widest pl-6 w-[60px]">S.No</TableHead>
+                    <TableHead className="text-[10px] font-black text-black uppercase tracking-widest w-[20%]">Medicine Name</TableHead>
+                    <TableHead className="text-[10px] font-black text-black uppercase tracking-widest w-[20%]">Composition</TableHead>
+                    <TableHead className="text-[10px] font-black text-black uppercase tracking-widest text-center">M-A-N</TableHead>
+                    <TableHead className="text-[10px] font-black text-black uppercase tracking-widest">Duration</TableHead>
+                    <TableHead className="text-[10px] font-black text-black uppercase tracking-widest pr-6 text-right">Instructions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {prescriptionItems.map((med, idx) => (
                     <TableRow key={idx} className="hover:bg-gray-50/30 border-b border-gray-50 h-16 transition-colors">
-                      <TableCell className="pl-6 text-xs font-bold text-gray-400">{idx + 1}</TableCell>
+                      <TableCell className="pl-6 text-xs font-bold text-black">{idx + 1}</TableCell>
                       <TableCell className="py-4">
-                        <span className="font-bold text-gray-900 text-sm uppercase">{med.medicineName}</span>
+                        <span className="font-bold text-black text-sm uppercase">{med.medicineName}</span>
                       </TableCell>
                       <TableCell className="py-4">
-                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-tight italic">{med.composition || "-"}</span>
+                        <span className="text-[11px] font-bold text-black uppercase tracking-tight italic">{med.composition || "-"}</span>
                       </TableCell>
                       <TableCell className="text-center font-black text-blue-600 text-xs tracking-[0.3em]">{med.dosageMorning}-{med.dosageAfternoon}-{med.dosageNight}</TableCell>
-                      <TableCell className="font-bold text-gray-900 text-sm">{med.days} days</TableCell>
-                      <TableCell className="text-right pr-6 font-bold text-gray-500 text-xs">{med.instructions || "-"}</TableCell>
+                      <TableCell className="font-bold text-black text-sm">{med.days} days</TableCell>
+                      <TableCell className="text-right pr-6 font-bold text-black text-xs">{med.instructions || "-"}</TableCell>
                     </TableRow>
                   ))}
                   {prescriptionItems.length === 0 && (
                     <TableRow>
-                      <td colSpan={6} className="text-center text-sm font-medium text-gray-400 h-24">No medicines prescribed in this visit</td>
+                      <td colSpan={6} className="text-center text-sm font-medium text-black h-24">No medicines prescribed in this visit</td>
                     </TableRow>
                   )}
                 </TableBody>
@@ -206,8 +206,8 @@ export default function DoctorPatientHistoryDetails() {
           {/* Doctor Notes / Remarks */}
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <h4 className="text-xs font-black tracking-[0.2em] text-gray-500 uppercase ml-1">Clinical Notes</h4>
-              <div className="bg-gray-50/50 p-8 rounded-[2rem] border border-gray-100 text-gray-600 font-medium leading-relaxed shadow-inner min-h-[120px]">
+              <h4 className="text-xs font-black tracking-[0.2em] text-black uppercase ml-1">Clinical Notes</h4>
+              <div className="bg-gray-50/50 p-8 rounded-[2rem] border border-gray-100 text-black font-medium leading-relaxed shadow-inner min-h-[120px]">
                 {(() => {
                   const val = selectedVisit.consultation?.consultationNotes?.split('\nRemarks:')[0]?.trim();
                   return (!val || val.toLowerCase() === 'none') ? "No clinical notes." : val;
@@ -215,8 +215,8 @@ export default function DoctorPatientHistoryDetails() {
               </div>
             </div>
             <div className="space-y-3">
-              <h4 className="text-xs font-black tracking-[0.2em] text-gray-500 uppercase ml-1">Investigation</h4>
-              <div className="bg-orange-50/30 p-8 rounded-[2rem] border border-orange-100 text-gray-700 font-medium leading-relaxed shadow-inner min-h-[120px]">
+              <h4 className="text-xs font-black tracking-[0.2em] text-black uppercase ml-1">Investigation</h4>
+              <div className="bg-orange-50/30 p-8 rounded-[2rem] border border-orange-100 text-black font-medium leading-relaxed shadow-inner min-h-[120px]">
                 {(() => {
                   const val = selectedVisit.consultation?.consultationNotes?.split('\nRemarks:')[1]?.trim();
                   return (!val || val.toLowerCase() === 'none' || val === 'undefined') ? "No investigation provided." : val;
@@ -239,10 +239,10 @@ function VitalCard({ label, value, unit, icon, color, bgColor }) {
         {icon}
       </div>
       <div className="flex flex-col">
-        <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest leading-none mb-1">{label}</span>
+        <span className="text-[10px] font-black uppercase text-black tracking-widest leading-none mb-1">{label}</span>
         <div className="flex items-baseline gap-1">
-          <span className="text-xl font-black text-gray-900 tracking-tight">{value || "--"}</span>
-          <span className="text-[10px] font-bold text-gray-400">{unit}</span>
+          <span className="text-xl font-black text-black tracking-tight">{value || "--"}</span>
+          <span className="text-[10px] font-bold text-black">{unit}</span>
         </div>
       </div>
     </div>

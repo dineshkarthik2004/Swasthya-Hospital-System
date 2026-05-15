@@ -25,7 +25,7 @@ export default function PaymentManagement() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight text-black">Financial Ledger</h1>
+          <h1 className="text-3xl font-black text-black tracking-tight text-black">Financial Ledger</h1>
           <p className="text-black font-black uppercase tracking-widest text-[11px]">Tracking hospital service fees and subscription payments.</p>
         </div>
         <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl h-14 px-8 font-black uppercase tracking-widest text-[10px] shadow-lg shadow-emerald-100">
@@ -36,7 +36,7 @@ export default function PaymentManagement() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <span className="text-[10px] font-black text-black uppercase tracking-widest">Outstanding Balance</span>
-            <h3 className="text-3xl font-black text-gray-900 tracking-tighter mt-2">₹0.00</h3>
+            <h3 className="text-3xl font-black text-black tracking-tighter mt-2">₹0.00</h3>
             <div className="mt-4 flex items-center gap-2 text-black opacity-60 font-black text-xs bg-gray-50 w-fit px-3 py-1.5 rounded-full uppercase tracking-tight">
                <AlertCircle className="w-3.5 h-3.5 opacity-40" /> 0 Pending Invoices
             </div>
@@ -85,10 +85,10 @@ export default function PaymentManagement() {
                     <td className="px-8 py-6">
                        <div className="flex items-center gap-3">
                           <Building2 className="w-4 h-4 text-black opacity-30" />
-                          <span className="font-black text-gray-900 tracking-tight">{p.hospital?.name}</span>
+                          <span className="font-black text-black tracking-tight">{p.hospital?.name}</span>
                        </div>
                     </td>
-                    <td className="px-8 py-6 font-black text-gray-900 tracking-tighter">₹{p.amount.toFixed(2)}</td>
+                    <td className="px-8 py-6 font-black text-black tracking-tighter">₹{p.amount.toFixed(2)}</td>
                     <td className="px-8 py-6">
                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${p.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
                           {p.status}
