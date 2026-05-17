@@ -1,6 +1,6 @@
 import { Outlet, Navigate, useLocation, Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
-import { Users, ClipboardList, Activity, ArrowLeftToLine, ArrowRightToLine, LogOut, FileText, UserSquare, LayoutDashboard, History, ShieldCheck, HeartPulse, Menu, Bell, ChevronDown, Loader2 } from "lucide-react"
+import { Users, ClipboardList, Activity, ArrowLeftToLine, ArrowRightToLine, LogOut, FileText, UserSquare, LayoutDashboard, History, ShieldCheck, HeartPulse, Menu, Bell, ChevronDown, Loader2, Settings } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -76,6 +76,7 @@ export default function AppLayout({ allowedRoles }) {
         { name: "Dashboard", path: "/doctor/dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
         { name: "My Patients History", path: "/doctor/history", icon: <History className="w-5 h-5" /> },
         { name: "Consultation", path: "/doctor/consultation", icon: <ClipboardList className="w-5 h-5" /> },
+        { name: "My Settings", path: "/doctor/settings", icon: <Settings className="w-5 h-5" /> },
       ]
     }
     if (effectiveRole === "PATIENT") {
@@ -187,6 +188,18 @@ export default function AppLayout({ allowedRoles }) {
                          </div>
                          Change Password
                       </DropdownMenuItem>
+
+                      {effectiveRole === "DOCTOR" && (
+                         <DropdownMenuItem 
+                           className="text-emerald-600 font-black uppercase tracking-widest text-[10px] focus:bg-emerald-50 focus:text-emerald-700 rounded-2xl cursor-pointer gap-4 py-4 px-5 transition-all mb-1" 
+                           onSelect={() => navigate("/doctor/settings")}
+                         >
+                           <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center">
+                             <Settings className="w-4 h-4" /> 
+                           </div>
+                           My Profile & Email
+                         </DropdownMenuItem>
+                       )}
 
                       <DropdownMenuItem 
                          className="text-red-500 font-black uppercase tracking-widest text-[10px] focus:bg-red-50 focus:text-red-600 rounded-2xl cursor-pointer gap-4 py-4 px-5 transition-all" 

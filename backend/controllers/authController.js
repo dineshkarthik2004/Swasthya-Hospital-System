@@ -74,18 +74,24 @@ export async function login(req, res) {
   try {
     const data = req.body;
     if (!data || typeof data !== "object") return res.status(400).json({ error: "Invalid input" });
-    const { email, password } = data;
-    console.log("[AuthController] Login attempt for email:", email);
+    const { email, password } = data; // "email" field accepts both email and username
+    console.log("[AuthController] Login attempt for:", email);
 
     if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required." });
+      return res.status(400).json({ error: "Username/Email and password are required." });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const identifier = email.trim().toLowerCase();
+
+    // Lookup by email first, then by username
+    let user = await prisma.user.findUnique({ where: { email: identifier } });
+    if (!user) {
+      user = await prisma.user.findUnique({ where: { username: identifier } });
+    }
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      console.warn("[AuthController] Login failed: Invalid credentials for", email);
-      return res.status(401).json({ error: "Invalid email or password" });
+      console.warn("[AuthController] Login failed: Invalid credentials for", identifier);
+      return res.status(401).json({ error: "Invalid username/email or password" });
     }
 
     const token = jwt.sign(
@@ -177,5 +183,65 @@ export async function changePassword(req, res) {
   } catch (error) {
     console.error("[AuthController] Change Password Error:", error);
     return res.status(500).json({ error: "Failed to update password." });
+  }
+}
+
+export async function updateEmail(req, res) {
+  try {
+    const { email } = req.body;
+    const userId = req.user.userId;
+    console.log(`[AuthController] Update email request for user: ${userId}`);
+
+    if (!email || !email.trim()) {
+      return res.status(400).json({ error: "Email is required." });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Check if email is already taken by another user
+    const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (existing && existing.id !== userId) {
+      return res.status(400).json({ error: "This email is already registered to another account." });
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { email: normalizedEmail }
+    });
+
+    return res.status(200).json({ message: "Email updated successfully.", email: normalizedEmail });
+  } catch (error) {
+    console.error("[AuthController] Update Email Error:", error);
+    return res.status(500).json({ error: "Failed to update email." });
+  }
+}
+
+export async function updateUsername(req, res) {
+  try {
+    const { username } = req.body;
+    const userId = req.user.userId;
+
+    if (!username || !username.trim()) {
+      return res.status(400).json({ error: "Username is required." });
+    }
+
+    const normalized = username.trim().toLowerCase();
+
+    // Check uniqueness
+    const existing = await prisma.user.findUnique({ where: { username: normalized } });
+    if (existing && existing.id !== userId) {
+      return res.status(400).json({ error: "This username is already taken." });
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { username: normalized }
+    });
+
+    console.log(`[AuthController] Username updated for user: ${userId} -> ${normalized}`);
+    return res.status(200).json({ message: "Username updated successfully.", username: normalized });
+  } catch (error) {
+    console.error("[AuthController] Update Username Error:", error);
+    return res.status(500).json({ error: "Failed to update username." });
   }
 }

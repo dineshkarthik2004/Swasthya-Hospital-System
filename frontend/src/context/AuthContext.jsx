@@ -42,6 +42,14 @@ export function AuthProvider({ children }) {
       }
   };
 
+  // Directly set user+token (used by OTP login flow)
+  const loginWithData = (userData, newToken) => {
+    setUser(userData);
+    setToken(newToken);
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", newToken);
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -50,7 +58,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, loginWithData, logout }}>
       {children}
     </AuthContext.Provider>
   );

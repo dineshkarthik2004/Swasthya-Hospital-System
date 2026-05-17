@@ -26,20 +26,26 @@ const OTP_ALLOWED_ROLES = ["ADMIN", "RECEPTIONIST", "DOCTOR"];
  */
 export async function requestOtp(req, res) {
   try {
-    const { email } = req.body;
+    const { email } = req.body; // "email" field accepts both email and username
 
     if (!email || typeof email !== "string") {
-      return res.status(400).json({ error: "A valid email address is required." });
+      return res.status(400).json({ error: "A valid email or username is required." });
     }
 
     const normalizedEmail = email.toLowerCase().trim();
     console.log(`[OtpController] OTP request for: ${normalizedEmail}`);
 
-    // Find user by email
-    const user = await prisma.user.findUnique({
+    // Find user by email first, then by username
+    let user = await prisma.user.findUnique({
       where: { email: normalizedEmail },
       select: { id: true, name: true, email: true, role: true, isActive: true },
     });
+    if (!user) {
+      user = await prisma.user.findUnique({
+        where: { username: normalizedEmail },
+        select: { id: true, name: true, email: true, role: true, isActive: true },
+      });
+    }
 
     if (!user) {
       // Intentionally vague to prevent email enumeration
@@ -112,6 +118,9 @@ export async function verifyOtpAndLogin(req, res) {
     // OTP is valid — fetch full user data to issue JWT
     const user = await prisma.user.findUnique({
       where: { email: normalizedEmail },
+      include: { hospital: true },
+    }) || await prisma.user.findUnique({
+      where: { username: normalizedEmail },
       include: { hospital: true },
     });
 
@@ -192,10 +201,16 @@ export async function resendOtp(req, res) {
     console.log(`[OtpController] OTP resend request for: ${normalizedEmail}`);
 
     // Check user still exists
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { email: normalizedEmail },
       select: { id: true, name: true, role: true, isActive: true },
     });
+    if (!user) {
+      user = await prisma.user.findUnique({
+        where: { username: normalizedEmail },
+        select: { id: true, name: true, role: true, isActive: true },
+      });
+    }
 
     if (!user || !user.isActive || !OTP_ALLOWED_ROLES.includes(user.role)) {
       return res.status(403).json({ error: "Cannot resend OTP for this account." });

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Building2, Plus, Edit2, Trash2, Search, X, Check, Globe, Shield, Phone, Mail } from "lucide-react"
+import { Building2, Plus, Edit2, Trash2, X, Check, Globe, Phone, Mail, User, AtSign, Lock } from "lucide-react"
 import api from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,14 +9,11 @@ export default function HospitalManagement() {
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingHospital, setEditingHospital] = useState(null)
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    serviceFee: 0,
-    featuresEnabled: "[]"
-  })
+  const emptyForm = {
+    name: "", email: "", phone: "", address: "", serviceFee: 0, featuresEnabled: "[]",
+    adminName: "", adminEmail: "", adminUsername: "", adminPassword: ""
+  }
+  const [formData, setFormData] = useState(emptyForm)
 
   const fetchHospitals = async () => {
     try {
@@ -43,7 +40,7 @@ export default function HospitalManagement() {
       }
       setIsModalOpen(false)
       setEditingHospital(null)
-      setFormData({ name: "", email: "", phone: "", address: "", serviceFee: 0, featuresEnabled: "[]" })
+      setFormData(emptyForm)
       fetchHospitals()
     } catch (error) {
       console.error("Error saving hospital:", error)
@@ -68,7 +65,7 @@ export default function HospitalManagement() {
           <p className="text-black font-black uppercase tracking-widest text-[11px]">Manage affiliated healthcare institutions and their access.</p>
         </div>
         <Button 
-          onClick={() => { setEditingHospital(null); setFormData({ name: "", email: "", phone: "", address: "", serviceFee: 0, featuresEnabled: "[]" }); setIsModalOpen(true); }}
+          onClick={() => { setEditingHospital(null); setFormData(emptyForm); setIsModalOpen(true); }}
           className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl h-14 px-8 font-black uppercase tracking-widest text-[10px] shadow-lg shadow-indigo-100 transition-all hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -185,6 +182,71 @@ export default function HospitalManagement() {
                        className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
                     />
                  </div>
+
+                 {/* ── Admin Credentials (new hospital only) ── */}
+                 {!editingHospital && (
+                   <>
+                     <div className="pt-2">
+                       <div className="flex items-center gap-3">
+                         <div className="flex-1 h-px bg-gray-100" />
+                         <span className="text-[10px] font-black text-black uppercase tracking-widest opacity-40">Hospital Admin Account</span>
+                         <div className="flex-1 h-px bg-gray-100" />
+                       </div>
+                       <p className="text-[10px] text-black opacity-40 font-bold mt-1 text-center">Login credentials for this hospital's administrator</p>
+                     </div>
+                     <div className="grid grid-cols-2 gap-6">
+                       <div className="space-y-2">
+                         <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1 flex items-center gap-1.5"><User className="w-3 h-3" /> Admin Name</label>
+                         <Input
+                           value={formData.adminName}
+                           onChange={e => setFormData({...formData, adminName: e.target.value})}
+                           placeholder="Dr. John Admin"
+                           className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
+                           required
+                         />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1 flex items-center gap-1.5">
+                           <AtSign className="w-3 h-3" /> Username
+                           <span className="normal-case font-medium tracking-normal text-[10px] text-gray-400">(for login)</span>
+                         </label>
+                         <Input
+                           value={formData.adminUsername}
+                           onChange={e => setFormData({...formData, adminUsername: e.target.value})}
+                           placeholder="admin@jotham"
+                           autoComplete="off"
+                           className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
+                           required
+                         />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1 flex items-center gap-1.5">
+                           <Mail className="w-3 h-3" /> Admin Email
+                           <span className="normal-case font-medium tracking-normal text-[10px] text-gray-400">(optional)</span>
+                         </label>
+                         <Input
+                           type="email"
+                           value={formData.adminEmail}
+                           onChange={e => setFormData({...formData, adminEmail: e.target.value})}
+                           placeholder="admin@hospital.com"
+                           className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black placeholder:text-black"
+                         />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1 flex items-center gap-1.5"><Lock className="w-3 h-3" /> Password</label>
+                         <Input
+                           type="password"
+                           value={formData.adminPassword}
+                           onChange={e => setFormData({...formData, adminPassword: e.target.value})}
+                           placeholder="••••••••"
+                           autoComplete="new-password"
+                           className="h-14 rounded-2xl border-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-black text-black"
+                           required
+                         />
+                       </div>
+                     </div>
+                   </>
+                 )}
                  
                  <div className="space-y-3">
                     <label className="text-[10px] font-black text-black uppercase tracking-widest pl-1">Enabled Features</label>

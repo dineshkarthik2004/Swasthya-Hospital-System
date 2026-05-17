@@ -72,6 +72,7 @@
 
     hospitalId          String?
     hospital            Hospital?       @relation("HospitalUsers", fields: [hospitalId], references: [id])
+    username            String?         @unique
   }
 
   model Patient {

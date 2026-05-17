@@ -20,6 +20,7 @@ import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import ConsultationPage from "./pages/doctor/ConsultationPage"
 import MyPatientsHistory from "./pages/doctor/MyPatientsHistory"
 import DoctorPatientHistoryDetails from "./pages/doctor/DoctorPatientHistoryDetails"
+import DoctorProfilePage from "./pages/doctor/DoctorProfilePage"
 
 // Patient Pages
 import PatientRecordsPage from "./pages/patient/PatientRecordsPage"
@@ -75,6 +76,7 @@ function App() {
           <Route path="consultation/:id" element={<ConsultationPage />} />
           <Route path="history" element={<MyPatientsHistory />} />
           <Route path="history/:visitId" element={<DoctorPatientHistoryDetails />} />
+          <Route path="settings" element={<DoctorProfilePage />} />
           <Route path="change-password" element={<ChangePasswordPage />} />
         </Route>
 

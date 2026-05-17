@@ -1,4 +1,5 @@
 import { prisma } from "../config/db.js";
+import bcrypt from "bcryptjs";
 
 // --- Hospitals Management ---
 export async function getHospitals(req, res) {
@@ -14,12 +15,47 @@ export async function getHospitals(req, res) {
 
 export async function createHospital(req, res) {
   try {
-    const { name, email, phone, address, serviceFee, featuresEnabled } = req.body;
+    const { name, email, phone, address, serviceFee, featuresEnabled,
+            adminName, adminEmail, adminUsername, adminPassword } = req.body;
+
+    // 1. Create the hospital record
     const hospital = await prisma.hospital.create({
       data: { name, email, phone, address, serviceFee: parseFloat(serviceFee || 0), featuresEnabled }
     });
+
+    // 2. If admin credentials provided, create the linked ADMIN user
+    if (adminPassword) {
+      const finalAdminEmail = (adminEmail && adminEmail.trim())
+        ? adminEmail.trim().toLowerCase()
+        : `${(adminUsername || name).trim().toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@noemail.local`;
+
+      // Check uniqueness
+      if (adminEmail && adminEmail.trim()) {
+        const existing = await prisma.user.findUnique({ where: { email: finalAdminEmail } });
+        if (existing) return res.status(400).json({ error: "Admin email already registered." });
+      }
+      if (adminUsername && adminUsername.trim()) {
+        const existingU = await prisma.user.findUnique({ where: { username: adminUsername.trim().toLowerCase() } });
+        if (existingU) return res.status(400).json({ error: "Admin username already taken." });
+      }
+
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      await prisma.user.create({
+        data: {
+          name: adminName || name,
+          email: finalAdminEmail,
+          username: adminUsername ? adminUsername.trim().toLowerCase() : null,
+          password: hashedPassword,
+          role: "ADMIN",
+          hospitalId: hospital.id,
+          isActive: true
+        }
+      });
+    }
+
     res.status(201).json(hospital);
   } catch (error) {
+    console.error("[AdminController] createHospital error:", error);
     res.status(500).json({ error: "Failed to create hospital" });
   }
 }

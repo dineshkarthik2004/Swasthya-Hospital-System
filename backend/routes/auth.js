@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, changePassword } from "../controllers/authController.js";
+import { register, login, changePassword, updateEmail, updateUsername } from "../controllers/authController.js";
 import { authenticateToken } from "../middleware/auth.js";
 
 // ── OTP Login (additive — does NOT change existing password login) ─────────────
@@ -11,6 +11,8 @@ const router = express.Router();
 router.post("/register", register);
 router.post("/login", login);
 router.post("/change-password", authenticateToken, changePassword);
+router.post("/update-email", authenticateToken, updateEmail);
+router.post("/update-username", authenticateToken, updateUsername);
 
 // ── OTP Routes ─────────────────────────────────────────────────────────────────
 router.post("/otp/request", requestOtp);        // Step 1: Send OTP (login)

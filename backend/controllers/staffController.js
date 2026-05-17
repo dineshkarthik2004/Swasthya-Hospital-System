@@ -20,6 +20,7 @@ export async function listStaff(req, res) {
         id: true,
         name: true,
         email: true,
+        username: true,
         phone: true,
         role: true,
         specialization: true,
@@ -89,17 +90,32 @@ export async function createStaff(req, res) {
   try {
     const data = req.body;
     if (!data || typeof data !== "object") return res.status(400).json({ error: "Invalid input" });
-    const { name, email, password, role, specialization, licenseNumber, phone, qualification, clinicName, doorNo, street, area, city, state, pincode, branchName } = data;
-    console.log("[StaffController] Creating new staff:", { name, email, role });
+    const { name, email, username, password, role, specialization, licenseNumber, phone, qualification, clinicName, doorNo, street, area, city, state, pincode, branchName } = data;
+    console.log("[StaffController] Creating new staff:", { name, email, username, role });
 
-    if (!name || !email || !password || !role) {
-      return res.status(400).json({ error: "Name, email, password, and role are required." });
+    if (!name || !password || !role) {
+      return res.status(400).json({ error: "Name, password, and role are required." });
     }
 
-    // Check if email already exists
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      return res.status(400).json({ error: "Email already registered." });
+    // Email is optional — generate a unique placeholder if not provided
+    const finalEmail = (email && email.trim()) 
+      ? email.trim() 
+      : `${(username || name).trim().toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@noemail.local`;
+
+    // Check if email already exists (only if a real email was provided)
+    if (email && email.trim()) {
+      const existing = await prisma.user.findUnique({ where: { email: finalEmail } });
+      if (existing) {
+        return res.status(400).json({ error: "Email already registered." });
+      }
+    }
+
+    // Check if username already exists (if provided)
+    if (username && username.trim()) {
+      const existingUsername = await prisma.user.findUnique({ where: { username: username.trim().toLowerCase() } });
+      if (existingUsername) {
+        return res.status(400).json({ error: "Username already taken." });
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -107,7 +123,8 @@ export async function createStaff(req, res) {
     const newUser = await prisma.user.create({
       data: {
         name,
-        email,
+        email: finalEmail,
+        username: username ? username.trim().toLowerCase() : null,
         password: hashedPassword,
         phone: phone || null,
         role: role.toUpperCase(),
@@ -129,6 +146,7 @@ export async function createStaff(req, res) {
         id: true,
         name: true,
         email: true,
+        username: true,
         phone: true,
         role: true,
         specialization: true,
@@ -164,12 +182,29 @@ export async function updateStaff(req, res) {
     const { id } = req.params;
     const reqData = req.body;
     if (!reqData || typeof reqData !== "object") return res.status(400).json({ error: "Invalid input" });
-    const { name, email, specialization, licenseNumber, role, phone, qualification, clinicName, doorNo, street, area, city, state, pincode, branchName } = reqData;
+    const { name, email, username, specialization, licenseNumber, role, phone, qualification, clinicName, doorNo, street, area, city, state, pincode, branchName } = reqData;
     console.log("[StaffController] Updating staff:", id);
+
+    // Find the staff member by id first
+    const existing = await prisma.user.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ error: "Staff member not found." });
+    }
+
+    // Security: only allow update if staff belongs to the same hospital,
+    // OR if staff has no hospitalId (legacy record) and user has one
+    if (
+      req.user.hospitalId &&
+      existing.hospitalId &&
+      existing.hospitalId !== req.user.hospitalId
+    ) {
+      return res.status(403).json({ error: "You can only edit staff from your own hospital." });
+    }
 
     const data = {};
     if (name) data.name = name;
     if (email) data.email = email;
+    if (username !== undefined) data.username = username ? username.trim().toLowerCase() : null;
     if (specialization !== undefined) data.specialization = specialization;
     if (licenseNumber !== undefined) data.licenseNumber = licenseNumber;
     if (role) data.role = role.toUpperCase();
@@ -184,16 +219,23 @@ export async function updateStaff(req, res) {
     if (pincode !== undefined) data.pincode = pincode;
     if (branchName !== undefined) data.branchName = branchName;
 
+    // Check username uniqueness if being changed
+    if (data.username && data.username !== existing.username) {
+      const takenBy = await prisma.user.findUnique({ where: { username: data.username } });
+      if (takenBy && takenBy.id !== id) {
+        return res.status(400).json({ error: "Username already taken by another account." });
+      }
+    }
+
+    // Update by id only (hospitalId cannot be used in update where clause)
     const updated = await prisma.user.update({
-      where: { 
-        id,
-        hospitalId: req.user.hospitalId
-      },
+      where: { id },
       data,
       select: {
         id: true,
         name: true,
         email: true,
+        username: true,
         role: true,
         specialization: true,
         licenseNumber: true,
@@ -226,11 +268,24 @@ export async function toggleStaffStatus(req, res) {
     const { isActive } = req.body;
     console.log("[StaffController] Toggling staff status:", id, "-> isActive:", isActive);
 
+    // Find the staff member by id first
+    const existing = await prisma.user.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ error: "Staff member not found." });
+    }
+
+    // Only block if both sides have a hospitalId and they differ
+    if (
+      req.user.hospitalId &&
+      existing.hospitalId &&
+      existing.hospitalId !== req.user.hospitalId
+    ) {
+      return res.status(403).json({ error: "You can only manage staff from your own hospital." });
+    }
+
+    // Update by id only
     const updated = await prisma.user.update({
-      where: { 
-        id,
-        hospitalId: req.user.hospitalId
-      },
+      where: { id },
       data: { isActive: isActive },
       select: {
         id: true,

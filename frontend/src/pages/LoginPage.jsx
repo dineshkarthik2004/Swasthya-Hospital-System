@@ -10,7 +10,7 @@ import { Activity } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
+  const [identifier, setIdentifier] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
@@ -24,9 +24,9 @@ export default function LoginPage() {
     setError("")
     setLoading(true)
     
-    console.log("[LoginPage] Attempting login for:", email);
+    console.log("[LoginPage] Attempting login for:", identifier);
 
-    const result = await login(email, password)
+    const result = await login(identifier, password)
     
     if (result.success) {
       // User requirements: Do NOT clear form or reset loading before navigation
@@ -66,20 +66,21 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">Swasthya Clinic</CardTitle>
           <CardDescription>
-            Enter your email and password to log in.
+            Enter your username or email and password to log in.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="identifier">Username or Email</Label>
               <Input 
-                id="email" 
-                type="email" 
-                placeholder="m@example.com" 
+                id="identifier" 
+                type="text" 
+                placeholder="username or email@example.com" 
                 required 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                autoComplete="username"
               />
             </div>
             <div className="space-y-2">

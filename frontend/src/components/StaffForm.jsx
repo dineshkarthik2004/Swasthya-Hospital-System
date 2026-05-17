@@ -96,6 +96,7 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
   const [formData, setFormData] = useState({
     name: initialData.name || "",
     email: initialData.email || "",
+    username: initialData.username || "",
     password: initialData.password || "",
     role: initialData.role || "DOCTOR",
     phone: initialData.phone || "",
@@ -248,10 +249,10 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
     }
   };
 
-  // Whether Doctor registration requires email verification (new only)
+  // Whether Doctor registration shows email verification option (new only)
   const needsEmailVerification = !isEdit && formData.role === "DOCTOR";
-  // Block submit if verification needed but not done
-  const submitBlocked = needsEmailVerification && !emailVerified;
+  // Submit is NEVER blocked — email verification is optional
+  const submitBlocked = false;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -278,12 +279,29 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
           <Input name="name" value={formData.name || ""} onChange={handleChange} required className="h-12 rounded-2xl bg-gray-50/50" />
         </div>
 
-        {/* ── Email field + Verify button ────────────────────────────────────── */}
+        {/* ── Username field ──────────────────────────────────────────────────── */}
         <div className="space-y-1.5">
+          <Label className="text-[10px] uppercase font-black tracking-widest text-black ml-1">
+            Username
+            <span className="ml-2 normal-case font-medium tracking-normal text-[10px] text-gray-400">(optional – for login)</span>
+          </Label>
+          <Input
+            name="username"
+            value={formData.username || ""}
+            onChange={handleChange}
+            placeholder="e.g. dr.john or john123"
+            className="h-12 rounded-2xl bg-gray-50/50"
+            autoComplete="username"
+          />
+        </div>
+      </div>
+
+      {/* ── Email field + Optional Verify button ───────────────────────────── */}
+      <div className="space-y-1.5">
           <Label className="text-[10px] uppercase font-black tracking-widest text-black ml-1">
             Email Address
             {needsEmailVerification && !emailVerified && (
-              <span className="ml-2 text-red-500 normal-case font-semibold tracking-normal text-[10px]">* Verification required</span>
+              <span className="ml-2 text-amber-500 normal-case font-semibold tracking-normal text-[10px]">– verify after creation or from doctor's settings</span>
             )}
             {emailVerified && (
               <span className="ml-2 text-green-600 normal-case font-semibold tracking-normal text-[10px] inline-flex items-center gap-1">
@@ -298,7 +316,7 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
               name="email"
               value={formData.email || ""}
               onChange={handleChange}
-              required
+              placeholder="optional — can be added later"
               disabled={verifyStep === "otp" || verifyStep === "checking" || emailVerified}
               className={`h-12 rounded-2xl bg-gray-50/50 flex-1 ${emailVerified ? "border-green-400 bg-green-50/40" : ""}`}
             />
@@ -372,7 +390,6 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
           {verifyStep === "idle" && verifyError && (
             <p className="text-xs text-red-500 font-semibold mt-1">{verifyError}</p>
           )}
-        </div>
       </div>
 
       {/* ── Role + Password row (unchanged) ──────────────────────────────────── */}
@@ -493,20 +510,13 @@ export default function StaffForm({ initialData = {}, onSubmit, isSubmitting, on
         )}
         <Button
           type="submit"
-          className={`flex-1 h-12 text-white rounded-[1rem] font-bold shadow-xl ${
-            submitBlocked
-              ? "bg-gray-300 shadow-gray-100 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 shadow-blue-100"
-          }`}
-          disabled={isSubmitting || submitBlocked}
-          title={submitBlocked ? "Verify the doctor's email before creating the account" : ""}
+          className="flex-1 h-12 text-white rounded-[1rem] font-bold shadow-xl bg-blue-600 hover:bg-blue-700 shadow-blue-100"
+          disabled={isSubmitting}
         >
           {isSubmitting ? (
             <Loader2 className="w-5 h-5 animate-spin" />
           ) : isEdit ? (
             "Save Changes"
-          ) : submitBlocked ? (
-            "Verify Email to Continue"
           ) : (
             "Create Account"
           )}

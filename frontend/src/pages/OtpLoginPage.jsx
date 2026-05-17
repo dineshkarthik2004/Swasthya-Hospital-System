@@ -139,7 +139,7 @@ export default function OtpLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { login: authContextLogin } = useAuth(); // existing context login (sets localStorage)
+  const { login: authContextLogin, loginWithData } = useAuth(); // existing context login (sets localStorage)
   const navigate = useNavigate();
   const { toast } = useToast();
   const countdown = useCountdown(60);
@@ -151,7 +151,7 @@ export default function OtpLoginPage() {
     setError("");
 
     if (!email.trim()) {
-      setError("Please enter your email address.");
+      setError("Please enter your username or email address.");
       return;
     }
 
@@ -209,12 +209,9 @@ export default function OtpLoginPage() {
 
       const { token, user: userData } = res.data;
 
-      // Use the same AuthContext mechanism as password login
-      // Manually set localStorage to match pattern in AuthContext
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(userData));
+      // Update AuthContext state AND localStorage so UI shows real name/email immediately
+      loginWithData(userData, token);
 
-      // Trigger a soft reload of context state (matches existing flow)
       const role = (userData.role || "").toUpperCase();
 
       toast({
@@ -281,8 +278,8 @@ export default function OtpLoginPage() {
             {step === "email"
               ? "Sign in with a one-time code sent to your email."
               : userName
-              ? `Hi ${userName}! Enter the 6-digit code sent to ${email}.`
-              : `Enter the 6-digit code sent to ${email}.`}
+              ? `Hi ${userName}! Enter the 6-digit code sent to your email.`
+              : `Enter the 6-digit code sent to your email.`}
           </CardDescription>
         </CardHeader>
 
@@ -293,17 +290,18 @@ export default function OtpLoginPage() {
               <div className="space-y-2">
                 <Label htmlFor="otp-email">
                   <Mail className="inline h-4 w-4 mr-1 mb-0.5" />
-                  Email Address
+                  Username or Email
                 </Label>
                 <Input
                   id="otp-email"
-                  type="email"
-                  placeholder="you@example.com"
+                  type="text"
+                  placeholder="username or you@example.com"
                   required
                   autoFocus
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
+                  autoComplete="username"
                 />
               </div>
 
