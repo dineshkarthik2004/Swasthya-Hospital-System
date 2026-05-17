@@ -146,18 +146,18 @@ export default function PrintPrescription() {
                {/* Vitals & Diagnosis Row */}
                <div className="flex gap-6">
                   <div className="flex-1">
-                     <h4 className="text-[10px] font-bold uppercase border-b border-black mb-2 opacity-30">Patient Complaints & Diagnosis</h4>
+                     <h4 className="text-[10px] font-bold uppercase border-b border-black mb-2 text-black">Patient Complaints & Diagnosis</h4>
                      <div className="space-y-1 p-1">
-                        <p className="text-xs text-black italic leading-snug">Patient Complaints: <span className="text-black not-italic font-medium">{visit.notes || ""}</span></p>
-                        <p className="text-sm font-bold text-black italic">Diagnosis: {consultation?.diagnosis || ""}</p>
+                        <p className="text-xs text-black italic leading-snug">Patient Complaints: <span className="text-black not-italic font-medium">{visit.notes || "-"}</span></p>
+                        <p className="text-sm font-bold text-black italic">Diagnosis: {(consultation?.diagnosis && consultation.diagnosis.trim() && consultation.diagnosis.toLowerCase() !== "consultation completed") ? consultation.diagnosis : "-"}</p>
                      </div>
                   </div>
                   <div className="w-[200px]">
-                     <h4 className="text-[10px] font-bold uppercase border-b border-black mb-2 opacity-30">Vital Signs</h4>
+                     <h4 className="text-[10px] font-bold uppercase border-b border-black mb-2 text-black">Vital Signs</h4>
                      <div className="grid grid-cols-2 gap-2 p-1">
                         <div>
                            <p className="text-[8px] text-black font-bold uppercase">BP</p>
-                           <p className="text-xs font-bold">{vitals?.bloodPressure || "-"}</p>
+                           <p className="text-xs font-bold text-black">{vitals?.bloodPressure || "-"}</p>
                         </div>
                         <div>
                            <p className="text-[8px] text-black font-bold uppercase">Weight</p>
@@ -179,34 +179,34 @@ export default function PrintPrescription() {
                <div className="flex flex-col flex-1 min-h-0 min-w-0">
                   <div className="flex items-end gap-3 mb-4 border-b-2 border-slate-100 pb-2">
                      <span className="text-4xl font-serif font-black italic leading-none">Rx</span>
-                     <span className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-1 ml-auto">Medication List ({count})</span>
+                     <span className="text-xs uppercase tracking-widest text-black font-bold mb-1 ml-auto">Medication List ({count})</span>
                   </div>
 
                   <div className="overflow-hidden mb-8">
                      <table className="w-full text-left">
                         <thead>
                            <tr className="bg-slate-50/50 border-y border-slate-200">
-                              <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 w-10">#</th>
-                              <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400">Medicine Name</th>
-                              <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400">Composition</th>
-                              <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 text-center w-28">Frequency</th>
-                              <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 w-28">Timing</th>
-                              <th className="px-2 py-2 text-[10px] font-black uppercase text-slate-400 text-right w-16">Days</th>
+                              <th className="px-2 py-2 text-[10px] font-black uppercase text-black w-10">#</th>
+                              <th className="px-2 py-2 text-[10px] font-black uppercase text-black">Medicine Name</th>
+                              <th className="px-2 py-2 text-[10px] font-black uppercase text-black">Composition</th>
+                              <th className="px-2 py-2 text-[10px] font-black uppercase text-black text-center w-28">Frequency</th>
+                              <th className="px-2 py-2 text-[10px] font-black uppercase text-black w-28">Timing</th>
+                              <th className="px-2 py-2 text-[10px] font-black uppercase text-black text-right w-16">Days</th>
                            </tr>
                         </thead>
                         <tbody>
                            {medicines.map((m, i) => (
                               <tr key={i} className="border-b border-slate-50 group hover:bg-slate-50/20 transition-colors">
-                                 <td className={cn("px-2 font-medium text-slate-300", rowPadding, tableFontSize)}>{i + 1}</td>
+                                 <td className={cn("px-2 font-medium text-black", rowPadding, tableFontSize)}>{i + 1}</td>
                                  <td className={cn("px-2", rowPadding)}>
-                                    <span className={cn("font-bold text-slate-900 uppercase tracking-tight", tableFontSize)}>{m.medicineName}</span>
+                                    <span className={cn("font-bold text-black uppercase tracking-tight", tableFontSize)}>{m.medicineName}</span>
                                  </td>
                                  <td className={cn("px-2", rowPadding)}>
-                                    <span className={cn("text-slate-500 italic font-serif leading-none", tableFontSize)}>{m.composition || "-"}</span>
+                                    <span className={cn("text-black italic font-serif leading-none", tableFontSize)}>{m.composition || "-"}</span>
                                  </td>
                                  <td className={cn("px-2 font-black text-blue-600 text-center tracking-widest", rowPadding, tableFontSize)}>{m.dosageMorning}-{m.dosageAfternoon}-{m.dosageNight}</td>
-                                 <td className={cn("px-2 text-slate-500 font-medium italic", rowPadding, tableFontSize)}>{m.instructions || "After Food"}</td>
-                                 <td className={cn("px-2 text-right font-bold text-slate-900", rowPadding, tableFontSize)}>{m.days}</td>
+                                 <td className={cn("px-2 text-black font-medium italic", rowPadding, tableFontSize)}>{m.instructions || "After Food"}</td>
+                                 <td className={cn("px-2 text-right font-bold text-black", rowPadding, tableFontSize)}>{m.days}</td>
                               </tr>
                            ))}
                         </tbody>
@@ -216,16 +216,16 @@ export default function PrintPrescription() {
                   {/* Instructions: Rides immediately below the table */}
                   <div className="space-y-2 border-t-2 border-slate-900/10 pt-4 max-w-[70%]">
                      <div className="flex gap-4">
-                        <span className="text-[9px] font-black uppercase text-slate-400 min-w-16 pt-0.5">Investigation:</span>
-                        <span className="text-xs italic text-slate-700 border-l-2 border-slate-100 pl-3 leading-relaxed">{consultation?.consultationNotes?.split('\nRemarks:')[1]?.trim() || "-"}</span>
+                        <span className="text-[9px] font-black uppercase text-black min-w-16 pt-0.5">Investigation:</span>
+                        <span className="text-xs italic text-black border-l-2 border-slate-100 pl-3 leading-relaxed">{(() => { const v = consultation?.consultationNotes?.split('\nRemarks:')[1]?.trim(); const s = (v || '').toLowerCase().replace(/[^a-z0-9]/g, ''); return (s === '' || s === 'nil' || s === 'none') ? '-' : v; })()}</span>
                      </div>
                      <div className="flex gap-4">
-                        <span className="text-[9px] font-black uppercase text-slate-400 min-w-16 pt-0.5">Advice:</span>
-                        <span className="text-xs italic text-slate-700 border-l-2 border-slate-100 pl-3 leading-relaxed">{consultation?.adviceInstructions || "-"}</span>
+                        <span className="text-[9px] font-black uppercase text-black min-w-16 pt-0.5">Advice:</span>
+                        <span className="text-xs italic text-black border-l-2 border-slate-100 pl-3 leading-relaxed">{(() => { const v = consultation?.adviceInstructions?.trim(); const s = (v || '').toLowerCase().replace(/[^a-z0-9]/g, ''); return (s === '' || s === 'nil' || s === 'none') ? '-' : v; })()}</span>
                      </div>
                      <div className="flex gap-4">
-                        <span className="text-[9px] font-black uppercase text-slate-400 min-w-16 pt-0.5 mt-0.5">Follow up:</span>
-                        <span className="text-sm font-bold text-slate-900 uppercase border-l-2 border-slate-100 pl-3">{consultation?.followUpDate ? new Date(consultation.followUpDate).toLocaleDateString("en-US", { day: 'numeric', month: 'short', year: 'numeric' }) : "As Required"}</span>
+                        <span className="text-[9px] font-black uppercase text-black min-w-16 pt-0.5 mt-0.5">Follow up:</span>
+                        <span className="text-sm font-bold text-black uppercase border-l-2 border-slate-100 pl-3">{consultation?.followUpDate ? new Date(consultation.followUpDate).toLocaleDateString("en-US", { day: 'numeric', month: 'short', year: 'numeric' }) : "As Required"}</span>
                      </div>
                   </div>
                </div>
@@ -233,11 +233,10 @@ export default function PrintPrescription() {
                {/* Footer - Signature ONLY (Sticks to absolute bottom) */}
                <div className="mt-auto pt-6 flex justify-end">
                   <div className="text-center group pb-2">
-                     <div className="border-t-2 border-dashed border-slate-900 w-48 mb-2 mx-auto opacity-20 group-hover:opacity-100 transition-opacity"></div>
-                     <p className="text-[9px] text-slate-400 italic tracking-[0.3em] uppercase mb-1">Clinic Signature</p>
-                     <h3 className="text-xl font-bold text-slate-900 leading-none uppercase tracking-tight">Dr. {visit.doctor?.name || "Shivananda Manohar"}</h3>
-                     {visit.doctor?.qualification && <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase">{visit.doctor.qualification}</p>}
-                     <p className="text-[8px] text-slate-300 mt-1 uppercase tracking-widest">
+                     <p className="text-[9px] text-black italic tracking-[0.3em] uppercase mb-1">Signature</p>
+                     <h3 className="text-xl font-bold text-black leading-none uppercase tracking-tight">Dr. {visit.doctor?.name || "Shivananda Manohar"}</h3>
+                     {visit.doctor?.qualification && <p className="text-[9px] font-bold text-black mt-1 uppercase">{visit.doctor.qualification}</p>}
+                     <p className="text-[8px] text-black mt-1 uppercase tracking-widest">
                         {new Date(visit.updatedAt || Date.now()).toLocaleDateString("en-US", { hour: '2-digit', minute: '2-digit' })}
                      </p>
                   </div>

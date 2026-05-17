@@ -86,7 +86,7 @@ export async function finalizeConsultation(req, res) {
           upsert: {
             create: {
               doctorId,
-              diagnosis: diagnosis || "Consultation Completed",
+              diagnosis: diagnosis || null,
               consultationNotes: notes || "",
               adviceInstructions: adviceInstructions || "",
               followUpDate: followUp,
@@ -102,7 +102,7 @@ export async function finalizeConsultation(req, res) {
               })
             },
             update: {
-              diagnosis: diagnosis || "Consultation Completed",
+              diagnosis: diagnosis || null,
               consultationNotes: notes || "",
               adviceInstructions: adviceInstructions || "",
               followUpDate: followUp,

@@ -422,7 +422,7 @@ export default function DailyVisitsPage() {
                                  {v.paymentStatus || "UNPAID"}
                               </Badge>
                            </TableCell>
-                           <TableCell className="text-right pr-10">
+                           <TableCell className="text-right pr-10" onClick={(e) => e.stopPropagation()}>
                               <DropdownMenu>
                                  <DropdownMenuTrigger asChild>
                                     <div className="p-2.5 hover:bg-gray-100 rounded-2xl inline-flex cursor-pointer text-black border border-transparent transition-all hover:text-black shadow-none">

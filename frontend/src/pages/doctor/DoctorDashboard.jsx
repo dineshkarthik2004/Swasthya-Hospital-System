@@ -54,14 +54,14 @@ export default function DoctorDashboard() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
          <Card className="rounded-[2rem] border-gray-100 shadow-sm bg-white overflow-hidden group">
             <CardContent className="p-8 flex items-center gap-6">
                <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-inner">
                   <User size={28} />
                </div>
                <div>
-                  <div className="text-[10px] font-black text-black mb-1 uppercase tracking-[0.2em] opacity-40">Total Patients</div>
+                  <div className="text-[10px] font-black text-black mb-1 uppercase tracking-[0.2em]">Total Patients</div>
                   <div className="text-3xl font-black text-black tracking-tighter">{totalPatients}</div>
                </div>
             </CardContent>
@@ -72,19 +72,8 @@ export default function DoctorDashboard() {
                   <Clock size={28} />
                </div>
                <div>
-                  <div className="text-[10px] font-black text-black mb-1 uppercase tracking-[0.2em] opacity-40">Waiting (In Queue)</div>
+                  <div className="text-[10px] font-black text-black mb-1 uppercase tracking-[0.2em]">Waiting (In Queue)</div>
                   <div className="text-3xl font-black text-black tracking-tighter">{waitingPatients}</div>
-               </div>
-            </CardContent>
-         </Card>
-         <Card className="rounded-[2rem] border-gray-100 shadow-sm bg-white overflow-hidden group">
-            <CardContent className="p-8 flex items-center gap-6">
-               <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all duration-500 shadow-inner">
-                  <Activity size={28} />
-               </div>
-               <div>
-                  <div className="text-[10px] font-black text-black mb-1 uppercase tracking-[0.2em] opacity-40">In Progress / Lab</div>
-                  <div className="text-3xl font-black text-black tracking-tighter">{inProgressPatients}</div>
                </div>
             </CardContent>
          </Card>
@@ -129,7 +118,7 @@ export default function DoctorDashboard() {
             <TableBody>
                {(filteredVisits || []).map(visit => (
                   <TableRow key={visit.id} className="hover:bg-gray-50/30 border-gray-50 h-24 transition-colors">
-                     <TableCell className="px-8 text-xs text-black font-black font-mono opacity-30">#{(visit.id || "").slice(-8).toUpperCase()}</TableCell>
+                     <TableCell className="px-8 text-xs text-black font-black font-mono">#{(visit.id || "").slice(-8).toUpperCase()}</TableCell>
                      <TableCell className="font-black text-black text-sm tracking-tight">
                         {new Date(visit.createdAt || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true}).toUpperCase()}
                      </TableCell>
@@ -156,7 +145,7 @@ export default function DoctorDashboard() {
                            {visit.status === "ASSIGNED_TO_DOCTOR" ? "WAITING" : (visit.status || "").replace(/_/g, ' ')}
                         </span>
                      </TableCell>
-                     <TableCell className="text-[11px] text-black font-black uppercase tracking-tight truncate max-w-[180px] opacity-60">
+                     <TableCell className="text-[11px] text-black font-black uppercase tracking-tight truncate max-w-[180px]">
                         {visit.notes || "GENERAL CHECKUP"}
                      </TableCell>
                      <TableCell className="text-right px-8">
@@ -176,7 +165,7 @@ export default function DoctorDashboard() {
                               >
                                  <PlayCircle className="w-5 h-5 mr-4" /> Start Consultation
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="cursor-pointer font-black text-[10px] uppercase tracking-widest text-black rounded-2xl py-4 px-5 focus:bg-gray-50 opacity-60">
+                              <DropdownMenuItem className="cursor-pointer font-black text-[10px] uppercase tracking-widest text-black rounded-2xl py-4 px-5 focus:bg-gray-50">
                                  View Medical History
                               </DropdownMenuItem>
                            </DropdownMenuContent>

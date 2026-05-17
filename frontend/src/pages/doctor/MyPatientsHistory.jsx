@@ -71,7 +71,7 @@ export default function MyPatientsHistory() {
           Visit History
         </h1>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ml-11">
-          <p className="text-black font-black uppercase tracking-widest text-[11px] opacity-40">All your completed consultations in one place.</p>
+          <p className="text-black font-black uppercase tracking-widest text-[11px]">All your completed consultations in one place.</p>
           <div className="bg-blue-50 px-4 py-1.5 rounded-full text-xs font-black text-blue-600 border border-blue-100 uppercase tracking-widest shadow-sm">
             {history.length} total visits
           </div>
@@ -158,7 +158,7 @@ export default function MyPatientsHistory() {
                     <TableCell className="px-8">
                       <div className="flex flex-col">
                         <span className="text-black font-black text-sm tracking-tight">{dateStr.split(' ')[1]} {dateStr.split(' ')[0]}</span>
-                        <span className="text-black text-[10px] uppercase font-black tracking-widest opacity-40">{dateStr.split(' ')[2]}</span>
+                        <span className="text-black text-[10px] uppercase font-black tracking-widest">{dateStr.split(' ')[2]}</span>
                       </div>
                     </TableCell>
                     <TableCell className="pl-4">
@@ -168,15 +168,15 @@ export default function MyPatientsHistory() {
                         </div>
                         <div className="flex flex-col">
                           <span className="font-black text-black text-[15px] group-hover:text-blue-600 transition-colors tracking-tight">{visit.patient?.name || "Unknown"}</span>
-                          <span className="text-[10px] text-black font-black uppercase tracking-[0.2em] opacity-40 mt-0.5">ID: {visit.patient?.id?.slice(-8).toUpperCase() || "N/A"}</span>
+                          <span className="text-[10px] text-black font-black uppercase tracking-[0.2em] mt-0.5">ID: {visit.patient?.id?.slice(-8).toUpperCase() || "N/A"}</span>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell className="font-black text-black text-sm tracking-tight">{age} YRS</TableCell>
                     <TableCell className="font-black text-black text-sm tracking-tight">{gender}</TableCell>
                     <TableCell className="text-sm">
-                      <div className="bg-gray-50 group-hover:bg-white px-4 py-2 rounded-2xl border border-transparent group-hover:border-blue-100 text-black font-black uppercase tracking-tight text-[11px] truncate max-w-[280px] transition-all shadow-sm group-hover:shadow-md opacity-60 group-hover:opacity-100">
-                        {visit.consultation?.diagnosis || "No diagnosis logged"}
+                      <div className="bg-transparent group-hover:bg-white px-4 py-2 rounded-2xl border border-transparent group-hover:border-blue-100 text-black font-black uppercase tracking-tight text-[11px] truncate max-w-[280px] transition-all shadow-sm group-hover:shadow-md group-hover:opacity-100">
+                        {visit.consultation?.diagnosis || "-"}
                       </div>
                     </TableCell>
                     <TableCell className="text-right pr-12">

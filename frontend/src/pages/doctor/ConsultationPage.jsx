@@ -32,7 +32,7 @@ export default function ConsultationPage() {
    const [showAdvice, setShowAdvice] = useState(true)
 
    const [diagnosis, setDiagnosis] = useState("")
-   const [remarks, setRemarks] = useState("nil")
+   const [remarks, setRemarks] = useState("")
    const [adviceInstructions, setAdviceInstructions] = useState("Drink plenty of water")
    const [followUpDate, setFollowUpDate] = useState("")
    const [labPending, setLabPending] = useState(false)
@@ -116,10 +116,11 @@ export default function ConsultationPage() {
                height: found.vitals?.height || ""
             })
             if (found.consultation) {
-               setDiagnosis(found.consultation.diagnosis || "")
-               setRemarks(found.consultation.consultationNotes?.split('\nRemarks:')[1]?.trim() || "")
-               setClinicalNotes(found.consultation.consultationNotes?.split('\nRemarks:')[0]?.trim() || "")
-               setAdviceInstructions(found.consultation.adviceInstructions || "")
+            const cleanVal = (v) => { const s = (v || '').trim().toLowerCase().replace(/[^a-z0-9]/g, ''); return (s === '' || s === 'nil' || s === 'none') ? '' : v.trim(); };
+               setDiagnosis(cleanVal(found.consultation.diagnosis))
+               setRemarks(cleanVal(found.consultation.consultationNotes?.split('\nRemarks:')[1]?.trim()))
+               setClinicalNotes(cleanVal(found.consultation.consultationNotes?.split('\nRemarks:')[0]?.trim()))
+               setAdviceInstructions(cleanVal(found.consultation.adviceInstructions))
                setFollowUpDate(found.consultation.followUpDate?.split('T')[0] || "")
                setLabPending(found.consultation.labPending || false)
                // prepopulate medicines if they exist
@@ -281,10 +282,14 @@ export default function ConsultationPage() {
    // Helper: append new text with comma separator (preserves old text)
    const appendText = (oldVal, newText) => {
       if (!newText || newText.trim() === "") return oldVal;
+      const trimmedNew = newText.trim();
+      const checkStr = trimmedNew.toLowerCase().replace(/[^a-z0-9]/g, '');
+      // Ignore AI-returned nil/none values entirely
+      if (checkStr === 'nil' || checkStr === 'none') return oldVal;
       const trimmedOld = (oldVal || "").trim();
-      // If old value is empty or just the default placeholder, replace entirely
-      if (!trimmedOld || trimmedOld.toLowerCase() === "nil") return newText.trim();
-      return trimmedOld + ", " + newText.trim();
+      // If old value is empty, replace entirely
+      if (!trimmedOld) return trimmedNew;
+      return trimmedOld + ", " + trimmedNew;
    };
 
    const applyExtractedData = (data, type) => {
@@ -452,8 +457,9 @@ export default function ConsultationPage() {
             days: Number(m.duration) || 0,
             instructions: m.timing + (m.instruction ? " | " + m.instruction : "")
          }))
-         const validClinicalNotes = (!clinicalNotes || clinicalNotes.toLowerCase() === 'none') ? "" : clinicalNotes.trim()
-         const validRemarks = (!remarks || remarks.toLowerCase() === 'none') ? "" : remarks.trim()
+         const validClinicalNotes = (!clinicalNotes || clinicalNotes.toLowerCase() === 'none' || clinicalNotes.toLowerCase() === 'nil') ? "" : clinicalNotes.trim()
+         const validRemarks = (!remarks || remarks.toLowerCase() === 'none' || remarks.toLowerCase() === 'nil') ? "" : remarks.trim()
+         const validAdvice = (!adviceInstructions || adviceInstructions.toLowerCase() === 'none' || adviceInstructions.toLowerCase() === 'nil') ? "" : adviceInstructions.trim()
          const combinedNotes = validClinicalNotes + (validRemarks ? "\nRemarks: " + validRemarks : "")
 
          await api.post(`/api/consultations/finalize`, {
@@ -461,7 +467,7 @@ export default function ConsultationPage() {
             diagnosis,
             notes: combinedNotes,
             prescription: validMedicines,
-            adviceInstructions,
+            adviceInstructions: validAdvice,
             followUpDate,
             labPending,
             feeType
@@ -814,8 +820,8 @@ export default function ConsultationPage() {
                      <Textarea
                         value={remarks}
                         onChange={(e) => setRemarks(e.target.value)}
-                        placeholder="..."
-                        className="flex-1 border-0 rounded-none resize-none focus-visible:ring-0 px-6 py-5 min-h-[120px] shadow-none font-bold text-black text-sm bg-transparent leading-relaxed placeholder:text-black"
+                        placeholder="-"
+                        className="flex-1 border-0 rounded-none resize-none focus-visible:ring-0 px-6 py-5 min-h-[120px] shadow-none font-bold text-black text-base bg-transparent leading-relaxed placeholder:text-black"
                      />
                   </Card>
                )}

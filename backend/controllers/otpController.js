@@ -163,6 +163,7 @@ export async function verifyOtpAndLogin(req, res) {
         id: user.id,
         name: user.name,
         email: user.email,
+        username: user.username || null,
         role: user.role,
         hospitalId: user.hospitalId,
         hospitalName: user.hospital?.name || null,

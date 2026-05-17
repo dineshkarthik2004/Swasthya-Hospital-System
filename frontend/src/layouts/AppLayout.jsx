@@ -173,7 +173,7 @@ export default function AppLayout({ allowedRoles }) {
                   </DropdownMenuTrigger>
                    <DropdownMenuContent align="end" className="w-64 rounded-[2rem] shadow-2xl mt-4 border-none p-4 bg-white ring-1 ring-black/5 z-[200]">
                       <DropdownMenuLabel className="font-black text-black text-sm px-4 pt-4 pb-2">Session Overview</DropdownMenuLabel>
-                      <p className="px-4 pb-4 text-[10px] font-bold text-black uppercase tracking-widest leading-none shrink-0">{user?.email || "user@hospital.com"}</p>
+                      <p className="px-4 pb-4 text-[10px] font-bold text-black uppercase tracking-widest leading-none shrink-0">{user?.username || (user?.email ? user.email.split('@')[0] : "user")}</p>
                       <DropdownMenuSeparator className="bg-gray-50 mb-3 mx-2" />
                       
                       <DropdownMenuItem 

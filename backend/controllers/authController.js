@@ -129,7 +129,8 @@ export async function login(req, res) {
       user: { 
         id: user.id, 
         name: user.name, 
-        email: user.email, 
+        email: user.email,
+        username: user.username || null,
         role: user.role, 
         hospitalId: user.hospitalId,
         hospitalName: userWithHospital?.hospital?.name || null,
