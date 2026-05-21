@@ -3,3 +3,6 @@ node_modules
 .env
 
 /generated/prisma
+
+# Migration/seed scripts contain hardcoded DB credentials — never commit
+scripts/
