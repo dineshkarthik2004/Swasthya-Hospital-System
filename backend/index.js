@@ -350,36 +350,54 @@ app.use("/api/medicines", medicineRouter);
 app.use("/api/admin", adminRouter);
 
 // ─── Public Settings Read (any authenticated user) ────────────────────────────
-// Doctors, receptionists etc. need to read settings like doctor_voice_enabled
-// Scoped to the user's own hospital so Hospital A settings don't affect Hospital B
+// 30-second in-memory cache per hospitalId — settings rarely change, no need to
+// hit Neon DB on every page refresh/poll
+const settingsCache = new Map(); // key: hospitalId|"global" → { data, expiresAt }
+
 app.get("/api/settings/public", authenticateToken, async (req, res) => {
   try {
     // Always fetch hospitalId FRESH from DB — JWT may be stale (old login sessions)
-    // where hospitalId was null at the time the token was issued
     const dbUser = await prisma.user.findUnique({
       where: { id: req.user.userId },
       select: { hospitalId: true }
     });
     const hospitalId = dbUser?.hospitalId || req.user.hospitalId || null;
+    const cacheKey = hospitalId || "global";
 
-    const all = await prisma.systemSettings.findMany();
-
-    if (hospitalId) {
-      // Return only this hospital's settings, with prefix stripped
-      const prefix = `${hospitalId}_`;
-      const scoped = all
-        .filter(s => s.key.startsWith(prefix))
-        .map(s => ({ ...s, key: s.key.slice(prefix.length) }));
-      return res.json(scoped);
+    // ── Serve from cache if still fresh ──────────────────────────────────────
+    const cached = settingsCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return res.json(cached.data);
     }
 
-    // No hospitalId — return all (super admin or unassigned user)
-    res.json(all);
+    // ── Fetch from DB ─────────────────────────────────────────────────────────
+    const all = await prisma.systemSettings.findMany();
+    let result;
+
+    if (hospitalId) {
+      const prefix = `${hospitalId}_`;
+      result = all
+        .filter(s => s.key.startsWith(prefix))
+        .map(s => ({ ...s, key: s.key.slice(prefix.length) }));
+    } else {
+      result = all;
+    }
+
+    // Cache for 30 seconds
+    settingsCache.set(cacheKey, { data: result, expiresAt: Date.now() + 30_000 });
+
+    return res.json(result);
   } catch (err) {
     console.error("[Settings Public] Error:", err);
     res.status(500).json([]);
   }
 });
+
+// ─── Invalidate settings cache when settings are updated ─────────────────────
+// Call this wherever settings are written so cache stays consistent
+export const invalidateSettingsCache = (hospitalId) => {
+  settingsCache.delete(hospitalId || "global");
+};
 
 
 // ─── Direct Aliases / Extra Endpoints ─────────────────────────────────────────
